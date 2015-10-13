@@ -9,6 +9,7 @@
   "dependencies": {
     "ejs": "^2.3.4",
     "express": "4.13.3",
+    "mongodb": "^2.0.45",
     "socket.io": "1.0.4"
   },
   "engines": {

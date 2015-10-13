@@ -1,3 +1,31 @@
-#myCanvas {
-	border: 1px solid;
-}
+body {
+		overflow: hidden;
+	}
+	
+	canvas {
+		border: 1px solid;
+	}
+	
+	#rooms {
+		position: absolute;
+		border: 1px solid;
+		width: 400px;
+		height: 450px;
+		left: 50%;
+		margin-left: -200px;
+		top: 100px;
+	}
+	
+	#join-room {
+		position: absolute;
+		bottom: 0;
+		width: 100%;
+	}
+	
+	#create {
+		width: 25%;
+	}
+	
+	#roomname {
+		width: 70%;
+	}
