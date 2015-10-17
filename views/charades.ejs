@@ -13,8 +13,9 @@
 	<link rel="stylesheet" href="stylesheets/charades.css">
 </head>
 <body>
-	<div id="rooms">
-		<div id="rooms-list"class="list-group">
+	<div id="rooms" ng-app="myApp" ng-controller="customersCtrl">
+		<div class="btn-group-vertical roomdiv">
+  		<button ng-repeat="x in rooms | orderBy: 'usersNum':true" type="button" class="btn btn-default btn-block">{{ x.name }}<span class="badge"> {{ x.usersNum }}</span></button>
 		</div>
 		<div id="join-room">
 			<div class="form-inline">
@@ -33,5 +34,20 @@
 	</div>	
 	<br/><br/>
 	<canvas id="myCanvas" height="5000" width="5000"></canvas>
+	<script>
+		var app = angular.module('myApp', []);
+		app.controller('customersCtrl', ["$scope", "$http",function($scope, $http) {
+				$http.get("/charades/rooms").success(function(response) {
+						$scope.rooms = response;
+					});
+					
+				$scope.update = function(rooms) {
+					$scope.$apply(function() {
+						$scope.rooms = rooms;
+					});
+				}
+		}]);
+	</script>
+	
 </body>
 </html>

@@ -29,3 +29,17 @@ body {
 	#roomname {
 		width: 70%;
 	}
+	
+	.roomdiv {
+		width: 100%;
+		text-align: left;
+		}
+		
+	.btn-block {
+		text-align: left;
+		}
+		
+		.badge {
+			float: right;
+			}
+	

@@ -1,7 +1,7 @@
 $(document).ready(function() {
 		$("#myCanvas").hide();
 		$("#tool-belt").hide();
-	});
+	});	
 	
 	var player = {
 		name:			"Marek",
@@ -72,24 +72,12 @@ $(document).ready(function() {
 		});
 		
 		socket.on('update rooms', function(rooms) {
-			addRoomsToList(rooms);
+			angular.element($('#rooms')).scope().update(rooms);
 		});
 
 		socket.on('remove room', function(room) {
 			$('#' + room + ".room").remove();
 		});
-
-		function addRoomsToList(rooms) {
-			$("#rooms-list").html('');
-			for(var i = 0; i < rooms.length; i++) {
-				$("#rooms-list").append('<button id="' + rooms[i].name + 
-				'" class="list-group-item room"><span class="room-name">' + rooms[i].name + 
-				'</span><span class="badge">' + rooms[i].numUsers + '</span></button>');
-				$('#' + rooms[i].name).on('click', function() {
-					sendWelcome($(this).attr('id'));
-				});
-			}
-		}
 		
 		function sendWelcome(roomName) {
 			socket.emit('welcome', {
