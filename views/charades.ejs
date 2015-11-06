@@ -15,7 +15,7 @@
 <body>
 	<div id="rooms" ng-app="myApp" ng-controller="customersCtrl">
 		<div class="btn-group-vertical roomdiv">
-  		<button ng-repeat="x in rooms | orderBy: 'usersNum':true" type="button" class="btn btn-default btn-block">{{ x.name }}<span class="badge"> {{ x.usersNum }}</span></button>
+  		<button ng-repeat="x in rooms | orderBy: 'usersNum':true" type="button" class="btn btn-default btn-block roomEnter"><span id="singleRoomName">{{ x.name }}</span><span class="badge"> {{ x.usersNum }}</span></button>
 		</div>
 		<div id="join-room">
 			<div class="form-inline">

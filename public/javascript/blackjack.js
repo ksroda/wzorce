@@ -4,8 +4,8 @@ $(document).ready(function() {
 	});	
 	
 	var player = {
-		name:			"Marek",
-		serverId:	0,
+		name: 			"Marek",
+		serverId:		0,
 		path:			0,
 		pathProperties:	{
 			color:	'black',
@@ -91,7 +91,7 @@ $(document).ready(function() {
 			socket.emit('welcome', {
 				name:	"Marek",
 				room:	roomName,
-				game: "blackjack"
+				game: 	"blackjack"
 			});
 		
 			$("#myCanvas").show();
