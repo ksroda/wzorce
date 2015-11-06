@@ -168,6 +168,7 @@ var game = {
 					}
 			
 					if(games[socket.game].rooms[roomIndex].usersNum <= 0) {
+						clearInterval(roomsIntervals[games[socket.game].rooms[roomIndex].interval]);
 						games[socket.game].rooms.splice(roomIndex, 1);
 					}
 			
