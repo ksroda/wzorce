@@ -9,13 +9,13 @@
 	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 	<script src= "http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
 	<script src="/socket.io/socket.io.js"></script>
-	<script src="javascript/charades.js"></script>
+	<script src="javascript/blackjack.js"></script>
 	<link rel="stylesheet" href="stylesheets/charades.css">
 </head>
 <body>
 	<div id="rooms" ng-app="myApp" ng-controller="customersCtrl">
 		<div class="btn-group-vertical roomdiv">
-  		<button ng-repeat="x in rooms | orderBy: 'usersNum':true" type="button" class="btn btn-default btn-block">{{ x.name }}<span class="badge"> {{ x.usersNum }}</span></button>
+  		<button ng-repeat="x in rooms | orderBy: 'usersNum':true" type="button" class="btn btn-default btn-block roomEnter"><span id="singleRoomName">{{ x.name }}</span><span class="badge"> {{ x.usersNum }}</span></button>
 		</div>
 		<div id="join-room">
 			<div class="form-inline">
@@ -37,7 +37,7 @@
 	<script>
 		var app = angular.module('myApp', []);
 		app.controller('customersCtrl', ["$scope", "$http", function($scope, $http) {
-				$http.get("/charades/rooms").success(function(response) {
+				$http.get("/blackjack/rooms").success(function(response) {
 						$scope.rooms = response;
 					});
 					

@@ -47,18 +47,26 @@ $(document).ready(function() {
 		}
 		
 		//------------------------------------JQuery-----------------------------------------
-		$("#create").on('click', function() {
-			sendWelcome($("#roomname").val());
-		});
+		$(document).ready(function() {
+			$("#create").on('click', function() {
+				sendWelcome($("#roomname").val());
+			
+			});
+			
+			//jeżeli dodajemy element dynamicznie (append) to tak wygląda funkcja on click jquery
+			$(document).on('click','.roomEnter',function(){
+				sendWelcome($(".roomEnter #singleRoomName").text());
+			});
 		
-		$(".color").on('click', function() {
-			player.pathProperties.color = this.id;
-		});
 		
-		$(".size").on('click', function() {
-			player.pathProperties.size = this.id;
-		});
+			$(".color").on('click', function() {
+				player.pathProperties.color = this.id;
+			});
 		
+			$(".size").on('click', function() {
+				player.pathProperties.size = this.id;
+			});
+		});
 		
 		//------------------------------------Socket-----------------------------------------
 		
@@ -83,7 +91,7 @@ $(document).ready(function() {
 			socket.emit('welcome', {
 				name:	"Marek",
 				room:	roomName,
-				game: "charades"
+				game: "blackjack"
 			});
 		
 			$("#myCanvas").show();
