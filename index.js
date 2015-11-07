@@ -11,6 +11,7 @@ var assert = require('assert');
 var ObjectId = require('mongodb').ObjectID;
 var url = 'mongodb://db_user:db_user123@ds033734.mongolab.com:33734/wzorce';
 
+var lessMiddleware = require('less-middleware');
 var blackjackRequire = require('./index_blackjack.js');
 var charadesRequire = require('./index_charades.js');
 var auxiliaryRequire = require('./index_auxiliary.js');
@@ -22,12 +23,22 @@ MongoClient.connect(url, function(err, database) {
 		//server.listen(port);
 		//console.log("Listening on " + port);
 	});
+
+
 	
 server.listen(port);
 console.log("Listening on " + port);
 var io = sio.listen(server);
 
+app.use(lessMiddleware(__dirname + '/public',{
+    debug: true,
+    dest: __dirname + '/public',
+    force: true,
+    once: false
+}));
+
 app.use(express.static(__dirname + '/public'));
+
 app.set('view engine','ejs');
 
 app.get('/charades', function(req, res) {

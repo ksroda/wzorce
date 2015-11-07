@@ -1,35 +1,5 @@
 var auxiliaryRequire = require('./index_auxiliary.js');
 
-function Card(id, x, y, goalX, goalY, type, value){
-  this.id = id;
-	this.x = x;
-	this.y = y;
-	this.goalX = goalX;
-	this.goalY = goalY;
-	this.value = value;
-}
-
-var getCardsStack = function() {
-	var cards = [
-		{id:'2Spades', value: 2},
-		{id:'3Spades', value: 3},
-		{id:'4Spades', value: 4},
-		{id:'5Spades', value: 5},
-		{id:'6Spades', value: 6},
-		{id:'7Spades', value: 7},
-		{id:'8Spades', value: 8},
-		{id:'9Spades', value: 9},
-		{id:'10Spades', value: 10},
-		{id:'jSpades', value: 10},
-		{id:'qSpades', value: 10},
-		{id:'kSpades', value: 10},
-		{id:'aSpades', value: 11}
-		]
-		
-		return cards;	
-}
-module.exports.getCardsStack = getCardsStack;
-
 var gameLoop = function gameLoop(io, room) {
 	var now = (new Date()).getTime();
 	switch(room.state) {
@@ -47,24 +17,19 @@ var gameLoop = function gameLoop(io, room) {
 			break;
 		case "deal":
 			if(now - room.controlDealTime > room.timeBetweenCardsDeal) {
-				console.log(room.players);
 				room.controlDealTime = now;
-				var cardIndex = Math.floor(Math.random() * room.cardsStack.length);
-				var card = room.cardsStack[cardIndex];
-				console.log(card);
-				room.cards.push(new Card(card.id, 1000, 200, room.currentPlayer.x, room.currentPlayer.y, card.value));
-				room.cardsStack.splice(cardIndex, 1);
+				var card = randomCardFromStack(room);
+				room.cards.push(card);
 				if(room.isCardForDealer){
-					room.cards[room.cards.length -1].goalX=600;
-					room.cards[room.cards.length -1].goalY=200;				
+					room.cards[room.cards.length -1].goalX = 600;
+					room.cards[room.cards.length -1].goalY = 200;				
 					room.dealerCardsSum += card.value;
 					room.dealerCardsNumber += 1;
 					room.isCardForDealer = false;
-				}
-				else{
+				} else {
 					room.currentPlayer.cardsSum += card.value;
 					room.currentPlayer.cardsNumber += 1;
-					if(room.currentPlayer.id === room.players[room.players.length-1].id){
+					if(room.currentPlayer.id === room.players[room.players.length - 1].id) {
 						room.isCardForDealer = true;
 					}
 					var index = room.players.indexOf(room.currentPlayer);
@@ -84,10 +49,8 @@ var gameLoop = function gameLoop(io, room) {
 		case "game":
 			switch (room.currentPlayer.action){
 				case "hit":
-					var cardIndex = Math.floor(Math.random() * room.cardsStack.length);
-					var card = room.cardsStack[cardIndex];
-					room.cards.push(new Card(card.id, 1000, 200, room.currentPlayer.x, room.currentPlayer.y, card.value));		
-					room.cardsStack.splice(cardIndex, 1);
+					var card = randomCardFromStack(room);
+					room.cards.push(card);
 					room.currentPlayer.cardsSum += card.value;
 					room.currentPlayer.cardsNumber += 1;
 					if(room.currentPlayer.cardsSum > 21 ){
@@ -121,7 +84,6 @@ var gameLoop = function gameLoop(io, room) {
 			if(now - room.currentPlayerTime > room.timeToThink){
 				room.currentPlayerTime = now;
 				var index = room.players.indexOf(room.currentPlayer);
-				console.log(index);
 				index++;
 				if(index > room.players.length - 1) {
 					index = 0;
@@ -136,13 +98,11 @@ var gameLoop = function gameLoop(io, room) {
 				break;
 			}
 		case "dealersTurn":
-			if( now - room.controlDealTime > room.timeBetweenCardsDeal){
+			if(now - room.controlDealTime > room.timeBetweenCardsDeal) {
 				room.controlDealTime = now;
 				if(room.dealerCardsSum < 17 ) {
-					var cardIndex = Math.floor(Math.random() * room.cardsStack.length);
-					var card = room.cardsStack[cardIndex];
-					room.cards.push(new Card(card.id, 1000, 200, 600, 200, card.value));
-					room.cardsStack.splice(cardIndex, 1);
+					var card = randomCardFromStack(room);
+					room.cards.push(card);
 					room.dealerCardsSum += card.value;
 					room.dealerCardsNumber += 1;
 					if(room.dealerCardsSum > 21) {
@@ -172,22 +132,18 @@ var gameLoop = function gameLoop(io, room) {
 				room.playersAll[i].action = "none";
 			}
 			room.state = "bet";
-
-			
 			room.players = [];
 			room.currentPlayer = 0;
-			//playersAll: [],
-			//state: "bet",
-			//cards: [],
 			room.dealerCardsSum = 0;
 			room.roomStartTime = (new Date()).getTime();
 			room.controlDealTime = (new Date()).getTime(),
 			room.isCardForDealer = false;
 			room.isRoundStarted = false;
-			room.cardsStack = getCardsStack();
+			room.cardsStack = auxiliaryRequire.getCardsStack();
 			room.currentPlayerTime = (new Date()).getTime();
 			break;
 	}
+
 	for(var i = 0; i < room.cards.length; i++) {
 		if(room.cards[i].x < room.cards[i].goalX) {
 			room.cards[i].x += 10;
@@ -226,7 +182,7 @@ module.exports.createRoom = function(games, io, roomName, roomsIntervals) {
 			controlDealTime: (new Date()).getTime(),
 			isCardForDealer: false,
 			isRoundStarted: false,
-			cardsStack: getCardsStack(),
+			cardsStack: auxiliaryRequire.getCardsStack(),
 			timeToThink: 15000,
 			currentPlayerTime: (new Date()).getTime()
 		};
@@ -247,4 +203,21 @@ module.exports.createRoom = function(games, io, roomName, roomsIntervals) {
 module.exports.createPlayer = function(games, user, roomName) {
 	var roomIndex = auxiliaryRequire.findRoomByName(games, "blackjack", roomName);
 	games["blackjack"].rooms[roomIndex].playersAll.push(user);
+}
+
+
+function randomCardFromStack(room) {
+	var cardIndex = Math.floor(Math.random() * room.cardsStack.length);
+	var card = room.cardsStack[cardIndex];
+	console.log(card);
+	room.cardsStack.splice(cardIndex, 1);
+	return ({
+		id: 	auxiliaryRequire.randomId(),
+  		type: 	card.type,
+		x: 		1000,
+		y: 		200,
+		goalX: 	room.currentPlayer.x,
+		goalY: 	room.currentPlayer.y,
+		value: 	card.value
+	});
 }
