@@ -30,7 +30,7 @@ module.exports.setOnWelcome = function(socket, games, io, roomsIntervals) {
 					player.cardsSum = 0;
 					player.pointsBet = 100;
 					player.x = 1000 - 200 * games[socket.game].rooms[auxiliaryRequire.findRoomByName(games, socket.game, socket.room)].playersAll.length;
-					player.y = 600;
+					player.y = 400;
 					break;			
 			}
 

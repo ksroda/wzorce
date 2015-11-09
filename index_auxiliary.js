@@ -26,7 +26,7 @@ module.exports.findRoomByName = function findRoomByName(games, gameName, roomNam
 module.exports.getCardsStack = function() {
 	var cards = [];
 
-		var suits = ["Hearts", "Spades", "Clubs", "Diamonds"];
+		var suits = ["hearts", "spades", "clubs", "diamonds"];
 		var symbols = [
 			{ type:2, 	value: 2  },
 			{ type:3, 	value: 3  },
@@ -37,10 +37,10 @@ module.exports.getCardsStack = function() {
 			{ type:8, 	value: 8  },
 			{ type:9, 	value: 9  },
 			{ type:10,  value: 10 },
-			{ type:"j", value: 10 },
-			{ type:"q", value: 10 },
-			{ type:"k", value: 10 },
-			{ type:"a", value: 11 }
+			{ type:"jack", value: 10 },
+			{ type:"queen", value: 10 },
+			{ type:"king", value: 10 },
+			{ type:"ace", value: 11 }
 		];
 
 		for(var i in suits) {

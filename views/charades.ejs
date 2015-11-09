@@ -15,7 +15,10 @@
 <body>
 	<div id="rooms" ng-app="myApp" ng-controller="customersCtrl">
 		<div class="btn-group-vertical roomdiv">
-  		<button ng-repeat="x in rooms | orderBy: 'usersNum':true" type="button" class="btn btn-default btn-block roomEnter"><span id="singleRoomName">{{ x.name }}</span><span class="badge"> {{ x.usersNum }}</span></button>
+  		<button ng-repeat="x in rooms | orderBy: 'usersNum':true" type="button" class="btn btn-default btn-block roomEnter">
+  			<span id="singleRoomName">{{ x.name }}</span>
+  			<span class="badge">{{ x.usersNum }}</span>
+  		</button>
 		</div>
 		<div id="join-room">
 			<div class="form-inline">
@@ -31,9 +34,9 @@
 		<button id="1" type="button" class="btn btn-default size">1</button>
 		<button id="10" type="button" class="btn btn-default size">10</button>
 		<button id="30" type="button" class="btn btn-default size">30</button>
-	</div>	
+	</div>
 	<br/><br/>
-	<canvas id="myCanvas" height="5000" width="5000"></canvas>
+	<canvas id="myCanvas" height="1920" width="1080"></canvas>
 	<script>
 		var app = angular.module('myApp', []);
 		app.controller('customersCtrl', ["$scope", "$http", function($scope, $http) {
@@ -48,6 +51,5 @@
 				}
 		}]);
 	</script>
-	
 </body>
 </html>

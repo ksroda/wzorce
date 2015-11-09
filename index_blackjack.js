@@ -21,8 +21,8 @@ var gameLoop = function gameLoop(io, room) {
 				var card = randomCardFromStack(room);
 				room.cards.push(card);
 				if(room.isCardForDealer){
-					room.cards[room.cards.length -1].goalX = 600;
-					room.cards[room.cards.length -1].goalY = 200;				
+					room.cards[room.cards.length -1].goalX = room.dealerX + room.dealerCardsNumber * 25;
+					room.cards[room.cards.length -1].goalY = room.dealerY;			
 					room.dealerCardsSum += card.value;
 					room.dealerCardsNumber += 1;
 					room.isCardForDealer = false;
@@ -102,6 +102,9 @@ var gameLoop = function gameLoop(io, room) {
 				room.controlDealTime = now;
 				if(room.dealerCardsSum < 17 ) {
 					var card = randomCardFromStack(room);
+					card.goalX = room.dealerX + room.dealerCardsNumber * 25;
+					card.goalY = room.dealerY;	
+					
 					room.cards.push(card);
 					room.dealerCardsSum += card.value;
 					room.dealerCardsNumber += 1;
@@ -123,7 +126,7 @@ var gameLoop = function gameLoop(io, room) {
 			break;
 		case "reset":
 			//delete room.cards;
-			room.cards = [];
+			//room.cards = [];
 			//room.players = []; Usunięte tylko na czas testów
 			for(var i = 0; i < room.playersAll.length; i++) {
 				room.playersAll[i].pointsBet = 100;
@@ -135,6 +138,7 @@ var gameLoop = function gameLoop(io, room) {
 			room.players = [];
 			room.currentPlayer = 0;
 			room.dealerCardsSum = 0;
+			room.dealerCardsNumber = 0;
 			room.roomStartTime = (new Date()).getTime();
 			room.controlDealTime = (new Date()).getTime(),
 			room.isCardForDealer = false;
@@ -145,22 +149,36 @@ var gameLoop = function gameLoop(io, room) {
 	}
 
 	for(var i = 0; i < room.cards.length; i++) {
-		if(room.cards[i].x < room.cards[i].goalX) {
-			room.cards[i].x += 10;
+		if(Math.abs(room.cards[i].x - room.cards[i].goalX) > 5 && Math.abs(room.cards[i].y - room.cards[i].goalY) > 5) {
+				var angle;
+				var cardX = room.cards[i].x;
+				var cardY = room.cards[i].y;
+						
+				angle = Math.atan((room.cards[i].goalY - cardY)/(room.cards[i].goalX - cardX));
+				if(room.cards[i].goalX >= cardX) {
+					angle += Math.PI;
+				}
+						
+				//angle = angle * 180/Math.PI;
+						
+				room.cards[i].x -= 20;	
+				var cardEndX = (room.cards[i].x - cardX) * Math.cos(angle) - (room.cards[i].y - cardY) * Math.sin(angle) + cardX;
+				var cardEndY = (room.cards[i].x - cardX) * Math.sin(angle) + (room.cards[i].y - cardY) * Math.cos(angle) + cardY;
+						
+				room.cards[i].x = cardEndX;
+				room.cards[i].y = cardEndY;
+			
 		} else {
-			room.cards[i].x -= 10;
+			room.cards[i].x = room.cards[i].goalX;
+			room.cards[i].y = room.cards[i].goalY;
 		}
 		
-		if(room.cards[i].y < room.cards[i].goalY) {
-			room.cards[i].y += 10;
-		} else {
-			room.cards[i].y -= 10;
-		}
 	}
-	io.to(room.id).emit({
-		
+
+	io.to(room.id).emit('update', {
+		cards: room.cards
 	});
-	console.log(room.state);
+	//console.log(room.state);
 }
 module.exports.gameLoop = gameLoop;
 
@@ -176,20 +194,23 @@ module.exports.createRoom = function(games, io, roomName, roomsIntervals) {
 			state: "bet",
 			cards: [],
 			dealerCardsSum: 0,
+			dealerCardsNumber: 0,
 			betTime: 5000,
 			roomStartTime: (new Date()).getTime(),
-			timeBetweenCardsDeal: 500,
+			timeBetweenCardsDeal: 800,
 			controlDealTime: (new Date()).getTime(),
 			isCardForDealer: false,
 			isRoundStarted: false,
 			cardsStack: auxiliaryRequire.getCardsStack(),
 			timeToThink: 15000,
-			currentPlayerTime: (new Date()).getTime()
+			currentPlayerTime: (new Date()).getTime(),
+			dealerX: 600,
+			dealerY: 50
 		};
 	
 	games["blackjack"].rooms.push(room);
 	
-	var intervalId = Math.random() * 10000000;
+	var intervalId = auxiliaryRequire.randomId();
 	
 	games["blackjack"].rooms[auxiliaryRequire.findRoomByName(games, "blackjack", roomName)].interval = intervalId;
 	
@@ -214,9 +235,9 @@ function randomCardFromStack(room) {
 	return ({
 		id: 	auxiliaryRequire.randomId(),
   		type: 	card.type,
-		x: 		1000,
-		y: 		200,
-		goalX: 	room.currentPlayer.x,
+		x: 		1200,
+		y: 		100,
+		goalX: 	room.currentPlayer.x + room.currentPlayer.cardsNumber * 25,
 		goalY: 	room.currentPlayer.y,
 		value: 	card.value
 	});

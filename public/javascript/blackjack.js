@@ -1,101 +1,95 @@
+//------------------------------------JQuery---------------------------------------------
 $(document).ready(function() {
-		$("#myCanvas").hide();
-		$("#tool-belt").hide();
-	});	
-	
-	var player = {
-		name: 			"Marek",
-		serverId:		0,
-		path:			0,
-		pathProperties:	{
-			color:	'black',
-			size:		1
-		},
-		drawPath: function() {
-			this.path = new Path();
-			this.path.strokeColor = this.pathProperties.color;
-			this.path.strokeWidth = this.pathProperties.size;
-		},
-		addPoint: function(position) {
-			if(this.path) this.path.add(new Point(position.x, position.y));
-			view.update();
-		}
-	};
-	
-	var socket = io();
-	
-	paper.install(window);
-	window.onload = function() {
-		//------------------------------------Paper.js--------------------------------------
-		paper.setup('myCanvas');
-		var tool = new Tool();
-		tool.minDistance = 5;
+	$("#create").on('click', function() {
+		sendWelcome($("#roomname").val());
+	});
 		
-		socket.emit('update rooms');
-		
-		tool.onMouseDown = function(event) {
-			player.drawPath();
-			socket.emit('mouse down', player.pathProperties);
-		}
+	//jeżeli dodajemy element dynamicznie (append) to tak wygląda funkcja on click jquery
+	$(document).on('click','.roomEnter',function(){
+		sendWelcome($(".roomEnter #singleRoomName").text());
+	});
 
-		tool.onMouseDrag = function(event) {
-			player.addPoint(event.point);
-			socket.emit('mouse drag', {
-				x:	event.point.x,
-				y:	event.point.y
-			});
-		}
+	//sendWelcome("testowy"); //Na czas testów
+});	
 		
-		//------------------------------------JQuery-----------------------------------------
-		$(document).ready(function() {
-			$("#create").on('click', function() {
-				sendWelcome($("#roomname").val());
-			
-			});
-			
-			//jeżeli dodajemy element dynamicznie (append) to tak wygląda funkcja on click jquery
-			$(document).on('click','.roomEnter',function(){
-				sendWelcome($(".roomEnter #singleRoomName").text());
-			});
-		
-		
-			$(".color").on('click', function() {
-				player.pathProperties.color = this.id;
-			});
-		
-			$(".size").on('click', function() {
-				player.pathProperties.size = this.id;
-			});
-		});
-		
-		//------------------------------------Socket-----------------------------------------
-		
-		socket.on('mouse down', function(properties) {
-			player.pathProperties = properties;
-			player.drawPath();
-		});
-	
-		socket.on('mouse drag', function(position) {
-			player.addPoint(position);
-		});
-		
-		socket.on('update rooms', function(rooms) {
-			angular.element($('#rooms')).scope().update(rooms);
-		});
+//------------------------------------Socket--------------------------------------------
+var socket = io();
 
-		socket.on('remove room', function(room) {
-			$('#' + room + ".room").remove();
-		});
-		
-		function sendWelcome(roomName) {
-			socket.emit('welcome', {
-				name:	"Marek",
-				room:	roomName,
-				game: 	"blackjack"
-			});
-		
-			$("#myCanvas").show();
-			$("#tool-belt").show();
-			$("#rooms").hide();
-		};
-	};
+function sendWelcome(roomName) {
+	socket.emit('welcome', {
+		name:	"Marek",
+		room:	roomName,
+		game: 	"blackjack"
+	});
+	$("#rooms").hide();
+};
+
+
+socket.on('update rooms', function(rooms) {
+	angular.element($('#rooms')).scope().update(rooms);
+});
+
+socket.on('update', function(data) {
+	for(var i = 0; i < data.cards.length; i++) {
+		if(!cards[data.cards[i].id]) {
+			createCard(data.cards[i]);
+		}
+		cards[data.cards[i].id].model.position.x = data.cards[i].x;
+		cards[data.cards[i].id].model.position.y = data.cards[i].y;
+	}
+});
+
+
+
+//------------------------------------Phraser-------------------------------------------
+var game = new Phaser.Game(window.innerWidth, window.innerHeight, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+var cardsGroup;
+
+var cards = {};
+
+
+function preload() {
+	var suits = ["hearts", "spades", "clubs", "diamonds"];
+		var symbols = [
+			{ type:2 },
+			{ type:3 },
+			{ type:4},
+			{ type:5},
+			{ type:6},
+			{ type:7},
+			{ type:8},
+			{ type:9},
+			{ type:10},
+			{ type:"jack" },
+			{ type:"queen" },
+			{ type:"king" },
+			{ type:"ace" }
+		];
+
+		for(var i in suits) {
+			for(var j in symbols) {
+				game.load.image(symbols[j].type + suits[i], 'cards/png/' + symbols[j].type + "_of_" +  suits[i] + ".png");
+			}
+		}
+	
+}
+
+function create() {
+	cardsGroup = game.add.group();
+
+	//var sprite = cardsGroup.create(120, 120, '2clubs');
+}
+
+function update() {
+
+}
+
+function createCard(card) {
+	cards[card.id] = {
+		model: cardsGroup.create(card.x, card.y, card.type),
+		value: card.value
+	}
+	cards[card.id].model.scale.setTo(0.25, 0.25);
+	//console.log(cards[card.id].model);
+	//console.log(cards[card.id]);
+}

@@ -17,13 +17,13 @@ var charadesRequire = require('./index_charades.js');
 var auxiliaryRequire = require('./index_auxiliary.js');
 var socketRequire = require('./index_socket.js');
 
-MongoClient.connect(url, function(err, database) {
+/*MongoClient.connect(url, function(err, database) {
 		assert.equal(null, err);
 		db = database;
 		//server.listen(port);
 		//console.log("Listening on " + port);
 	});
-
+*/
 
 	
 server.listen(port);
