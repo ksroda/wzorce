@@ -249,9 +249,11 @@ module.exports.createRoom = function(games, io, roomName, roomsIntervals) {
 	
 	games["blackjack"].rooms[auxiliaryRequire.findRoomByName(games, "blackjack", roomName)].interval = intervalId;
 	
+	var roomId = auxiliaryRequire.findRoomByName(games, "blackjack", roomName);
+
 	var interval = setInterval(function() {
-		gameLoop(io, games["blackjack"].rooms[auxiliaryRequire.findRoomByName(games, "blackjack", roomName)]);
-	}, 33);
+		gameLoop(io, games["blackjack"].rooms[roomId]);
+	}, 40);
 	
 	roomsIntervals[intervalId] = interval;
 }
