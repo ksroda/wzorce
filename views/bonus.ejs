@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	<script src= "http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+	<script src="phaser\phaser-2.4.4\build\phaser.js"></script>
+	<script src="phaser\phaser-2.4.4\build\phaser.min.js"></script>
+</head>
+<body>
+	<script>
+		var gameWidth = 950;
+		var game = new Phaser.Game(950, window.innerHeight, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+
+
+		var tilesGroup, tiles = [], barriers = [];
+		var x = 6;
+		var y = x;
+		var ball, exit, ballGroup, exitGroup, barriersGroup;
+		var level = 1;
+
+
+		var levelFuntions = {
+			1: function() {
+				exitHeight = 300;
+			},
+			2: function() {
+				exitHeight = 250;
+			},
+			3: function() {
+				exitHeight = 200;
+			},
+			4: function() {
+				exitHeight = 150;
+				barrier = barriersGroup.create(950/2, 220, 'barrier1');
+	    		barrier.scale.setTo(0.5, 0.25);
+				
+	    		game.physics.p2.enable(barrier);
+	    		barrier.body.static = true;
+			},
+			5: function() {
+				exitHeight = 100;
+			}
+		}
+
+		function preload() {
+			game.load.image('tile1', 'assets/tile.png');
+			game.load.image('tile2', 'assets/tile2.png');
+			game.load.image('tile3', 'assets/tile3.png');
+			game.load.image('barrier1', 'assets/barrier1.png');
+		}
+
+		function create() {
+
+			game.physics.startSystem(Phaser.Physics.P2JS);
+			game.physics.p2.gravity.y = 300;
+    		game.physics.p2.restitution = 0;
+  			
+  			ballGroup = game.add.group();
+  			exitGroup = game.add.group();
+  			tilesGroup = game.add.group();
+  			barriersGroup = game.add.group();
+			
+  			ballGroup.remove(ball);
+			exitGroup.remove(exit);
+			for(var i  = 0; i < tiles.length; i++) {
+				tilesGroup.remove(tiles[i]);
+			}
+			tiles = [];
+
+  			levelFuntions[level]();
+
+			ball = ballGroup.create(950/4, 50, 'tile3');
+    		ball.scale.setTo(0.15, 0.15);
+    		game.physics.p2.enable(ball);
+    		ball.body.setCircle(ball.width/2);
+    		
+    		
+    		exit = exitGroup.create(950/2, exitHeight, 'tile1');
+    		exit.scale.setTo(0.15, 0.15);
+    		game.physics.p2.enable(exit);
+    		//exit.body.setCircle(exit.width/2);
+    		exit.body.static = true;
+
+    		ball.body.onBeginContact.add(blockHit, this);
+
+    		for(var i = 0; i < x * y; i++) {
+				var tile;
+				if(Math.floor(i / y) % 2 != 0) {
+					tile = tilesGroup.create((i % x) * 110 + 105, Math.floor(i / y) * 55 + 400, 'tile2');
+				} else {
+					tile = tilesGroup.create((i % x) * 110 + 50, Math.floor(i / y) * 55 + 400, 'tile2');
+				}
+				
+				tile.scale.setTo(0.2, 0.2);
+				tile.anchor.setTo(0.5, 0.5);
+				
+				tile.buttonMode = true;
+				tile.inputEnabled = true;
+				game.physics.p2.enable(tile);
+
+				tile.body.setCircle(ball.width/2);
+				tiles.push(tile);
+			}
+		}
+
+		function update() {
+			for(var i = 0; i < tiles.length; i++) {
+				if (tiles[i].input.pointerOver()) {
+					if (game.input.keyboard.isDown(Phaser.Keyboard.UP) && tiles[i].scale.x < 0.5) {
+						tiles[i].scale.x += 0.005;
+						tiles[i].scale.y += 0.005;
+					}
+					if (game.input.keyboard.isDown(Phaser.Keyboard.DOWN) && tiles[i].scale.x > 0.05) {
+						tiles[i].scale.x -= 0.005;
+						tiles[i].scale.y -= 0.005;
+					}
+				} 
+				tiles[i].body.setCircle(tiles[i].width/2);
+			}
+		}
+
+		function reset() {
+			level++;
+			game.state.restart();
+		}
+
+		function blockHit (body, bodyB, shapeA, shapeB, equation) {
+			if(body && body.sprite.key == "tile1") {
+				reset();
+			}
+		}
+	</script>
+</body>
+</html>

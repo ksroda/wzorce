@@ -56,6 +56,10 @@ app.get('/blackjack/rooms', function(req, res) {
   res.send(games["blackjack"].rooms);
 });
 
+app.get('/bonus', function(req, res) {
+  res.render('bonus');
+});
+
 var roomsIntervals = {};
 var games = {};
 

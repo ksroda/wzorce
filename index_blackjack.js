@@ -84,6 +84,7 @@ var gameLoop = function gameLoop(io, room) {
 					}
 					room.currentPlayer = room.players[index];
 					room.isRoundStarted = true;
+					room.currentPlayerTime = now;
 					break;
 				case "split":	
 					//TODO
