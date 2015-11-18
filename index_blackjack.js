@@ -6,9 +6,11 @@ var gameLoop = function gameLoop(io, room) {
 		case "bet":
 			room.timer = Math.ceil((room.betTime - (now - room.roomStartTime))/1000);
 			if(now - room.roomStartTime > room.betTime){
-				for(var i=0; i<room.playersAll.length; i++){
-					if(room.playersAll[i].pointsBet >0){
+				for(var i=0; i < room.playersAll.length; i++){
+					if(room.playersAll[i].pointsBet > 0){
+						room.playersAll[i].inGame = true;
 						room.players.push(room.playersAll[i]);
+						
 					}
 				}
 				room.state = "deal";
