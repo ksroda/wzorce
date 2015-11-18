@@ -9,8 +9,14 @@ $(document).ready(function() {
 		sendWelcome($(".roomEnter #singleRoomName").text());
 	});
 
-	//sendWelcome("testowy"); //Na czas testów
+	$(".actionButton").on('click', function() {
+		socket.emit("actionButton", this.id);
+	});
+
+	sendWelcome("testowy"); //Na czas testów
 });	
+
+
 		
 //------------------------------------Socket--------------------------------------------
 var socket = io();
@@ -30,23 +36,40 @@ socket.on('update rooms', function(rooms) {
 });
 
 socket.on('update', function(data) {
-	for(var i = 0; i < data.cards.length; i++) {
-		if(!cards[data.cards[i].id]) {
-			createCard(data.cards[i]);
+	for(var i = 0; i < data.room.cards.length; i++) {
+		if(!cards[data.room.cards[i].id]) {
+			createCard(data.room.cards[i]);
 		}
-		cards[data.cards[i].id].model.position.x = data.cards[i].x;
-		cards[data.cards[i].id].model.position.y = data.cards[i].y;
+		cards[data.room.cards[i].id].position.x = data.room.cards[i].x;
+		cards[data.room.cards[i].id].position.y = data.room.cards[i].y;
 	}
+
+	for(var i = 0; i < data.room.players.length; i++) {
+		console.log(data.room.players[i]);
+		if(!cardsSums[data.room.players[i].id]) {
+			createCardSum(data.room.players[i]);
+		}
+		cardsSums[data.room.players[i].id].setText(data.room.players[i].cardsSum);
+	}
+
+	if(timer) timer.setText(data.room.timer);
 });
 
-
+socket.on('reset', function() {
+	for(var x in cards) {
+		console.log(cards[x]);
+		cardsGroup.remove(cards[x]);
+	}
+});
 
 //------------------------------------Phraser-------------------------------------------
 var game = new Phaser.Game(window.innerWidth, window.innerHeight, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 var cardsGroup;
 
 var cards = {};
-
+var cardsSums = {};
+var style = { font: "65px Arial", fill: "#ff0044", align: "center" };
+var timer;
 
 function preload() {
 	var suits = ["hearts", "spades", "clubs", "diamonds"];
@@ -76,7 +99,7 @@ function preload() {
 
 function create() {
 	cardsGroup = game.add.group();
-
+	timer = game.add.text(50, 50, "", style);
 	//var sprite = cardsGroup.create(120, 120, '2clubs');
 }
 
@@ -84,12 +107,18 @@ function update() {
 
 }
 
+//UWAGA DEKOATOR
 function createCard(card) {
-	cards[card.id] = {
-		model: cardsGroup.create(card.x, card.y, card.type),
+	cards[card.id] = cardsGroup.create(card.x, card.y, card.type);
+	cards[card.id].properties = {
 		value: card.value
-	}
-	cards[card.id].model.scale.setTo(0.25, 0.25);
-	//console.log(cards[card.id].model);
-	//console.log(cards[card.id]);
+	};
+
+	cards[card.id].scale.setTo(0.25, 0.25);
+}
+
+function createCardSum(player) {
+	var sum = game.add.text(player.x, player.y - 50, player.cardsSum, style);
+
+	cardsSums[player.id] = sum;
 }

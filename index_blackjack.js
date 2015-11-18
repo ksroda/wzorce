@@ -4,7 +4,8 @@ var gameLoop = function gameLoop(io, room) {
 	var now = (new Date()).getTime();
 	switch(room.state) {
 		case "bet":
-			if(now- room.roomStartTime > room.betTime){
+			room.timer = Math.ceil((room.betTime - (now - room.roomStartTime))/1000);
+			if(now - room.roomStartTime > room.betTime){
 				for(var i=0; i<room.playersAll.length; i++){
 					if(room.playersAll[i].pointsBet >0){
 						room.players.push(room.playersAll[i]);
@@ -16,6 +17,7 @@ var gameLoop = function gameLoop(io, room) {
 			room.controlDealTime = (new Date()).getTime();
 			break;
 		case "deal":
+			timer = 0;
 			if(now - room.controlDealTime > room.timeBetweenCardsDeal) {
 				room.controlDealTime = now;
 				var card = randomCardFromStack(room);
@@ -60,10 +62,17 @@ var gameLoop = function gameLoop(io, room) {
 							index = 0;
 						}
 						room.currentPlayer = room.players[index];
-						room.players.splice(room.players.indexOf(room.currentPlayer), 1);
+						//room.players.splice(room.players.indexOf(room.currentPlayer), 1);
+						room.players[room.players.indexOf(room.currentPlayer)].inGame = false;
+
 					}
 					room.currentPlayerTime = now;
-					room.currentPlayer.action = "none";
+					if(room.playersInGame() === 0) {
+						room.state = "dealersTurn";
+						break;
+					} else {
+						room.currentPlayer.action = "none";
+					}
 					break;
 				case "stand":
 					var index = room.players.indexOf(room.currentPlayer);
@@ -81,6 +90,7 @@ var gameLoop = function gameLoop(io, room) {
 					//TODO
 					break;
 			}
+			room.timer = Math.ceil((room.timeToThink - (now - room.currentPlayerTime))/1000);
 			if(now - room.currentPlayerTime > room.timeToThink){
 				room.currentPlayerTime = now;
 				var index = room.players.indexOf(room.currentPlayer);
@@ -98,6 +108,7 @@ var gameLoop = function gameLoop(io, room) {
 				break;
 			}
 		case "dealersTurn":
+			timer = 0;
 			if(now - room.controlDealTime > room.timeBetweenCardsDeal) {
 				room.controlDealTime = now;
 				if(room.dealerCardsSum < 17 ) {
@@ -110,29 +121,41 @@ var gameLoop = function gameLoop(io, room) {
 					room.dealerCardsNumber += 1;
 					if(room.dealerCardsSum > 21) {
 						for(var i = 0; i < room.players.length; i++) {
-							room.players[i].overallPoints += 2 * room.players[i].pointsBet;
+							if(room.players[i].inGame) {
+								room.players[i].overallPoints += 2 * room.players[i].pointsBet;
+							}
 						}
-						room.state = "reset";
+						room.state = "afterGame";
+						room.afterGameControlTime = now;
 					}
 				} else {
 					for(var i = 0; i < room.players.length; i++) {
-						if(room.players[i].cardsSum > room.dealerCardsSum) {
+						if(room.players[i].cardsSum > room.dealerCardsSum && room.players[i].inGame) {
 							room.players[i].overallPoints += 2 * room.players[i].pointsBet;
 						}
 					}
-					room.state = "reset";
+					room.state = "afterGame";
+					room.afterGameControlTime = now;
 				}	
+			}
+			break;
+		case "afterGame":
+			room.timer = Math.ceil((room.afterGameTime - (now - room.afterGameControlTime))/1000);
+			if(now - room.afterGameControlTime > room.afterGameTime) {
+				room.afterGameControlTime = now;
+				room.state = "reset";
+				io.to(room.id).emit('reset');
 			}
 			break;
 		case "reset":
 			//delete room.cards;
 			//room.cards = [];
-			//room.players = []; Usunięte tylko na czas testów
-			for(var i = 0; i < room.playersAll.length; i++) {
-				room.playersAll[i].pointsBet = 100;
-				room.playersAll[i].cardsNumber = 0;
-				room.playersAll[i].cardsSum = 0;
-				room.playersAll[i].action = "none";
+			//room.players = [];
+			for(var i = 0; i < room.players.length; i++) {
+				room.players[i].pointsBet = 100;
+				room.players[i].cardsNumber = 0;
+				room.players[i].cardsSum = 0;
+				room.players[i].action = "none";
 			}
 			room.state = "bet";
 			room.players = [];
@@ -176,7 +199,7 @@ var gameLoop = function gameLoop(io, room) {
 	}
 
 	io.to(room.id).emit('update', {
-		cards: room.cards
+		room: room
 	});
 	//console.log(room.state);
 }
@@ -205,8 +228,19 @@ module.exports.createRoom = function(games, io, roomName, roomsIntervals) {
 			timeToThink: 15000,
 			currentPlayerTime: (new Date()).getTime(),
 			dealerX: 600,
-			dealerY: 50
+			dealerY: 50,
+			afterGameControlTime: (new Date()).getTime(),
+			afterGameTime: 5000,
+			timer: 0
 		};
+
+	room.playersInGame = function() {
+		var result = 0;
+		for(var i = 0; i < this.players.length; i++) {
+			if(this.players[i].inGame) result++;
+		}
+		return result;
+	}
 	
 	games["blackjack"].rooms.push(room);
 	

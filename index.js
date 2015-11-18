@@ -24,7 +24,6 @@ var socketRequire = require('./index_socket.js');
 		//console.log("Listening on " + port);
 	});
 */
-
 	
 server.listen(port);
 console.log("Listening on " + port);
@@ -80,4 +79,5 @@ io.on('connection', function(socket) {
 		socketRequire.setOnMessage(socket, io);
 		socketRequire.setOnMouseDown(socket);
 		socketRequire.setOnMouseDrag(socket);
+		socketRequire.setOnActionChange(socket, games);
 });

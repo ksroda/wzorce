@@ -20,7 +20,8 @@ module.exports.setOnWelcome = function(socket, games, io, roomsIntervals) {
 				id: socket.id,
 				name: socket.name,
 				room: socket.room,
-				overallPoints: 1000
+				overallPoints: 1000,
+				inGame: true
 			}
 			
 			switch(socket.game){
@@ -84,3 +85,16 @@ module.exports.setOnMouseDrag = function(socket) {
 					socket.broadcast.to(socket.game + "." + socket.room).emit('mouse drag', msg);
 			});
 		}
+
+//-------------------------------------------------------------Blackjack-----------------------------------------------------------
+
+module.exports.setOnActionChange = function(socket, games) {
+			socket.on('actionButton', function(action) {
+				console.log(action + "  " + socket);
+				var roomIndex = auxiliaryRequire.findRoomByName(games, socket.game, socket.room);
+				var currentPlayer = games[socket.game].rooms[roomIndex].currentPlayer;
+				if(currentPlayer.id == socket.id) {
+					currentPlayer.action = action;
+				}
+			});
+}
