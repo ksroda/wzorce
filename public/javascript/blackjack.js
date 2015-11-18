@@ -45,7 +45,7 @@ socket.on('update', function(data) {
 	}
 
 	for(var i = 0; i < data.room.players.length; i++) {
-		console.log(data.room.players[i]);
+		//console.log(data.room.players[i]);
 		if(!cardsSums[data.room.players[i].id]) {
 			createCardSum(data.room.players[i]);
 		}
@@ -57,7 +57,7 @@ socket.on('update', function(data) {
 
 socket.on('reset', function() {
 	for(var x in cards) {
-		console.log(cards[x]);
+		//console.log(cards[x]);
 		cardsGroup.remove(cards[x]);
 	}
 	cardsGroup = game.add.group();
