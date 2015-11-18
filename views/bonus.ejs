@@ -12,7 +12,8 @@
 <body>
 	<script>
 		var gameWidth = 950;
-		var game = new Phaser.Game(950, window.innerHeight, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+		var gameHeight = 650;
+		var game = new Phaser.Game(950, gameHeight, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 
 
 		var tilesGroup, tiles = [], barriers = [];
