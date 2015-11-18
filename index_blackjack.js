@@ -203,7 +203,7 @@ var gameLoop = function gameLoop(io, room) {
 	io.to(room.id).emit('update', {
 		room: room
 	});
-	ups();
+	//ups();
 	//console.log(room.state);
 }
 module.exports.gameLoop = gameLoop;

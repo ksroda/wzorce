@@ -92,7 +92,8 @@ function preload() {
 
 		for(var i in suits) {
 			for(var j in symbols) {
-				game.load.image(symbols[j].type + suits[i], 'cards/png/' + symbols[j].type + "_of_" +  suits[i] + ".png");
+				//game.load.image(symbols[j].type + suits[i], 'cards/png/' + symbols[j].type + "_of_" +  suits[i] + ".png");
+				game.load.image(symbols[j].type + suits[i], "cards/png/test.jpg");
 			}
 		}
 	
@@ -114,7 +115,7 @@ function createCard(card) {
 		value: card.value
 	};
 
-	cards[card.id].scale.setTo(0.25, 0.25);
+	//cards[card.id].scale.setTo(0.25, 0.25);
 }
 
 function createCardSum(player) {
