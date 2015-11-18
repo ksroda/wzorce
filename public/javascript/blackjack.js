@@ -13,7 +13,7 @@ $(document).ready(function() {
 		socket.emit("actionButton", this.id);
 	});
 
-	sendWelcome("testowy"); //Na czas testów
+	//sendWelcome("testowy"); //Na czas testów
 });	
 
 
@@ -60,6 +60,7 @@ socket.on('reset', function() {
 		console.log(cards[x]);
 		cardsGroup.remove(cards[x]);
 	}
+	cardsGroup = game.add.group();
 });
 
 //------------------------------------Phraser-------------------------------------------
@@ -100,14 +101,13 @@ function preload() {
 function create() {
 	cardsGroup = game.add.group();
 	timer = game.add.text(50, 50, "", style);
-	//var sprite = cardsGroup.create(120, 120, '2clubs');
 }
 
 function update() {
 
 }
 
-//UWAGA DEKOATOR
+//UWAGA DEKORATOR
 function createCard(card) {
 	cards[card.id] = cardsGroup.create(card.x, card.y, card.type);
 	cards[card.id].properties = {
