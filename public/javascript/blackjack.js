@@ -93,7 +93,7 @@ function preload() {
 		for(var i in suits) {
 			for(var j in symbols) {
 				//game.load.image(symbols[j].type + suits[i], 'cards/png/' + symbols[j].type + "_of_" +  suits[i] + ".png");
-				game.load.image(symbols[j].type + suits[i], "cards/png/test.jpg");
+				game.load.image(symbols[j].type + suits[i], "cards/svg/test.svg");
 			}
 		}
 	
