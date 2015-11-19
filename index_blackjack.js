@@ -255,7 +255,7 @@ module.exports.createRoom = function(games, io, roomName, roomsIntervals) {
 
 	var interval = setInterval(function() {
 		gameLoop(io, games["blackjack"].rooms[roomId]);
-	}, 33);
+	}, 41);
 	
 	roomsIntervals[intervalId] = interval;
 }
