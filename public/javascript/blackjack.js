@@ -76,7 +76,7 @@ var dealerCardsSum;
 var userInfo = {};
 
 function preload() {
-	var suits = ["hearts", "spades", "clubs", "diamonds"];
+	var suits = ["h", "s", "c", "d"];
 		var symbols = [
 			{ type:2 },
 			{ type:3 },
@@ -87,16 +87,17 @@ function preload() {
 			{ type:8},
 			{ type:9},
 			{ type:10},
-			{ type:"jack" },
-			{ type:"queen" },
-			{ type:"king" },
-			{ type:"ace" }
+			{ type:"j" },
+			{ type:"q" },
+			{ type:"k" },
+			{ type:"a" }
 		];
 
 		for(var i in suits) {
 			for(var j in symbols) {
 				//game.load.image(symbols[j].type + suits[i], 'cards/png/' + symbols[j].type + "_of_" +  suits[i] + ".png");
 				game.load.image(symbols[j].type + suits[i], "cards/png/test2.png");
+				//game.load.image(symbols[j].type + suits[i], 'cards/windows/' + suits[i] + symbols[j].type + ".png");
 			}
 		}
 	
