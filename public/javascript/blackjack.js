@@ -42,6 +42,9 @@ socket.on('update', function(data) {
 		}
 		cards[data.room.cards[i].id].position.x = data.room.cards[i].x;
 		cards[data.room.cards[i].id].position.y = data.room.cards[i].y;
+
+		cards[data.room.cards[i].id].properties.goalX = data.room.cards[i].goalX;
+		cards[data.room.cards[i].id].properties.goalY = data.room.cards[i].goalY;
 	}
 
 
@@ -66,7 +69,9 @@ socket.on('reset', function() {
 });
 
 //------------------------------------Phraser-------------------------------------------
+var lastLoop = new Date;
 var game = new Phaser.Game(window.innerWidth, window.innerHeight, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+//game.physics.startSystem(Phaser.Physics.ARCADE);
 var cardsGroup;
 
 var cards = {};
@@ -96,7 +101,7 @@ function preload() {
 		for(var i in suits) {
 			for(var j in symbols) {
 				//game.load.image(symbols[j].type + suits[i], 'cards/png/' + symbols[j].type + "_of_" +  suits[i] + ".png");
-				game.load.image(symbols[j].type + suits[i], "cards/png/test2.png");
+				game.load.image(symbols[j].type + suits[i], "cards/png/test4.png");
 			}
 		}
 	
@@ -109,15 +114,41 @@ function create() {
 }
 
 function update() {
-
+	for(var i in cards) {
+		if(Math.abs(cards[i].position.x - cards[i].properties.goalX) > 10 || Math.abs(cards[i].position.y - cards[i].properties.goalY) > 10) {
+				var angle;
+				var cardX = cards[i].position.x;
+				var cardY = cards[i].position.y;
+						
+				angle = Math.atan((cards[i].properties.goalY - cardY)/(cards[i].properties.goalX - cardX));
+				if(cards[i].properties.goalX >= cardX) {
+					angle += Math.PI;
+				}
+						
+				cards[i].position.x -= 10;	
+				var cardEndX = (cards[i].position.x - cardX) * Math.cos(angle) - (cards[i].position.y - cardY) * Math.sin(angle) + cardX;
+				var cardEndY = (cards[i].position.x - cardX) * Math.sin(angle) + (cards[i].position.y - cardY) * Math.cos(angle) + cardY;
+						
+				cards[i].position.x = cardEndX;
+				cards[i].position.y = cardEndY;
+			
+		} else {
+			cards[i].position.x = cards[i].properties.goalX;
+			cards[i].position.y = cards[i].properties.goalY;
+		}
+	}
+	//ups();
 }
 
 //UWAGA DEKORATOR
 function createCard(card) {
 	cards[card.id] = cardsGroup.create(card.x, card.y, card.type);
 	cards[card.id].properties = {
-		value: card.value
+		value: card.value,
+		goalX: card.goalX,
+		goalY: card.goalY
 	};
+	//game.physics.enable(cards[card.id], Phaser.Physics.ARCADE);
 	//cards[card.id].scale.setTo(0.5, 0.5);
 }
 
@@ -137,4 +168,12 @@ function updateUserInfo(player) {
 	userInfo[player.id].cardsSum.setText(player.cardsSum);
 	userInfo[player.id].pointsBet.setText(player.pointsBet);
 	userInfo[player.id].overallPoints.setText(player.overallPoints);
+}
+
+
+function ups() { 
+    var thisLoop = new Date;
+    var fps = Math.floor(1000 / (thisLoop - lastLoop));
+	console.log(fps + "UPS");
+    lastLoop = thisLoop;
 }

@@ -178,7 +178,7 @@ var gameLoop = function gameLoop(io, room) {
 	}
 
 	for(var i = 0; i < room.cards.length; i++) {
-		if(Math.abs(room.cards[i].x - room.cards[i].goalX) > 30 || Math.abs(room.cards[i].y - room.cards[i].goalY) > 30) {
+		if(Math.abs(room.cards[i].x - room.cards[i].goalX) > 60 || Math.abs(room.cards[i].y - room.cards[i].goalY) > 60) {
 				var angle;
 				var cardX = room.cards[i].x;
 				var cardY = room.cards[i].y;
@@ -188,7 +188,7 @@ var gameLoop = function gameLoop(io, room) {
 					angle += Math.PI;
 				}
 						
-				room.cards[i].x -= 30;	
+				room.cards[i].x -= 60;	
 				var cardEndX = (room.cards[i].x - cardX) * Math.cos(angle) - (room.cards[i].y - cardY) * Math.sin(angle) + cardX;
 				var cardEndY = (room.cards[i].x - cardX) * Math.sin(angle) + (room.cards[i].y - cardY) * Math.cos(angle) + cardY;
 						
@@ -255,7 +255,7 @@ module.exports.createRoom = function(games, io, roomName, roomsIntervals) {
 
 	var interval = setInterval(function() {
 		gameLoop(io, games["blackjack"].rooms[roomId]);
-	}, 41);
+	}, 100);
 	
 	roomsIntervals[intervalId] = interval;
 }
