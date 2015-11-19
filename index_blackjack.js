@@ -64,9 +64,10 @@ var gameLoop = function gameLoop(io, room) {
 						if(index > room.players.length - 1) {
 							index = 0;
 						}
+						room.players[room.players.indexOf(room.currentPlayer)].inGame = false;
 						room.currentPlayer = room.players[index];
 						//room.players.splice(room.players.indexOf(room.currentPlayer), 1);
-						room.players[room.players.indexOf(room.currentPlayer)].inGame = false;
+						
 
 					}
 					room.currentPlayerTime = now;
