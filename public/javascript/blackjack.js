@@ -39,9 +39,12 @@ socket.on('update', function(data) {
 	for(var i = 0; i < data.room.cards.length; i++) {
 		if(!cards[data.room.cards[i].id]) {
 			createCard(data.room.cards[i]);
+		} else {
+			cards[data.room.cards[i].id].properties.goalX = data.room.cards[i].goalX;
+			cards[data.room.cards[i].id].properties.goalY = data.room.cards[i].goalY;
 		}
-		cards[data.room.cards[i].id].position.x = data.room.cards[i].x;
-		cards[data.room.cards[i].id].position.y = data.room.cards[i].y;
+		//cards[data.room.cards[i].id].position.x = data.room.cards[i].x;
+		//cards[data.room.cards[i].id].position.y = data.room.cards[i].y;
 	}
 
 
@@ -60,9 +63,19 @@ socket.on('update', function(data) {
 socket.on('reset', function() {
 	for(var x in cards) {
 		//console.log(cards[x]);
-		cardsGroup.remove(cards[x]);
+		cards[x].destroy();
+		//cards[x] = {};
+		//delete cards[x];
 	}
-	cardsGroup = game.add.group();
+	//cardsGroup.removeAll();
+	setTimeout(function() {
+		cards = {};
+		console.log(cards);
+	}, 3000);
+	
+	//cardsGroup = game.add.group();
+	//cards = {};
+	//game.state.restart();
 });
 
 //------------------------------------Phraser-------------------------------------------
@@ -110,14 +123,39 @@ function create() {
 }
 
 function update() {
-
+	for(var i in cards) {
+	//for(var i = 0; i < cards.length; i++) {
+		if(Math.abs(cards[i].x - cards[i].properties.goalX) > 15 || Math.abs(cards[i].y - cards[i].properties.goalY) > 15) {
+				var angle;
+				var cardX = cards[i].position.x;
+				var cardY = cards[i].position.y;
+						
+				angle = Math.atan((cards[i].properties.goalY - cardY)/(cards[i].properties.goalX - cardX));
+				if(cards[i].properties.goalX >= cardX) {
+					angle += Math.PI;
+				}
+						
+				cards[i].position.x -= 15;	
+				var cardEndX = (cards[i].position.x - cardX) * Math.cos(angle) - (cards[i].position.y - cardY) * Math.sin(angle) + cardX;
+				var cardEndY = (cards[i].position.x - cardX) * Math.sin(angle) + (cards[i].position.y - cardY) * Math.cos(angle) + cardY;
+						
+				cards[i].position.x = cardEndX;
+				cards[i].position.y = cardEndY;
+			
+		} else {
+			cards[i].position.x = cards[i].properties.goalX;
+			cards[i].position.y = cards[i].properties.goalY;
+		}
+	}
 }
 
 //UWAGA DEKORATOR
 function createCard(card) {
 	cards[card.id] = cardsGroup.create(card.x, card.y, card.type);
 	cards[card.id].properties = {
-		value: card.value
+		value: card.value,
+		goalX: card.goalX,
+		goalY: card.goalY
 	};
 	//cards[card.id].scale.setTo(0.5, 0.5);
 }

@@ -156,7 +156,7 @@ var gameLoop = function gameLoop(io, room) {
 			break;
 		case "reset":
 			//delete room.cards;
-			//room.cards = [];
+			room.cards = [];
 			//room.players = [];
 			for(var i = 0; i < room.players.length; i++) {
 				room.players[i].pointsBet = 100;
@@ -177,8 +177,12 @@ var gameLoop = function gameLoop(io, room) {
 			break;
 	}
 
+	io.to(room.id).emit('update', {
+		room: room
+	});
+
 	for(var i = 0; i < room.cards.length; i++) {
-		if(Math.abs(room.cards[i].x - room.cards[i].goalX) > 30 || Math.abs(room.cards[i].y - room.cards[i].goalY) > 30) {
+		/*if(Math.abs(room.cards[i].x - room.cards[i].goalX) > 45 || Math.abs(room.cards[i].y - room.cards[i].goalY) > 45) {
 				var angle;
 				var cardX = room.cards[i].x;
 				var cardY = room.cards[i].y;
@@ -188,22 +192,18 @@ var gameLoop = function gameLoop(io, room) {
 					angle += Math.PI;
 				}
 						
-				room.cards[i].x -= 30;	
+				room.cards[i].x -= 45;	
 				var cardEndX = (room.cards[i].x - cardX) * Math.cos(angle) - (room.cards[i].y - cardY) * Math.sin(angle) + cardX;
 				var cardEndY = (room.cards[i].x - cardX) * Math.sin(angle) + (room.cards[i].y - cardY) * Math.cos(angle) + cardY;
 						
 				room.cards[i].x = cardEndX;
 				room.cards[i].y = cardEndY;
 			
-		} else {
+		} else {*/
 			room.cards[i].x = room.cards[i].goalX;
 			room.cards[i].y = room.cards[i].goalY;
-		}
+		//}
 	}
-
-	io.to(room.id).emit('update', {
-		room: room
-	});
 	//console.log(room.state);
 }
 module.exports.gameLoop = gameLoop;
@@ -255,7 +255,7 @@ module.exports.createRoom = function(games, io, roomName, roomsIntervals) {
 
 	var interval = setInterval(function() {
 		gameLoop(io, games["blackjack"].rooms[roomId]);
-	}, 33);
+	}, 100);
 	
 	roomsIntervals[intervalId] = interval;
 }
