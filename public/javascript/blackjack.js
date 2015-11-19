@@ -63,16 +63,21 @@ socket.on('update', function(data) {
 socket.on('reset', function() {
 	for(var x in cards) {
 		//console.log(cards[x]);
-		cards[x].destroy();
+		cards[x].kill();
 		//cards[x] = {};
 		//delete cards[x];
 	}
 	//cardsGroup.removeAll();
-	setTimeout(function() {
-		cards = {};
+	/*setTimeout(function() {
+		for(var x in cards) {
+			//console.log(cards[x]);
+			//cards[x].destroy();
+			//cards[x] = {};
+			delete cards[x];
+		}
 		console.log(cards);
 	}, 3000);
-	
+	*/
 	//cardsGroup = game.add.group();
 	//cards = {};
 	//game.state.restart();
@@ -117,14 +122,21 @@ function preload() {
 }
 
 function create() {
+	game.physics.startSystem(Phaser.Physics.ARCADE);
 	cardsGroup = game.add.group();
 	timer = game.add.text(50, 50, "", style);
 	dealerCardsSum = game.add.text(500, 50, "", style);
 }
 
 function update() {
+
 	for(var i in cards) {
-	//for(var i = 0; i < cards.length; i++) {
+		var temp = game.input.activePointer;
+		temp.x = cards[i].properties.goalX;
+		temp.y = cards[i].properties.goalY;
+		game.physics.arcade.moveToPointer(cards[i], 50, temp, 300);
+		//console.log(game.input.activePointer);
+	/*for(var i = 0; i < cards.length; i++) {
 		if(Math.abs(cards[i].x - cards[i].properties.goalX) > 15 || Math.abs(cards[i].y - cards[i].properties.goalY) > 15) {
 				var angle;
 				var cardX = cards[i].position.x;
@@ -145,7 +157,7 @@ function update() {
 		} else {
 			cards[i].position.x = cards[i].properties.goalX;
 			cards[i].position.y = cards[i].properties.goalY;
-		}
+		}*/
 	}
 }
 
@@ -157,6 +169,8 @@ function createCard(card) {
 		goalX: card.goalX,
 		goalY: card.goalY
 	};
+	game.physics.enable(cards[card.id], Phaser.Physics.ARCADE);
+	cards[card.id].body.allowRotation = false;
 	//cards[card.id].scale.setTo(0.5, 0.5);
 }
 
