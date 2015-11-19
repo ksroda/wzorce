@@ -1,11 +1,7 @@
-1. Tworzenie kart klienta -> Dekorator
-2. Serwer -> przesyłanie całego pokoju
 4. Przyciski bet -> 1, 10, 25, 50, 100...
 5. Dlaczego nie działa dla krótszego czasu oczekiwania na ruch gracza
 6. Trójkąt(strzałka) wskazaująca czyj aktualnie jest ruch
 7. Zmniejszyć rozmiar kart na ekranie
 8. Ułożenie kart w łuk
-9. Usuwanie kart po rozgrywce
 10. Dodanie elementów interfejsu:
-- suma kart
 - liczba obstwionych punktów
