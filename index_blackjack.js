@@ -10,6 +10,7 @@ var gameLoop = function gameLoop(io, room) {
 				for(var i=0; i < room.playersAll.length; i++){
 					if(room.playersAll[i].pointsBet > 0){
 						room.playersAll[i].inGame = true;
+						room.playersAll[i].overallPoints -= room.playersAll[i].pointsBet;
 						room.players.push(room.playersAll[i]);
 					}
 				}
@@ -202,7 +203,6 @@ var gameLoop = function gameLoop(io, room) {
 	io.to(room.id).emit('update', {
 		room: room
 	});
-	//ups();
 	//console.log(room.state);
 }
 module.exports.gameLoop = gameLoop;
@@ -279,12 +279,4 @@ function randomCardFromStack(room) {
 		goalY: 	room.currentPlayer.y,
 		value: 	card.value
 	});
-}
-var lastLoop = new Date;
-
-function ups() { 
-    var thisLoop = new Date;
-    var fps = Math.floor(1000 / (thisLoop - lastLoop));
-	console.log(fps + "UPS");
-    lastLoop = thisLoop;
 }

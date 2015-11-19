@@ -44,15 +44,17 @@ socket.on('update', function(data) {
 		cards[data.room.cards[i].id].position.y = data.room.cards[i].y;
 	}
 
+
 	for(var i = 0; i < data.room.players.length; i++) {
-		//console.log(data.room.players[i]);
-		if(!cardsSums[data.room.players[i].id]) {
-			createCardSum(data.room.players[i]);
+		if(!userInfo[data.room.players[i].id]) {
+			createUserInfo(data.room.players[i]);
 		}
-		cardsSums[data.room.players[i].id].setText(data.room.players[i].cardsSum);
+		updateUserInfo(data.room.players[i]);
 	}
 
+
 	if(timer) timer.setText(data.room.timer);
+	if(dealerCardsSum) dealerCardsSum.setText(data.room.dealerCardsSum);
 });
 
 socket.on('reset', function() {
@@ -68,9 +70,10 @@ var game = new Phaser.Game(window.innerWidth, window.innerHeight, Phaser.AUTO, '
 var cardsGroup;
 
 var cards = {};
-var cardsSums = {};
-var style = { font: "65px Arial", fill: "#ff0044", align: "center" };
+var style = { font: "30px Arial", fill: "#ff0044", align: "center" };
 var timer;
+var dealerCardsSum;
+var userInfo = {};
 
 function preload() {
 	var suits = ["hearts", "spades", "clubs", "diamonds"];
@@ -93,7 +96,7 @@ function preload() {
 		for(var i in suits) {
 			for(var j in symbols) {
 				//game.load.image(symbols[j].type + suits[i], 'cards/png/' + symbols[j].type + "_of_" +  suits[i] + ".png");
-				game.load.image(symbols[j].type + suits[i], "cards/svg/test.svg");
+				game.load.image(symbols[j].type + suits[i], "cards/png/test2.png");
 			}
 		}
 	
@@ -102,6 +105,7 @@ function preload() {
 function create() {
 	cardsGroup = game.add.group();
 	timer = game.add.text(50, 50, "", style);
+	dealerCardsSum = game.add.text(500, 50, "", style);
 }
 
 function update() {
@@ -114,12 +118,23 @@ function createCard(card) {
 	cards[card.id].properties = {
 		value: card.value
 	};
-
-	//cards[card.id].scale.setTo(0.25, 0.25);
+	//cards[card.id].scale.setTo(0.5, 0.5);
 }
 
-function createCardSum(player) {
-	var sum = game.add.text(player.x, player.y - 50, player.cardsSum, style);
+function createUserInfo(player) {
+	var cardsSum = game.add.text(player.x, player.y - 50, player.cardsSum, style);
+	var pointsBet = game.add.text(player.x, player.y + 120, player.pointsBet, style);
+	var overallPoints = game.add.text(player.x + 100, player.y + 120, player.overallPoints, style);
 
-	cardsSums[player.id] = sum;
+	userInfo[player.id] = {
+		cardsSum: cardsSum,
+		pointsBet: pointsBet,
+		overallPoints: overallPoints
+	}
+}
+
+function updateUserInfo(player) {
+	userInfo[player.id].cardsSum.setText(player.cardsSum);
+	userInfo[player.id].pointsBet.setText(player.pointsBet);
+	userInfo[player.id].overallPoints.setText(player.overallPoints);
 }
