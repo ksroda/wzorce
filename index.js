@@ -63,25 +63,16 @@ app.get('/bonus', function(req, res) {
 var roomsIntervals = {};
 var games = {};
 
-games["blackjack"] = {
-		rooms: []
-	}
-games["blackjack"].createRoom = blackjackRequire.createRoom;
-games["blackjack"].createPlayer = blackjackRequire.createPlayer;
-
-
-games["charades"] = {
-		rooms: []
-	}
-
-games["charades"].createRoom = charadesRequire.createRoom;
-games["charades"].createPlayer = charadesRequire.createPlayer;
+games["blackjack"] = blackjackRequire;
+games["charades"] = charadesRequire;
 
 io.on('connection', function(socket) {
-		socketRequire.setOnWelcome(socket, games, io, roomsIntervals);
-		socketRequire.setOnDisconnect(socket, games, io, roomsIntervals);
-		socketRequire.setOnMessage(socket, io);
-		socketRequire.setOnMouseDown(socket);
-		socketRequire.setOnMouseDrag(socket);
-		socketRequire.setOnActionChange(socket, games);
+	socketRequire.setOnWelcome(socket, games, io, roomsIntervals);
+	socketRequire.setOnDisconnect(socket, games, io, roomsIntervals);
+	socketRequire.setOnMessage(socket, io);
+
+	charadesRequire.setOnMouseDown(socket);
+	charadesRequire.setOnMouseDrag(socket);
+
+	blackjackRequire.setOnActionChange(socket);
 });

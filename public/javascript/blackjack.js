@@ -40,19 +40,17 @@ socket.on('update', function(data) {
 		if(!cards[data.room.cards[i].id]) {
 			createCard(data.room.cards[i]);
 		} else {
-			cards[data.room.cards[i].id].properties.goalX = data.room.cards[i].goalX;
-			cards[data.room.cards[i].id].properties.goalY = data.room.cards[i].goalY;
+			cards[data.room.cards[i].id].updateGoal(data.room.cards[i]);
 		}
-		//cards[data.room.cards[i].id].position.x = data.room.cards[i].x;
-		//cards[data.room.cards[i].id].position.y = data.room.cards[i].y;
 	}
 
 
 	for(var i = 0; i < data.room.players.length; i++) {
 		if(!userInfo[data.room.players[i].id]) {
-			createUserInfo(data.room.players[i]);
+			userInfo[data.room.players[i].id] = new UserInfo(data.room.players[i]);
+		} else {
+			userInfo[data.room.players[i].id].update(data.room.players[i]);
 		}
-		updateUserInfo(data.room.players[i]);
 	}
 
 
@@ -62,25 +60,8 @@ socket.on('update', function(data) {
 
 socket.on('reset', function() {
 	for(var x in cards) {
-		//console.log(cards[x]);
 		cards[x].kill();
-		//cards[x] = {};
-		//delete cards[x];
 	}
-	//cardsGroup.removeAll();
-	/*setTimeout(function() {
-		for(var x in cards) {
-			//console.log(cards[x]);
-			//cards[x].destroy();
-			//cards[x] = {};
-			delete cards[x];
-		}
-		console.log(cards);
-	}, 3000);
-	*/
-	//cardsGroup = game.add.group();
-	//cards = {};
-	//game.state.restart();
 });
 
 //------------------------------------Phraser-------------------------------------------
@@ -96,19 +77,19 @@ var userInfo = {};
 function preload() {
 	var suits = ["h", "s", "c", "d"];
 		var symbols = [
-			{ type:2 },
-			{ type:3 },
-			{ type:4},
-			{ type:5},
-			{ type:6},
-			{ type:7},
-			{ type:8},
-			{ type:9},
-			{ type:10},
-			{ type:"j" },
-			{ type:"q" },
-			{ type:"k" },
-			{ type:"a" }
+			{ type: 2	},
+			{ type: 3	},
+			{ type: 4	},
+			{ type: 5	},
+			{ type: 6	},
+			{ type: 7	},
+			{ type: 8	},
+			{ type: 9	},
+			{ type: 10	},
+			{ type: "j"	},
+			{ type: "q"	},
+			{ type: "k"	},
+			{ type: "a"	}
 		];
 
 		for(var i in suits) {
@@ -118,7 +99,6 @@ function preload() {
 				//game.load.image(symbols[j].type + suits[i], 'cards/windows/' + suits[i] + symbols[j].type + ".png");
 			}
 		}
-	
 }
 
 function create() {
@@ -131,63 +111,45 @@ function create() {
 function update() {
 
 	for(var i in cards) {
-		var temp = game.input.activePointer;
-		temp.x = cards[i].properties.goalX;
-		temp.y = cards[i].properties.goalY;
-		game.physics.arcade.moveToPointer(cards[i], 50, temp, 300);
-		//console.log(game.input.activePointer);
-	/*for(var i = 0; i < cards.length; i++) {
-		if(Math.abs(cards[i].x - cards[i].properties.goalX) > 15 || Math.abs(cards[i].y - cards[i].properties.goalY) > 15) {
-				var angle;
-				var cardX = cards[i].position.x;
-				var cardY = cards[i].position.y;
-						
-				angle = Math.atan((cards[i].properties.goalY - cardY)/(cards[i].properties.goalX - cardX));
-				if(cards[i].properties.goalX >= cardX) {
-					angle += Math.PI;
-				}
-						
-				cards[i].position.x -= 15;	
-				var cardEndX = (cards[i].position.x - cardX) * Math.cos(angle) - (cards[i].position.y - cardY) * Math.sin(angle) + cardX;
-				var cardEndY = (cards[i].position.x - cardX) * Math.sin(angle) + (cards[i].position.y - cardY) * Math.cos(angle) + cardY;
-						
-				cards[i].position.x = cardEndX;
-				cards[i].position.y = cardEndY;
-			
-		} else {
-			cards[i].position.x = cards[i].properties.goalX;
-			cards[i].position.y = cards[i].properties.goalY;
-		}*/
+		cards[i].move();
 	}
 }
 
 //UWAGA DEKORATOR
 function createCard(card) {
 	cards[card.id] = cardsGroup.create(card.x, card.y, card.type);
+
 	cards[card.id].properties = {
 		value: card.value,
 		goalX: card.goalX,
 		goalY: card.goalY
 	};
+
+	cards[card.id].move = function() {
+		var temp = game.input.activePointer;
+		temp.x = this.properties.goalX;
+		temp.y = this.properties.goalY;
+		game.physics.arcade.moveToPointer(this, 50, temp, 300);
+	}
+
+	cards[card.id].updateGoal = function(card) {
+		this.properties.goalX = card.goalX;
+		this.properties.goalY = card.goalY;
+	}
+
 	game.physics.enable(cards[card.id], Phaser.Physics.ARCADE);
 	cards[card.id].body.allowRotation = false;
 	//cards[card.id].scale.setTo(0.5, 0.5);
 }
 
-function createUserInfo(player) {
-	var cardsSum = game.add.text(player.x, player.y - 50, player.cardsSum, style);
-	var pointsBet = game.add.text(player.x, player.y + 120, player.pointsBet, style);
-	var overallPoints = game.add.text(player.x + 100, player.y + 120, player.overallPoints, style);
-
-	userInfo[player.id] = {
-		cardsSum: cardsSum,
-		pointsBet: pointsBet,
-		overallPoints: overallPoints
-	}
+function UserInfo(player) {
+	this.cardsSum = game.add.text(player.x, player.y - 50, player.cardsSum, style);
+	this.pointsBet = game.add.text(player.x, player.y + 120, player.pointsBet, style);
+	this.overallPoints = game.add.text(player.x + 100, player.y + 120, player.overallPoints, style);
 }
 
-function updateUserInfo(player) {
-	userInfo[player.id].cardsSum.setText(player.cardsSum);
-	userInfo[player.id].pointsBet.setText(player.pointsBet);
-	userInfo[player.id].overallPoints.setText(player.overallPoints);
+UserInfo.prototype.update = function(player) {
+	this.cardsSum.setText(player.cardsSum);
+	this.pointsBet.setText(player.pointsBet);
+	this.overallPoints.setText(player.overallPoints);
 }
