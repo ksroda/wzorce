@@ -175,7 +175,7 @@ Room.prototype.gameLoop = function(io) {
 					}
 
 					this.currentPlayer.cardsNumber += 1;
-					if(this.currentPlayer.cardsSum > 21 ){
+					if(this.currentPlayer.cardsSum > 21){
 						var index = this.players.indexOf(this.currentPlayer);
 						index++;
 						if(index > this.players.length - 1) {
@@ -214,7 +214,8 @@ Room.prototype.gameLoop = function(io) {
 					break;
 			}
 			this.timer = Math.ceil((this.timeToThink - (now - this.currentPlayerTime))/1000);
-			if(now - this.currentPlayerTime > this.timeToThink){
+			if(now - this.currentPlayerTime > this.timeToThink || this.currentPlayer.cardsSum === 21){
+				this.controlDealTime = now - this.timeBetweenCardsDeal/2;
 				this.currentPlayerTime = now;
 				var index = this.players.indexOf(this.currentPlayer);
 				index++;

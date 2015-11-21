@@ -166,7 +166,7 @@ function UserInfo(player) {
 
 UserInfo.prototype.update = function(player) {
 	this.name.setText(player.name);
-	this.cardsSum.setText(player.cardsSum);
+	this.cardsSum.setText(player.howManyAces > 0 ? player.cardsSum + "/" + (player.cardsSum - 10) : player.cardsSum);
 	this.pointsBet.setText(player.pointsBet);
 	if(player.id === myId) this.overallPoints.setText("Overall points: " + player.overallPoints);
 }
