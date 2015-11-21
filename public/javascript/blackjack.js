@@ -13,7 +13,7 @@ $(document).ready(function() {
 		socket.emit("actionButton", this.id);
 	});
 
-	//sendWelcome("testowy"); //Na czas testów
+	
 });	
 
 
@@ -30,6 +30,9 @@ function sendWelcome(roomName) {
 	$("#rooms").hide();
 };
 
+socket.on('id', function(id) {
+	myId = id;
+});
 
 socket.on('update rooms', function(rooms) {
 	angular.element($('#rooms')).scope().update(rooms);
@@ -65,14 +68,15 @@ socket.on('reset', function() {
 });
 
 //------------------------------------Phraser-------------------------------------------
-var game = new Phaser.Game(window.innerWidth, window.innerHeight, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+var game = new Phaser.Game(1350, 650, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 var cardsGroup;
 
 var cards = {};
-var style = { font: "30px Arial", fill: "#ff0044", align: "center" };
+var style = { font: "20px Arial", fill: "#0000000", align: "center" };
 var timer;
 var dealerCardsSum;
 var userInfo = {};
+var myId;
 
 function preload() {
 	var suits = ["h", "s", "c", "d"];
@@ -102,10 +106,16 @@ function preload() {
 }
 
 function create() {
+	game.stage.backgroundColor = 0x418026;
 	game.physics.startSystem(Phaser.Physics.ARCADE);
 	cardsGroup = game.add.group();
 	timer = game.add.text(50, 50, "", style);
-	dealerCardsSum = game.add.text(500, 50, "", style);
+	dealerCardsSum = game.add.text(600, 100, "", style);
+	
+	timer.anchor.set(0.5, 0.5);
+	dealerCardsSum.anchor.set(0.5, 0.5);
+
+	//sendWelcome("testowy"); //Na czas testów
 }
 
 function update() {
@@ -118,6 +128,7 @@ function update() {
 //UWAGA DEKORATOR
 function createCard(card) {
 	cards[card.id] = cardsGroup.create(card.x, card.y, card.type);
+	cards[card.id].anchor.set(0.5, 0.5);
 
 	cards[card.id].properties = {
 		value: card.value,
@@ -143,13 +154,19 @@ function createCard(card) {
 }
 
 function UserInfo(player) {
-	this.cardsSum = game.add.text(player.x, player.y - 50, player.cardsSum, style);
-	this.pointsBet = game.add.text(player.x, player.y + 120, player.pointsBet, style);
-	this.overallPoints = game.add.text(player.x + 100, player.y + 120, player.overallPoints, style);
+	this.name = game.add.text(player.x, player.y + 130, player.name, style);
+	this.cardsSum = game.add.text(player.x - 70, player.y, player.cardsSum, style);
+	this.pointsBet = game.add.text(player.x, player.y + 100, player.pointsBet, style);
+	if(player.id === myId) this.overallPoints = game.add.text(100, 600, "Overll points: " + player.overallPoints, style);
+
+	this.name.anchor.set(0.5, 0.5);
+	this.cardsSum.anchor.set(0.5, 0.5);
+	this.pointsBet.anchor.set(0.5, 0.5);
 }
 
 UserInfo.prototype.update = function(player) {
+	this.name.setText(player.name);
 	this.cardsSum.setText(player.cardsSum);
 	this.pointsBet.setText(player.pointsBet);
-	this.overallPoints.setText(player.overallPoints);
+	if(player.id === myId) this.overallPoints.setText("Overall points: " + player.overallPoints);
 }

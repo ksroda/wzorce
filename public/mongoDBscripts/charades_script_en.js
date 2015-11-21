@@ -1,7 +1,7 @@
 db.charades_dictionary.drop();
 
 
-var easy = ("Stop;Alligator;Dance;Skip;Football;Kick;Head;Sunglasses;Mosquito;Pinch;Chair;Jump;Elephant;"+
+var easy = ("Thing;Stop;Alligator;Dance;Skip;Football;Kick;Head;Sunglasses;Mosquito;Pinch;Chair;Jump;Elephant;"+
 	"Scissors;Point;Star;Tree;Airplane;Tail;Basketball;Mouth;Telephone;Chin;Jar;Smile;Cheek;Ear;Drum;Room;"+
 	"Turtle;Wings;Doll;Bird;Spider;Hopscotch;Happy;Baby;Monkey;Pig;Jump;Crayon;Arm;Arm;Rabbit;Book;Camera;"+
 	"Rock;Chicken;Robot;Mosquito;Pinch;Chair;Jump;Elephant;Scissors;Point;Star;Tree;Airplane;Tail;Basketball;"+
@@ -10,7 +10,7 @@ var easy = ("Stop;Alligator;Dance;Skip;Football;Kick;Head;Sunglasses;Mosquito;Pi
 	"Milk;Icecream;Circle").split(";");
 
 
-var moderate = ("Wink;Ball;Rope;Elbow;Beg;Rollerblade;Summer;Cow;Fang;Table tennis;Snowball;Guitar;Alarm;"+
+var moderate = ("Thing;Wink;Ball;Rope;Elbow;Beg;Rollerblade;Summer;Cow;Fang;Table tennis;Snowball;Guitar;Alarm;"+
 	"Cape;Bird;Saddle;Rain;Bike;Roof;Blind;Hoop;Violin;Coil;Goldfish;Frankenstein;Stairs;Dog;String;Fetch;"+
 	"Cage;Mailbox;Spider man;Puppet;Penguin;Shovel;Popcorn;Butter;Trumpet;Haircut;Shopping trolley;Lipstick;"+
 	"Soap;Hula;Mop;Money;Food;Glue;Banana;Hot;Violin;Coil;Goldfish;Frankenstein;Stairs;Dog;String;Fetch;Cage;"+
@@ -18,7 +18,7 @@ var moderate = ("Wink;Ball;Rope;Elbow;Beg;Rollerblade;Summer;Cow;Fang;Table tenn
 	"Hula;Mop;Money;Food;Glue;Banana;Hot;See-saw;Jellyfish").split(";");
 
 
-var hard = ("Gingerbread;Lawn mower;Peck;Windmill;Bobsled;Sand;Year;Stain;Vest;Swordfish;Pizza;Softball;"+
+var hard = ("Thing;Gingerbread;Lawn mower;Peck;Windmill;Bobsled;Sand;Year;Stain;Vest;Swordfish;Pizza;Softball;"+
 	"Party;Wrench;Hair;Spine;Beetle;Trip;Gym;Sip;Torch;Cowboy;Carrot;Spider web;Beggar;Lung;Basket;Flamingo;"+
 	"Cuff;Dryer;Blinds;Brain;Business;Eraser;Volcano;Whisk;Funny;Quicksand;Trap;Sheet;Small;Mouse;Poison;"+
 	"Washing;Marble;Nightmare;Vegetable;Anger;Knot;Softball;Party;Wrench;Hair;Spine;Beetle;Trip;Gym;Sip;Torch;"+
@@ -26,7 +26,7 @@ var hard = ("Gingerbread;Lawn mower;Peck;Windmill;Bobsled;Sand;Year;Stain;Vest;S
 	"Funny;Quicksand;Trap;Sheet;Small;Mouse;Poison;Washing;Marble;Nightmare;Vegetable;Anger;Knot;Badge;Bubble;"+
 	"Cramp;Doghouse;Mirror;Doctor;Wig").split(";");
 
-var very_hard = ("Calendar;Organize;Killer;Channel;Pinboard;Shipwreck;Chuck norris;Defect;Mine;Bubble;Hydrant;"+
+var very_hard = ("Thing;Calendar;Organize;Killer;Channel;Pinboard;Shipwreck;Chuck norris;Defect;Mine;Bubble;Hydrant;"+
 	"Alphabet;Journal;Advertise;Personal;Jet lag;Flag;Teenager;Invitation;Streamline;Pendulum;Carpenter;Shrink;"+
 	"Tachometer;Olive oil;Boundary;Explore;Shaft;Music;Conversation;Application;Tomato sauce;Pompous;Police;"+
 	"Island;Unemployed;Faucet;Computer monitor;Lifestyle;Mozart;Apathy;Level;Portfolio;Evolution;Train;Dismantle;"+
@@ -36,7 +36,7 @@ var very_hard = ("Calendar;Organize;Killer;Channel;Pinboard;Shipwreck;Chuck norr
 	"Mozart;Apathy").split(";");
 
 
-var idiom = ("Bite your tongue;A slap on the wrist;You can't judge a book by its cover;Off on the wrong foot;"+
+var idiom = ("Idiom;Bite your tongue;A slap on the wrist;You can't judge a book by its cover;Off on the wrong foot;"+
 	"Grab the bull by the horns;Beating around the bush;Piece of cake;Never bite the hand that feeds you;"+
 	"Out of this world;All bark and no bite;A chip on your shoulder;Water under the bridge;"+
 	"Make a mountain out of a molehill;Pull the wool over your eyes;Finger lickin' good;Method to my madness;"+
@@ -48,7 +48,7 @@ var idiom = ("Bite your tongue;A slap on the wrist;You can't judge a book by its
 	"Spitting image;A fool and his money are easily parted;Two left feet;When in rome;Drive me up the wall;"+
 	"In the bag;Over my dead body;Out of this world;All bark and no bite;A chip on your shoulder").split(";");
 
-var characters = ("Stephen Hawking;Yoda;Thomas Edison;Leonardo DiCaprio;Socrates;Satan;Neil Armstrong;"+
+var characters = ("Character;Stephen Hawking;Yoda;Thomas Edison;Leonardo DiCaprio;Socrates;Satan;Neil Armstrong;"+
 	"Indiana Jones;Spider Man;Sherlock Holmes;Albert Einstein;Winnie the Pooh;Shakespeare;Snoopy;"+
 	"Kermit the Frog;Christopher Columbus;Abraham Lincoln;The Beatles;Isaac Newton;Scooby Doo;Voldemort;"+
 	"King Arthur;Sigmund Freud;Elvis Presley;Achilles;Dr. Seuss;Pablo Picasso;Darth Vader;Barbie;Iron Man;"+
@@ -58,7 +58,7 @@ var characters = ("Stephen Hawking;Yoda;Thomas Edison;Leonardo DiCaprio;Socrates
 	"The Joker;Marry Poppins;Buzz Lightyear;Captain Jack Sparrow;Mohammad Ali;Robin Williams;Easter Bunny;"+
 	"Stewie Griffin;Popeye;Stephen Hawking;Yoda").split(";");
 
-var movies = ("The Truman Show;Aladdin;Spiderman;Full Metal Jacket;Dumbo;The Parent Trap;Cars;The Terminator;"+
+var movies = ("Movie;The Truman Show;Aladdin;Spiderman;Full Metal Jacket;Dumbo;The Parent Trap;Cars;The Terminator;"+
 	"Harry Potter;The Mighty Ducks;The Matrix;E.T.;Shrek;Star Wars;Toy Story;Tarzan;Batman;The Incredibles;"+
 	"Monty Python and the Holy Grail;Fight Club;A Bugs Life;James Bond;Remember the Titans;Reservoir Dogs;"+
 	"Indiana Jones;High School Musical;Leon: The Professional;The Little Mermaid;Brother Bear;Marry Poppins;"+
@@ -72,13 +72,13 @@ var movies = ("The Truman Show;Aladdin;Spiderman;Full Metal Jacket;Dumbo;The Par
 	"Snow White;Avatar;Rocky;Jaws;The Godfather;Apollo 13;Ratatouille").split(";");
 
 
-var series = ("Boston Legal;Avatar: The Last Airbender;Merlin;Grey's Anatomy;Kim Possible;Pokemon;NCIS;"+
+var series = ("Series;Boston Legal;Avatar: The Last Airbender;Merlin;Grey's Anatomy;Kim Possible;Pokemon;NCIS;"+
 	"King of the Hill;Star Wars: The Clone Wars;The Simpsons;The Big Bang Theory;Breaking Bad;MythBusters;"+
 	"How I Met Your Mother;Two and a Half Men;Rugrats;Home Improvement;Smallville;ER;American Dad;Law & Order;"+
 	"Batman: The Animated Series;Charlie's Angels;The A-Team;House;Chuck;Beavis and Butthead;"+
 	"The Addams Family;The Drew Carey Show").split(";");
 
-var books = ("La Confidential by James Ellroy;The Call of the Wild by Jack London;White Fang by Jack London;"+
+var books = ("Book;La Confidential by James Ellroy;The Call of the Wild by Jack London;White Fang by Jack London;"+
 	"The Hobbit by J. R. R. Tolkien;James Bond by Ian Fleming;The Da Vinci Code by Dan Brown;"+
 	"A Tale of Two Cities by Charles Dickens;The Eagle Has Landed by Jack Higgins;"+
 	"To Kill A Mockingbird by Harper Lee;Jaws by Peter Benchley;Where the Wild Things Are by Maurice Sendak;"+
@@ -91,17 +91,24 @@ var books = ("La Confidential by James Ellroy;The Call of the Wild by Jack Londo
 	"The Picture of Dorian Gray by Oscar Wilde").split(";");
 
 
-var words = easy.concat(moderate).concat(hard).concat(very_hard).concat(idiom).concat(characters).concat(movies).concat(series).concat(books);
-
-
-db.charades_dictionary.insert(translateToJSON(words));
+db.charades_dictionary.insert(joinCollections([easy, moderate, hard, very_hard, idiom, characters, movies, series]));
 
 function translateToJSON(list) {
 	var result = [];
 	for(var i = 1; i < list.length; i++) {
 		result.push({ 
-			"word": list[i]
+			"word": list[i], 
+			"category": list[0]
 		});
+	}
+	return result;
+}
+
+
+function joinCollections(list) {
+	var result = [];
+	for(var i = 0; i < list.length; i++) {
+		result = result.concat(translateToJSON(list[i]));
 	}
 	return result;
 }

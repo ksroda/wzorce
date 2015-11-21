@@ -5,11 +5,6 @@ var server = http.createServer(app);
 var sio = require('socket.io');
 var port = process.env.PORT || 5000;
 
-var db;
-var MongoClient = require('mongodb').MongoClient;
-var assert = require('assert');
-var ObjectId = require('mongodb').ObjectID;
-var url = 'mongodb://db_user:db_user123@ds033734.mongolab.com:33734/wzorce';
 
 var lessMiddleware = require('less-middleware');
 var blackjackRequire = require('./index_blackjack.js');
@@ -17,14 +12,6 @@ var charadesRequire = require('./index_charades.js');
 var auxiliaryRequire = require('./index_auxiliary.js');
 var socketRequire = require('./index_socket.js');
 
-/*MongoClient.connect(url, function(err, database) {
-		assert.equal(null, err);
-		db = database;
-		//server.listen(port);
-		//console.log("Listening on " + port);
-	});
-*/
-	
 server.listen(port);
 console.log("Listening on " + port);
 var io = sio.listen(server);
@@ -67,6 +54,8 @@ games["blackjack"] = blackjackRequire;
 games["charades"] = charadesRequire;
 
 io.on('connection', function(socket) {
+	socket.emit('id', socket.id);
+	
 	socketRequire.setOnWelcome(socket, games, io, roomsIntervals);
 	socketRequire.setOnDisconnect(socket, games, io, roomsIntervals);
 	socketRequire.setOnMessage(socket, io);

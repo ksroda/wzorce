@@ -21,7 +21,7 @@ module.exports.setOnWelcome = function(socket, games, io, roomsIntervals) {
 				inGame: true
 			}
 
-			games[socket.game].rooms[socket.roomId].createPlayer(player)
+			games[socket.game].rooms[socket.roomId].createPlayer(player);
 			io.emit('update rooms', games[socket.game].rooms);
 		});
 	};

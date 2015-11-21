@@ -46,20 +46,22 @@ function Room(roomName, currentTime) {
 	this.cardsStack 			= auxiliaryRequire.getCardsStack();
 	this.timeToThink 			= 15000;
 	this.currentPlayerTime 		= currentTime;
-	this.dealerX 				= 600;
-	this.dealerY 				= 50;
+	this.dealerX 				= 675;
+	this.dealerY 				= 100;
 	this.afterGameControlTime 	= currentTime;
 	this.afterGameTime 			= 3000;
 	this.timer 					= 0;
+	this.dealerHowManyAces		= 0;
 }
 
 Room.prototype.createPlayer = function(player) {
 	player.cardsNumber = 0;
+	player.howManyAces = 0;
 	player.action = "none";
 	player.cardsSum = 0;
 	player.pointsBet = 100;
-	player.x = 1000 - 200 * this.playersAll.length;
-	player.y = 400;
+	player.x = 1150 - 237.5 * (this.playersAll.length + 0);
+	player.y = -0.0001 * Math.pow(player.x, 2) + 500;
 	
 	this.playersAll.push(player);
 	this.usersNum += 1;
@@ -131,10 +133,16 @@ Room.prototype.gameLoop = function(io) {
 					this.cards[this.cards.length -1].goalX = this.dealerX + this.dealerCardsNumber * 25;
 					this.cards[this.cards.length -1].goalY = this.dealerY;			
 					this.dealerCardsSum += card.value;
+					if(card.value === 11) this.dealerHowManyAces += 1;
 					this.dealerCardsNumber += 1;
 					this.isCardForDealer = false;
 				} else {
 					this.currentPlayer.cardsSum += card.value;
+					if(card.value === 11) this.currentPlayer.howManyAces += 1;
+					if(this.currentPlayer.cardsSum > 21 && this.currentPlayer.howManyAces > 0) {
+						this.currentPlayer.cardsSum -= 10;
+						--this.currentPlayer.howManyAces;
+					}
 					this.currentPlayer.cardsNumber += 1;
 					if(this.currentPlayer.id === this.players[this.players.length - 1].id) {
 						this.isCardForDealer = true;
@@ -159,6 +167,13 @@ Room.prototype.gameLoop = function(io) {
 					var card = this.randomCardFromStack();
 					this.cards.push(card);
 					this.currentPlayer.cardsSum += card.value;
+
+					if(card.value === 11) this.currentPlayer.howManyAces += 1;
+					if(this.currentPlayer.cardsSum > 21 && this.currentPlayer.howManyAces > 0) {
+						this.currentPlayer.cardsSum -= 10;
+						--this.currentPlayer.howManyAces;
+					}
+
 					this.currentPlayer.cardsNumber += 1;
 					if(this.currentPlayer.cardsSum > 21 ){
 						var index = this.players.indexOf(this.currentPlayer);
@@ -224,14 +239,22 @@ Room.prototype.gameLoop = function(io) {
 					var card = this.randomCardFromStack();
 					card.goalX = this.dealerX + this.dealerCardsNumber * 25;
 					card.goalY = this.dealerY;	
-					
 					this.cards.push(card);
 					this.dealerCardsSum += card.value;
+
+					if(card.value === 11) this.dealerHowManyAces += 1;
+					if(this.dealerCardsSum > 21 && this.dealerHowManyAces > 0) {
+						this.dealerCardsSum -= 10;
+						--this.dealerHowManyAces;
+					}
+
 					this.dealerCardsNumber += 1;
 					if(this.dealerCardsSum > 21) {
 						for(var i = 0; i < this.players.length; i++) {
 							if(this.players[i].inGame) {
 								this.players[i].overallPoints += 2 * this.players[i].pointsBet;
+							} else {
+								this.players[i].overallPoints += this.players[i].pointsBet;
 							}
 						}
 						this.state = "afterGame";
@@ -239,8 +262,12 @@ Room.prototype.gameLoop = function(io) {
 					}
 				} else {
 					for(var i = 0; i < this.players.length; i++) {
-						if(this.players[i].cardsSum > this.dealerCardsSum && this.players[i].inGame) {
-							this.players[i].overallPoints += 2 * this.players[i].pointsBet;
+						if(this.players[i].inGame) {
+							if(this.players[i].cardsSum > this.dealerCardsSum) {
+								this.players[i].overallPoints += 2 * this.players[i].pointsBet;
+							} else if(this.players[i].cardsSum === this.dealerCardsSum) {
+								this.players[i].overallPoints += this.players[i].pointsBet;
+							}
 						}
 					}
 					this.state = "afterGame";
@@ -265,6 +292,7 @@ Room.prototype.gameLoop = function(io) {
 				this.players[i].cardsNumber = 0;
 				this.players[i].cardsSum = 0;
 				this.players[i].action = "none";
+				this.players[i].howManyAces = 0;
 			}
 			this.state = "bet";
 			this.currentPlayer = 0;
@@ -276,6 +304,7 @@ Room.prototype.gameLoop = function(io) {
 			this.isRoundStarted = false;
 			this.cardsStack = auxiliaryRequire.getCardsStack();
 			this.currentPlayerTime = (new Date()).getTime();
+			this.dealerHowManyAces = 0;
 			break;
 	}
 

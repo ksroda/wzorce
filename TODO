@@ -1,3 +1,4 @@
+BLACKJACK
 4. Przyciski bet -> 1, 10, 25, 50, 100...
 5. Dlaczego nie działa dla krótszego czasu oczekiwania na ruch gracza
 6. Trójkąt(strzałka) wskazaująca czyj aktualnie jest ruch
@@ -9,3 +10,4 @@
 	ma spot = 1, drugi spot = 2, kiedy pierwszy gracz wyjdzie z gry to trzeba zwolnić spot1, 3 gracz dołącza i wchodzi na spot = 1
 12. Jak gracz wyjdzie to usuwanie, jego elementów interfejsu
 13. Karty po stronie klienta nie są usuwane - do naprawy
+14. reakcja na event onDisconnect dla konkretnego pokoju
