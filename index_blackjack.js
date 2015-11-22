@@ -91,7 +91,7 @@ Room.prototype.playersInGame = function() {
 Room.prototype.randomCardFromStack = function() {
 	var cardIndex = Math.floor(Math.random() * this.cardsStack.length);
 	var card = this.cardsStack[cardIndex];
-	console.log(card);
+	console.log("Card: " + JSON.stringify(card) + "    CardIndex = " + cardIndex + "    CardsStack.length = " + this.cardsStack.length);
 	this.cardsStack.splice(cardIndex, 1);
 	return ({
 		id: 	auxiliaryRequire.randomId(),
@@ -303,7 +303,7 @@ Room.prototype.gameLoop = function(io) {
 			this.controlDealTime = (new Date()).getTime(),
 			this.isCardForDealer = false;
 			this.isRoundStarted = false;
-			this.cardsStack = auxiliaryRequire.getCardsStack();
+			if(this.cardsStack.length <= 100) this.cardsStack = auxiliaryRequire.getCardsStack();
 			this.currentPlayerTime = (new Date()).getTime();
 			this.dealerHowManyAces = 0;
 			break;
