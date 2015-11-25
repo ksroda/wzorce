@@ -52,6 +52,7 @@ function Room(roomName, currentTime) {
 	this.afterGameTime 			= 3000;
 	this.timer 					= 0;
 	this.dealerHowManyAces		= 0;
+	this.seats					= [false, false, false, false, false];
 }
 
 Room.prototype.createPlayer = function(player) {
@@ -60,8 +61,23 @@ Room.prototype.createPlayer = function(player) {
 	player.action = "none";
 	player.cardsSum = 0;
 	player.pointsBet = 100;
-	player.x = 1150 - 237.5 * (this.playersAll.length + 0);
-	player.y = -0.0001 * Math.pow(player.x, 2) + 500;
+
+	player.seat = this.seats.indexOf(false);
+	this.seats[player.seat] = true;
+	player.x = 1080 - 202.5 * player.seat;
+	switch(player.seat) {
+		case 4:
+		case 0:
+			player.y = 230;
+			break;
+		case 3:
+		case 1:
+			player.y = 410;
+			break;
+		case 2:
+			player.y = 470; 
+			break;
+	}
 	
 	this.playersAll.push(player);
 	this.usersNum += 1;
@@ -89,7 +105,8 @@ Room.prototype.playersInGame = function() {
 }
 
 Room.prototype.randomCardFromStack = function() {
-	var cardIndex = Math.floor(Math.random() * this.cardsStack.length);
+	//var cardIndex = Math.floor(Math.random() * this.cardsStack.length);
+	var cardIndex = 0;
 	var card = this.cardsStack[cardIndex];
 	console.log("Card: " + JSON.stringify(card) + "    CardIndex = " + cardIndex + "    CardsStack.length = " + this.cardsStack.length);
 	this.cardsStack.splice(cardIndex, 1);

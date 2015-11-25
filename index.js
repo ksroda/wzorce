@@ -27,6 +27,10 @@ app.use(express.static(__dirname + '/public'));
 
 app.set('view engine','ejs');
 
+app.get('/', function(req, res) {
+	res.render('homepage');
+});
+
 app.get('/charades', function(req, res) {
 	res.render('charades');
 });

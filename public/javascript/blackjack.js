@@ -23,7 +23,7 @@ var socket = io();
 
 function sendWelcome(roomName) {
 	socket.emit('welcome', {
-		name:	"Marek",
+		name:	"Guest" + Math.floor(Math.random() * 1000),
 		room:	roomName,
 		game: 	"blackjack"
 	});
@@ -68,7 +68,7 @@ socket.on('reset', function() {
 });
 
 //------------------------------------Phraser-------------------------------------------
-var game = new Phaser.Game(1350, 650, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+var game = new Phaser.Game(1350, 700, Phaser.AUTO, '', { preload: preload, create: create, update: update }, true);
 var cardsGroup;
 
 var cards = {};
@@ -79,7 +79,7 @@ var userInfo = {};
 var myId;
 
 function preload() {
-	var suits = ["h", "s", "c", "d"];
+	var suits = ["hearts", "spades", "clubs", "diamonds"];
 		var symbols = [
 			{ type: 2	},
 			{ type: 3	},
@@ -90,32 +90,36 @@ function preload() {
 			{ type: 8	},
 			{ type: 9	},
 			{ type: 10	},
-			{ type: "j"	},
-			{ type: "q"	},
-			{ type: "k"	},
-			{ type: "a"	}
+			{ type: "jack"	},
+			{ type: "queen"	},
+			{ type: "king"	},
+			{ type: "ace"	}
 		];
 
 		for(var i in suits) {
 			for(var j in symbols) {
-				//game.load.image(symbols[j].type + suits[i], 'cards/png/' + symbols[j].type + "_of_" +  suits[i] + ".png");
-				game.load.image(symbols[j].type + suits[i], "cards/png/test2.png");
+				game.load.image(symbols[j].type + "_of_" + suits[i], 'cards/ost/' + symbols[j].type + "_of_" +  suits[i] + ".png");
+				//game.load.image(symbols[j].type + suits[i], "cards/png/test2.png");
 				//game.load.image(symbols[j].type + suits[i], 'cards/windows/' + suits[i] + symbols[j].type + ".png");
 			}
 		}
+	game.load.image("table", "cards/table.png");
 }
 
 function create() {
-	game.stage.backgroundColor = 0x418026;
+	//game.stage.backgroundColor = 0x418026;
+	var table = game.add.sprite(675, 280, "table");
 	game.physics.startSystem(Phaser.Physics.ARCADE);
 	cardsGroup = game.add.group();
 	timer = game.add.text(50, 50, "", style);
 	dealerCardsSum = game.add.text(600, 100, "", style);
 	
+	table.scale.setTo(0.6, 0.6);
+	table.anchor.set(0.5, 0.5);
 	timer.anchor.set(0.5, 0.5);
 	dealerCardsSum.anchor.set(0.5, 0.5);
 
-	//sendWelcome("testowy"); //Na czas testów
+	sendWelcome("testowy"); //Na czas testów
 }
 
 function update() {

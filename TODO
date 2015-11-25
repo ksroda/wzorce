@@ -3,11 +3,11 @@ BLACKJACK
 5. Dlaczego nie działa dla krótszego czasu oczekiwania na ruch gracza
 6. Trójkąt(strzałka) wskazaująca czyj aktualnie jest ruch
 7. Zmniejszyć rozmiar kart na ekranie
-8. Ułożenie kart w łuk
 10. Dodanie elementów interfejsu:
 - liczba obstwionych punktów
 !!!11. Trzeba ustawić zmienną spot gracza, decydującą o miejscu w którym się znajduje, czyli pierwszy gracz
 	ma spot = 1, drugi spot = 2, kiedy pierwszy gracz wyjdzie z gry to trzeba zwolnić spot1, 3 gracz dołącza i wchodzi na spot = 1
 12. Jak gracz wyjdzie to usuwanie, jego elementów interfejsu
 13. Karty po stronie klienta nie są usuwane - do naprawy
-14. reakcja na event onDisconnect dla konkretnego pokoju
+14. reakcja na event onDisconnect dla konkretnego pokoju - usunięci gracza ze stołu
+15. Poprawa ułożenia kart w łuk - zmiany w funkcji
