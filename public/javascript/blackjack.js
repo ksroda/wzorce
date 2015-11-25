@@ -47,7 +47,6 @@ socket.on('update', function(data) {
 		}
 	}
 
-
 	for(var i = 0; i < data.room.players.length; i++) {
 		if(!userInfo[data.room.players[i].id]) {
 			userInfo[data.room.players[i].id] = new UserInfo(data.room.players[i]);
@@ -59,6 +58,10 @@ socket.on('update', function(data) {
 
 	if(timer) timer.setText(data.room.timer);
 	if(dealerCardsSum) dealerCardsSum.setText(data.room.dealerCardsSum);
+
+	currentPlayer = data.room.currentPlayer;
+	gameState = data.room.state;
+	
 });
 
 socket.on('reset', function() {
@@ -77,6 +80,10 @@ var timer;
 var dealerCardsSum;
 var userInfo = {};
 var myId;
+var arrow;
+var currentPlayerPointer;
+var currentPlayer;
+var gameState;
 
 function preload() {
 	var suits = ["hearts", "spades", "clubs", "diamonds"];
@@ -104,6 +111,8 @@ function preload() {
 			}
 		}
 	game.load.image("table", "cards/table.png");
+	game.load.image("arrow", "assets/arrow.png");
+	game.load.image("blank", "assets/blank.png");
 }
 
 function create() {
@@ -119,7 +128,16 @@ function create() {
 	timer.anchor.set(0.5, 0.5);
 	dealerCardsSum.anchor.set(0.5, 0.5);
 
-	sendWelcome("testowy"); //Na czas testów
+	arrow = game.add.sprite(675, 30, "arrow");
+	arrow.anchor.set(0.45, 0.5);
+	//arrow.scale.setTo(0.5, 0.5);
+
+	currentPlayerPointer = game.add.sprite(1080, 230, "blank");
+	game.physics.enable(currentPlayerPointer, Phaser.Physics.ARCADE);
+	currentPlayerPointer.body.allowRotation = false;
+	currentPlayerPointer.anchor.set(0.5, 0.5);
+
+	//sendWelcome("testowy"); //Na czas testów
 }
 
 function update() {
@@ -127,6 +145,18 @@ function update() {
 	for(var i in cards) {
 		cards[i].move();
 	}
+
+	//console.log(currentPlayerPointer);
+	if(currentPlayer && currentPlayerPointer && gameState == "game") {
+		var temp = game.input.activePointer;
+		temp.x = currentPlayer.x;
+		temp.y = currentPlayer.y;
+		game.physics.arcade.moveToPointer(currentPlayerPointer, 50, temp, 300);
+		//console.log(currentPlayerPointer);
+		arrow.rotation = game.physics.arcade.angleBetween(arrow, { x: currentPlayerPointer.position.x, y: currentPlayerPointer.position.y });
+	}
+
+	
 }
 
 //UWAGA DEKORATOR

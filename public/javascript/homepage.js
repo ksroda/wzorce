@@ -21,8 +21,8 @@ $(document).ready(function(){
 	});
 
 	$(".games").mouseout(function() {
-		$("#top-container").css("background", "#999999");
-		$("body").css("background", "white");
+		$("#top-container").css("background", "#222222");
+		$("body").css("background", "#333333");
 		$("#charades").css("opacity", "1");
 		$("#blackjack").css("opacity", "1");
 		$("#hangman").css("opacity", "1");
