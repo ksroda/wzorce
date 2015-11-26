@@ -11,3 +11,4 @@ BLACKJACK
 13. Karty po stronie klienta nie są usuwane - do naprawy
 14. reakcja na event onDisconnect dla konkretnego pokoju - usunięci gracza ze stołu
 15. Poprawa ułożenia kart w łuk - zmiany w funkcji
+16. Algorytm tasowania do zmiany

@@ -41,8 +41,11 @@ module.exports.setOnDisconnect = function(socket, games, io, roomsIntervals) {
 				if(games[socket.game].rooms[socket.roomId].usersNum <= 0) {
 					clearInterval(roomsIntervals[games[socket.game].rooms[socket.roomId].interval]);
 					delete games[socket.game].rooms[socket.roomId];
+				} else {
+					io.to(socket.roomId).emit('player disconnected', socket.id);
+					games[socket.game].rooms[socket.roomId].userDisconnected(socket.id);
 				}
-			
+
 				io.emit('update rooms', games[socket.game].rooms);
 			}
 		});

@@ -34,6 +34,14 @@ socket.on('id', function(id) {
 	myId = id;
 });
 
+socket.on('player disconnected', function(playerId) {
+	if(userInfo[playerId]) {
+		userInfo[playerId].name.kill();
+		userInfo[playerId].cardsSum.kill();
+		userInfo[playerId].pointsBet.kill();
+	}
+});
+
 socket.on('update rooms', function(rooms) {
 	angular.element($('#rooms')).scope().update(rooms);
 });
@@ -75,7 +83,7 @@ var game = new Phaser.Game(1350, 700, Phaser.AUTO, '', { preload: preload, creat
 var cardsGroup;
 
 var cards = {};
-var style = { font: "20px Arial", fill: "#0000000", align: "center" };
+var style = { font: "18px Arial", fill: "#0000000", align: "center" };
 var timer;
 var dealerCardsSum;
 var userInfo = {};
@@ -117,11 +125,13 @@ function preload() {
 
 function create() {
 	//game.stage.backgroundColor = 0x418026;
+	game.time.desiredFps = 30;
+
 	var table = game.add.sprite(675, 280, "table");
 	game.physics.startSystem(Phaser.Physics.ARCADE);
 	cardsGroup = game.add.group();
 	timer = game.add.text(50, 50, "", style);
-	dealerCardsSum = game.add.text(600, 100, "", style);
+	dealerCardsSum = game.add.text(600, 80, "", style);
 	
 	table.scale.setTo(0.6, 0.6);
 	table.anchor.set(0.5, 0.5);
@@ -188,9 +198,9 @@ function createCard(card) {
 }
 
 function UserInfo(player) {
-	this.name = game.add.text(player.x, player.y + 130, player.name, style);
+	this.name = game.add.text(player.x, player.y + 100, player.name, style);
 	this.cardsSum = game.add.text(player.x - 70, player.y, player.cardsSum, style);
-	this.pointsBet = game.add.text(player.x, player.y + 100, player.pointsBet, style);
+	this.pointsBet = game.add.text(player.x, player.y + 80, player.pointsBet, style);
 	if(player.id === myId) this.overallPoints = game.add.text(100, 600, "Overll points: " + player.overallPoints, style);
 
 	this.name.anchor.set(0.5, 0.5);

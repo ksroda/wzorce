@@ -15,9 +15,11 @@ blackjack.createRoom = function(io, roomName, roomIntervals) {
 blackjack.setOnActionChange = function(socket) {
 	var self = this;
 	socket.on('actionButton', function(action) {
-		var currentPlayer = self.rooms[socket.roomId].currentPlayer;
-		if(currentPlayer.id == socket.id) {
-			currentPlayer.action = action;
+		if(self.rooms[socket.roomId]) {
+			var currentPlayer = self.rooms[socket.roomId].currentPlayer;
+			if(currentPlayer.id === socket.id) {
+				currentPlayer.action = action;
+			}
 		}
 	});
 }
@@ -47,7 +49,7 @@ function Room(roomName, currentTime) {
 	this.timeToThink 			= 15000;
 	this.currentPlayerTime 		= currentTime;
 	this.dealerX 				= 675;
-	this.dealerY 				= 100;
+	this.dealerY 				= 80;
 	this.afterGameControlTime 	= currentTime;
 	this.afterGameTime 			= 3000;
 	this.timer 					= 0;
@@ -63,24 +65,26 @@ Room.prototype.createPlayer = function(player) {
 	player.pointsBet = 100;
 
 	player.seat = this.seats.indexOf(false);
-	this.seats[player.seat] = true;
-	player.x = 1080 - 202.5 * player.seat;
-	switch(player.seat) {
-		case 4:
-		case 0:
-			player.y = 230;
-			break;
-		case 3:
-		case 1:
-			player.y = 410;
-			break;
-		case 2:
-			player.y = 470; 
-			break;
+	if(player.seat !== -1) {
+		this.seats[player.seat] = true;
+		player.x = 1080 - 202.5 * player.seat;
+		switch(player.seat) {
+			case 4:
+			case 0:
+				player.y = 230;
+				break;
+			case 3:
+			case 1:
+				player.y = 430;
+				break;
+			case 2:
+				player.y = 470; 
+				break;
+		}
+		
+		this.playersAll.push(player);
+		this.usersNum += 1;
 	}
-	
-	this.playersAll.push(player);
-	this.usersNum += 1;
 }
 
 
@@ -91,7 +95,7 @@ Room.prototype.startLoop = function(io, roomIntervals) {
 	var self = this;
 	var interval = setInterval(function() {
 		self.gameLoop(io);
-	}, 100);
+	}, 500);
 	
 	roomIntervals[intervalId] = interval;
 }
@@ -106,7 +110,7 @@ Room.prototype.playersInGame = function() {
 
 Room.prototype.randomCardFromStack = function() {
 	//var cardIndex = Math.floor(Math.random() * this.cardsStack.length);
-	var cardIndex = 0;
+	var cardIndex = this.cardsStack.length - 1;
 	var card = this.cardsStack[cardIndex];
 	console.log("Card: " + JSON.stringify(card) + "    CardIndex = " + cardIndex + "    CardsStack.length = " + this.cardsStack.length);
 	this.cardsStack.splice(cardIndex, 1);
@@ -121,6 +125,31 @@ Room.prototype.randomCardFromStack = function() {
 	});
 }
 
+Room.prototype.userDisconnected = function(playerId) {
+	if(this.currentPlayer.id === playerId) {
+		var index = this.players.indexOf(this.currentPlayer);
+		index++;
+		if(index > this.players.length - 1) {
+			index = 0;
+		}
+		this.players[this.players.indexOf(this.currentPlayer)].inGame = false;
+		this.currentPlayer = this.players[index];
+	}
+
+	for(var i = 0; i < this.players.length; i++) {
+		if(this.players[i].id === playerId) {
+			this.seats[this.players[i].seat] = false;
+			this.players.splice(i, 1);
+			break;
+		}
+	}
+
+	if(this.players.length <= 0) {
+		this.state = "afterGame";
+	}
+
+}
+
 Room.prototype.gameLoop = function(io) {
 	var now = (new Date()).getTime();
 	switch(this.state) {
@@ -128,13 +157,14 @@ Room.prototype.gameLoop = function(io) {
 			this.timer = Math.ceil((this.betTime - (now - this.thisStartTime))/1000);
 			if(now - this.thisStartTime > this.betTime) {
 				this.players = [];
-				for(var i=0; i < this.playersAll.length; i++){
+				for(var i = 0; i < this.playersAll.length; i++){
 					if(this.playersAll[i].pointsBet > 0){
 						this.playersAll[i].inGame = true;
 						this.playersAll[i].overallPoints -= this.playersAll[i].pointsBet;
 						this.players.push(this.playersAll[i]);
 					}
 				}
+				this.players.sort(function(a, b) {return a.seat - b.seat});
 				this.state = "deal";
 				this.currentPlayer = this.players[0];
 			}
