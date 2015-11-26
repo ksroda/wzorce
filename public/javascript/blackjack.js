@@ -157,7 +157,7 @@ function update() {
 	}
 
 	//console.log(currentPlayerPointer);
-	if(currentPlayer && currentPlayerPointer && gameState == "game") {
+	if(currentPlayer && currentPlayerPointer && gameState !== "deal") {
 		var temp = game.input.activePointer;
 		temp.x = currentPlayer.x;
 		temp.y = currentPlayer.y;

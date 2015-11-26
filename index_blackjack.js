@@ -245,6 +245,7 @@ Room.prototype.gameLoop = function(io) {
 					break;
 				case "stand":
 					var index = this.players.indexOf(this.currentPlayer);
+					console.log(index);
 					index++;
 					if(index > this.players.length - 1) {
 						index = 0;
@@ -261,6 +262,11 @@ Room.prototype.gameLoop = function(io) {
 					break;
 			}
 			this.timer = Math.ceil((this.timeToThink - (now - this.currentPlayerTime))/1000);
+			if(this.players.indexOf(this.currentPlayer) === 0 && this.isRoundStarted){
+				this.controlDealTime = now - this.timeBetweenCardsDeal/2;
+				this.state = "dealersTurn";
+				break;
+			}
 			if(now - this.currentPlayerTime > this.timeToThink || this.currentPlayer.cardsSum === 21){
 				this.controlDealTime = now - this.timeBetweenCardsDeal/2;
 				this.currentPlayerTime = now;
@@ -271,10 +277,6 @@ Room.prototype.gameLoop = function(io) {
 				}
 				this.currentPlayer = this.players[index];	
 				this.isRoundStarted = true;
-			}
-			if(this.players.indexOf(this.currentPlayer) === 0 && this.isRoundStarted){
-				this.controlDealTime = now - this.timeBetweenCardsDeal/2;
-				this.state = "dealersTurn";
 			}
 			break;
 		case "dealersTurn":
