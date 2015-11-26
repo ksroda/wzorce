@@ -363,5 +363,5 @@ Room.prototype.gameLoop = function(io) {
 		this.cards[i].y = this.cards[i].goalY;
 	}
 
-	console.log("Game state: " + this.state + "   currentPlayer: " + this.currentPlayer);
+	console.log("Game state: " + this.state + "   currentPlayer: " + this.currentPlayer.name);
 }
