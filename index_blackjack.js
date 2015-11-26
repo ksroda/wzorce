@@ -276,9 +276,7 @@ Room.prototype.gameLoop = function(io) {
 				this.controlDealTime = now - this.timeBetweenCardsDeal/2;
 				this.state = "dealersTurn";
 			}
-			else{
-				break;
-			}
+			break;
 		case "dealersTurn":
 			timer = 0;
 			if(now - this.controlDealTime > this.timeBetweenCardsDeal) {
@@ -364,4 +362,6 @@ Room.prototype.gameLoop = function(io) {
 		this.cards[i].x = this.cards[i].goalX;
 		this.cards[i].y = this.cards[i].goalY;
 	}
+
+	console.log(this.state);
 }
