@@ -138,14 +138,15 @@ function create() {
 	timer.anchor.set(0.5, 0.5);
 	dealerCardsSum.anchor.set(0.5, 0.5);
 
-	arrow = game.add.sprite(675, 30, "arrow");
-	arrow.anchor.set(0.45, 0.5);
+	//arrow = game.add.sprite(675, 30, "arrow");
+	//arrow.anchor.set(0.45, 0.5);
 	//arrow.scale.setTo(0.5, 0.5);
 
-	currentPlayerPointer = game.add.sprite(1080, 230, "blank");
+	currentPlayerPointer = game.add.sprite(1080, 230, "arrow");
 	game.physics.enable(currentPlayerPointer, Phaser.Physics.ARCADE);
 	currentPlayerPointer.body.allowRotation = false;
 	currentPlayerPointer.anchor.set(0.5, 0.5);
+	currentPlayerPointer.scale.setTo(0.1, 0.1);
 
 	//sendWelcome("testowy"); //Na czas testów
 }
@@ -160,10 +161,10 @@ function update() {
 	if(currentPlayer && currentPlayerPointer && gameState !== "deal") {
 		var temp = game.input.activePointer;
 		temp.x = currentPlayer.x;
-		temp.y = currentPlayer.y;
+		temp.y = currentPlayer.y + 60;
 		game.physics.arcade.moveToPointer(currentPlayerPointer, 50, temp, 300);
 		//console.log(currentPlayerPointer);
-		arrow.rotation = game.physics.arcade.angleBetween(arrow, { x: currentPlayerPointer.position.x, y: currentPlayerPointer.position.y });
+		//arrow.rotation = game.physics.arcade.angleBetween(arrow, { x: currentPlayerPointer.position.x, y: currentPlayerPointer.position.y });
 	}
 
 	
