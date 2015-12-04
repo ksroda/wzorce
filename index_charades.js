@@ -16,19 +16,43 @@ charades.createRoom = function(io, roomName, roomIntervals) {
 charades.setOnMouseDown = function(socket) {
 	var self = this;
 	socket.on('mouse down', function(msg) {
-		var currentPlayer = self.rooms[socket.roomId].currentPlayer;
-		if(currentPlayer.id = socket.id) {
+		//var currentPlayer = self.rooms[socket.roomId].currentPlayer;
+		//if(currentPlayer.id = socket.id) {
 			socket.broadcast.to(socket.roomId).emit('mouse down', msg);
-		}
+		//}
+		//console.log(msg);
 	});
 };
 		
 charades.setOnMouseDrag = function(socket) {
 	var self = this;
 	socket.on('mouse drag', function(msg) {
-		var currentPlayer = self.rooms[socket.roomId].currentPlayer;
-		if(currentPlayer.id = socket.id) {
+		//var currentPlayer = self.rooms[socket.roomId].currentPlayer;
+		//if(currentPlayer.id = socket.id) {
 			socket.broadcast.to(socket.roomId).emit('mouse drag', msg);
+		//}
+	});
+}
+
+charades.setOnChatMessage = function(io, socket) {
+	var self = this;
+	socket.on('chat-message', function(msg) {
+		var currentPlayer = self.rooms[socket.roomId].currentPlayer;
+		if(currentPlayer.id != socket.id) {
+			io.to(socket.roomId).emit('chat-message', msg);
+
+			//console.log(self.rooms[socket.roomId].currentWord.word);
+			if(self.rooms[socket.roomId].currentWord.word.toLowerCase() === msg.content.toLowerCase()) {
+				io.to(socket.roomId).emit('chat-message', {
+					sender: "System",
+					content: "Congratulations! The winner is " + socket.name
+				});
+				self.rooms[socket.roomId].playersAll.forEach(function(player) {
+					if(player.id === socket.id) {
+						self.rooms[socket.roomId].changeCurrentPlayer(io, player);
+					}
+				})
+			}
 		}
 	});
 }
@@ -44,11 +68,12 @@ function Room(roomName, currentTime) {
 	this.playersAll 			= [];
 	this.state					= "beginning";
 	this.drawingControlTime		= currentTime;
-	this.drawingTime 			= 5000;
+	this.drawingTime 			= 60000;
 	this.afterGameControlTime 	= currentTime;
-	this.afterGameTime 			= 3000;
+	this.afterGameTime 			= 0;
 	this.pointsForWin			= 100;
 	this.currentPlayer			= 0;
+	this.timer 					= 0;
 }
 
 
@@ -68,14 +93,26 @@ Room.prototype.startLoop = function(io, roomIntervals) {
 	var self = this;
 	var interval = setInterval(function() {
 		self.gameLoop(io);
-	}, 100);
+	}, 500);
 	
 	roomIntervals[intervalId] = interval;
-	//this.setRandomWord();
 }
 
 Room.prototype.setRandomWord = function() {
 	databaseRequire.setRandomWord(this);
+}
+
+Room.prototype.changeCurrentPlayer = function(io, player) {
+	this.currentPlayer = player;
+	this.drawingControlTime = (new Date()).getTime();
+	this.state = "beginning";
+	io.to(this.id).emit('clear screen');
+}
+
+Room.prototype.userDisconnected = function(io, playerId) {
+	if(this.currentPlayer.id === playerId) {
+		this.changeCurrentPlayer(io, this.playersAll[Math.floor(Math.random() * this.playersAll.length)]);
+	}
 }
 
 Room.prototype.gameLoop = function(io) {
@@ -100,22 +137,26 @@ Room.prototype.gameLoop = function(io) {
 					this.state = "after game";
 				}
 			});
+			this.timer = Math.ceil((this.drawingTime - (now - this.drawingControlTime))/1000);
 			if(now - this.drawingControlTime > this.drawingTime) {
-				this.drawingControlTime = now;
-				this.currentPlayer = this.playersAll[Math.floor(Math.random() * this.playersAll.length)];
-				this.state = "beginning";
+				this.changeCurrentPlayer(io, this.playersAll[Math.floor(Math.random() * this.playersAll.length)]);
 			}
 			break;
 		case "after game":
-			if(now - this.afterGameControlTime > this.afterGameTime) {
-				this.afterGameControlTime = now;
+			//if(now - this.afterGameControlTime > this.afterGameTime) {
+			//	this.afterGameControlTime = now;
 				this.playersAll.forEach(function(player) {
 					player.guessedWord = false;
 				})
 				this.state = "beginning";
-			}
+			//}
 			break;
 	}
+
+	io.to(this.id).emit('update', {
+		room: this,
+	});
+
 	if(this.currentWord) console.log("Game state: " + this.state + "    Current word: " + this.currentWord["word"] +
 		"   Current player: " + this.currentPlayer.name);
 }

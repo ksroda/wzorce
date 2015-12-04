@@ -1,9 +1,16 @@
+.bordered {
+	border: 1px solid white;
+}
+
 body {
 	overflow: hidden;
 }
 	
 canvas {
-	border: 1px solid;
+	.bordered;
+	position: absolute;
+	top: 0px;
+	z-index: -1;
 }
 
 #rooms {
@@ -43,7 +50,6 @@ canvas {
 	float: right;
 }
 
-
 .actionButton {
 	width: 100px;
 }
@@ -55,9 +61,108 @@ canvas {
 	margin-left: -150px;
 }
 
-canvas {
-	position: : absolute;
-	display : block;
-	margin : auto;
-	border: none;
+
+#tool-belt {
+	position: absolute;
+	top: 70px;
+	left: 50%;
+	width: 600px;
+	margin-left: -300px;
+	text-align: center;
+
+	button {
+		width: 40px;
+		height: 40px;
+	}
+
+	#black {
+		background-color: black;
+	}
+
+	#white {
+		background-color: white;
+	}
+
+	#red {
+		background-color: red;
+	}
+
+	#blue {
+		background-color: blue;
+	}
+
+	#yellow {
+		background-color: yellow;
+	}
+
+	#green {
+		background-color: green;
+	}
+
+	#size-buttons {
+		margin-left: 20px;
+	}
+}
+
+#top-container {
+	background-color: #1d3643;
+}
+
+#right-container {
+	position: absolute;
+	right: 10px;
+	width: 350px;
+	top: 70px;
+	background-color: #1d3643;
+	color: white;
+
+	#chat {
+		width: 100%;
+		.bordered;
+
+		#output-chat {
+			width: 100%;
+			height: 250px;
+			.bordered;
+			padding: 10px;
+			overflow-y: scroll;
+
+			ul {
+				list-style-type: none;
+				//.bordered;
+				margin: 0;
+				padding: 0;
+
+				li {
+					//.bordered;
+				}
+			}
+		}
+
+		#input-chat {
+			width: 100%;
+			.bordered;
+			margin: 0;
+
+			#message {
+				//width: 100%;
+				margin: 0;
+				padding: 0;
+			}
+
+			#send-button {
+				//width: 50px;
+				margin: 0;
+				padding: 0;
+				button {
+					width: 95%;
+					float: right;
+					//margin-left: 0;
+					background-color: #4a87a8;
+					
+				}
+			}
+		}
+	}
+
 }

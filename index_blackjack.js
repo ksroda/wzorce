@@ -199,7 +199,7 @@ Room.prototype.drawCard = function(cardForDealer) {
 	}
 }
 
-Room.prototype.changeCurrentPlayer = function(playerInGame) {
+Room.prototype.changeCurrentPlayer = function(io,playerInGame) {
 	var index = this.players.indexOf(this.currentPlayer);
 	index++;
 	if(index > this.players.length - 1) {

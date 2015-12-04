@@ -29,7 +29,7 @@ module.exports.setOnWelcome = function(socket, games, io, roomsIntervals) {
 module.exports.setOnDisconnect = function(socket, games, io, roomsIntervals) {
 		socket.on('disconnect', function() {
 			if(socket.game) {
-				games[socket.game].rooms[socket.roomId].usersNum -= 1;
+				games[socket.game].rooms[socket.roomId].usersNum--;
 					
 				for(var i = 0; i < games[socket.game].rooms[socket.roomId].playersAll.length; i++) {
 					if(games[socket.game].rooms[socket.roomId].playersAll[i].id === socket.id) {
@@ -43,7 +43,7 @@ module.exports.setOnDisconnect = function(socket, games, io, roomsIntervals) {
 					delete games[socket.game].rooms[socket.roomId];
 				} else {
 					io.to(socket.roomId).emit('player disconnected', socket.id);
-					games[socket.game].rooms[socket.roomId].userDisconnected(socket.id);
+					games[socket.game].rooms[socket.roomId].userDisconnected(io, socket.id);
 				}
 
 				io.emit('update rooms', games[socket.game].rooms);
@@ -53,6 +53,6 @@ module.exports.setOnDisconnect = function(socket, games, io, roomsIntervals) {
 	
 module.exports.setOnMessage = function(socket, io) {
 		socket.on('message', function(msg) {
-				io.to(socket.game + "." + socket.room).emit('message', msg);
+				io.to(socket.roomId).emit('message', msg);
 		});
 	};
