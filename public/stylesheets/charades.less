@@ -4,6 +4,7 @@
 
 body {
 	overflow: hidden;
+	background-color: #4a87a8;
 }
 	
 canvas {
@@ -14,51 +15,53 @@ canvas {
 }
 
 #rooms {
+	.bordered;
 	position: absolute;
-	border: 1px solid;
 	width: 400px;
-	height: 450px;
 	left: 50%;
 	margin-left: -200px;
 	top: 100px;
-}
-
-#join-room {
-	position: absolute;
-	bottom: 0;
-	width: 100%;
-}
-
-#create {
-	width: 25%;
-}
-
-#roomname {
-	width: 70%;
-}
-
-.roomdiv {
-	width: 100%;
-	text-align: left;
-}
+	border-radius: 5px;
+	border-color: #1d3643;
 	
-.btn-block {
-	text-align: left;
+	#output-room {
+		//.bordered;
+		height: 400px;
+		overflow-y: scroll;
+
+		button {
+			.singleRoomName {
+				float: left;
+			}
+			margin: 0;
+		}
+	}
+
+
+	#input-room {
+		margin: 0;
+		//.bordered;
+
+		#input-join {
+			//.bordered;
+			margin: 0;
+			padding: 0;
+		}
+
+		#submit-join {
+			//.bordered;
+			margin: 0;
+			padding: 0;
+			button {
+				width: 95%;
+				float: right;
+			}
+		}
+	}
 }
 	
 .badge {
 	float: right;
-}
-
-.actionButton {
-	width: 100px;
-}
-
-.actionButtons {
-	position: absolute;
-	top: 610px;
-	left: 50%;
-	margin-left: -150px;
 }
 
 
@@ -123,7 +126,7 @@ canvas {
 		#output-chat {
 			width: 100%;
 			height: 250px;
-			.bordered;
+			//.bordered;
 			padding: 10px;
 			overflow-y: scroll;
 
@@ -141,7 +144,7 @@ canvas {
 
 		#input-chat {
 			width: 100%;
-			.bordered;
+			//.bordered;
 			margin: 0;
 
 			#message {

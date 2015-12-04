@@ -17,15 +17,17 @@
 </head>
 <body>
 	<div id="rooms" ng-app="myApp" ng-controller="customersCtrl">
-		<div class="btn-group-vertical roomdiv">
+		<div id="output-room">
 			<button ng-repeat="x in rooms | orderBy: 'usersNum':true" type="button" class="btn btn-default btn-block roomEnter">
-			<span id="singleRoomName">{{ x.name }}</span>
-			<span class="badge">{{ x.usersNum }}</span>
-		</button>
+				<span class="singleRoomName">{{ x.name }}</span>
+				<span class="badge">{{ x.usersNum }}</span>
+			</button>
 		</div>
-		<div id="join-room">
-			<div class="form-inline">
+		<div id="input-room" class="row">
+			<div id="input-join" class="col-sm-9">
 				  <input type="text" class="form-control" id="roomname" placeholder="Enter Room Name">
+			</div>
+			<div id="submit-join" class="col-sm-3">
 				  <button id="create" type="button" class="btn btn-success">Join Room</button>
 			</div>
 		</div>

@@ -1,14 +1,14 @@
 //------------------------------------JQuery---------------------------------------------
 $(document).ready(function() {
-	//$("#myCanvas").hide();
 	$("#tool-belt").hide();
+	$("#right-container").hide();
 	$("#create").on('click', function() {
 		sendWelcome($("#roomname").val());
 	});
 			
 	//jeżeli dodajemy element dynamicznie (append) to tak wygląda funkcja on click jquery
 	$(document).on('click','.roomEnter',function(){
-		sendWelcome($(".roomEnter #singleRoomName").text());
+		sendWelcome($(".singleRoomName", this).text());
 	});
 		
 	$(".color").on('click', function() {
@@ -39,7 +39,7 @@ $(document).ready(function() {
 	        }
     	});
 
-	sendWelcome("testowy");
+	//sendWelcome("testowy");
 });
 
 
@@ -94,9 +94,10 @@ function sendWelcome(roomName) {
 		game: 	"charades"
 	});
 		
-	$("#myCanvas").show();
+	$("canvas").show();
 	$("#tool-belt").show();
 	$("#rooms").hide();
+	$("#right-container").show();
 };
 
 //------------------------------------Player-----------------------------------------------
@@ -131,7 +132,7 @@ var whoIsDrawing;
 var timer;
 
 function create() {
-
+	$("canvas").hide();
 	game.stage.backgroundColor = 0xfdf5d6;
     graphics = game.add.graphics(0, 0);
 
@@ -146,7 +147,7 @@ function create() {
     currentCategory = game.add.text(20, 105, "Category:", style);
     currentWord = game.add.text(20, 140, "", style);
     
-    timer = game.add.text(950, 70, "", style);
+    timer = game.add.text(window.innerWidth - 420, 70, "", style);
 }
 
 
