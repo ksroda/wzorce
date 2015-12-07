@@ -47,28 +47,28 @@ socket.on('update rooms', function(rooms) {
 });
 
 socket.on('update', function(data) {
-	for(var i = 0; i < data.room.cards.length; i++) {
-		if(!cards[data.room.cards[i].id]) {
-			createCard(data.room.cards[i]);
+	for(var i = 0; i < data.cards.length; i++) {
+		if(!cards[data.cards[i].id]) {
+			createCard(data.cards[i]);
 		} else {
-			cards[data.room.cards[i].id].updateGoal(data.room.cards[i]);
+			cards[data.cards[i].id].updateGoal(data.cards[i]);
 		}
 	}
 
-	for(var i = 0; i < data.room.players.length; i++) {
-		if(!userInfo[data.room.players[i].id]) {
-			userInfo[data.room.players[i].id] = new UserInfo(data.room.players[i]);
+	for(var i = 0; i < data.players.length; i++) {
+		if(!userInfo[data.players[i].id]) {
+			userInfo[data.players[i].id] = new UserInfo(data.players[i]);
 		} else {
-			userInfo[data.room.players[i].id].update(data.room.players[i]);
+			userInfo[data.players[i].id].update(data.players[i]);
 		}
 	}
 
 
-	if(timer) timer.setText(data.room.timer);
-	if(dealerCardsSum) dealerCardsSum.setText(data.room.dealerCardsSum);
+	if(timer) timer.setText(data.timer);
+	if(dealerCardsSum) dealerCardsSum.setText(data.dealerCardsSum);
 
-	currentPlayer = data.room.currentPlayer;
-	gameState = data.room.state;
+	currentPlayer = data.currentPlayer;
+	gameState = data.state;
 	
 });
 

@@ -267,6 +267,8 @@ Room.prototype.gameLoop = function(io) {
 			}
 		this.timer = Math.ceil((this.timeToThink - (now - this.currentPlayerTime))/1000);
 
+
+		//SPRAWDZIC!!!
 		if(this.players.indexOf(this.currentPlayer) === 0 && this.isRoundStarted){
 			this.controlDealTime = now - this.timeBetweenCardsDeal/2;
 			this.state = "dealersTurn";
@@ -339,7 +341,12 @@ Room.prototype.gameLoop = function(io) {
 
 
 	io.to(this.id).emit('update', {
-		room: this
+		cards: this.cards,
+		players: this.players,
+		dealerCardsSum: this.dealerCardsSum,
+		timer: this.timer,
+		currentPlayer: this.currentPlayer,
+		state: this.state
 	});
 
 	for(var i = 0; i < this.cards.length; i++) {
