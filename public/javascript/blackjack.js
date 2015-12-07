@@ -1,5 +1,6 @@
 //------------------------------------JQuery---------------------------------------------
 $(document).ready(function() {
+	$(".actionButtons").hide();
 	$("#create").on('click', function() {
 		sendWelcome($("#roomname").val());
 	});
@@ -13,22 +14,13 @@ $(document).ready(function() {
 		socket.emit("actionButton", this.id);
 	});
 
-	
+
 });	
 
 
 		
 //------------------------------------Socket--------------------------------------------
 var socket = io();
-
-function sendWelcome(roomName) {
-	socket.emit('welcome', {
-		name:	"Guest" + Math.floor(Math.random() * 1000),
-		room:	roomName,
-		game: 	"blackjack"
-	});
-	$("#rooms").hide();
-};
 
 socket.on('id', function(id) {
 	myId = id;
@@ -78,12 +70,31 @@ socket.on('reset', function() {
 	}
 });
 
+function sendWelcome(roomName) {
+	socket.emit('welcome', {
+		name:	player.name,
+		room:	roomName,
+		game: 	"blackjack"
+	});
+
+	$("canvas").show();
+	$("#rooms").hide();
+	$("#top-container").hide();
+	$(".actionButtons").show();
+};
+
+//------------------------------------Player-----------------------------------------------
+var player = {
+	name: 			"Guest" + Math.floor(Math.random() * 1000),
+	roomName:		0,
+};
+
 //------------------------------------Phraser-------------------------------------------
 var game = new Phaser.Game(1350, 700, Phaser.AUTO, '', { preload: preload, create: create, update: update }, true);
 var cardsGroup;
 
 var cards = {};
-var style = { font: "18px Arial", fill: "#0000000", align: "center" };
+var style = { font: "18px Arial", fill: "#FFFFFF", align: "center" };
 var timer;
 var dealerCardsSum;
 var userInfo = {};
@@ -124,7 +135,7 @@ function preload() {
 }
 
 function create() {
-	//game.stage.backgroundColor = 0x418026;
+	$("canvas").hide();
 	game.time.desiredFps = 30;
 
 	var table = game.add.sprite(675, 280, "table");

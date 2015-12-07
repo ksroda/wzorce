@@ -1,46 +1,72 @@
+.bordered {
+	border: 1px solid white;
+}
+
 body {
 	overflow: hidden;
+	background-color: #000000;
 }
 	
 canvas {
-	border: 1px solid;
+	//.bordered;
+	position: absolute;
+	top: 0px;
+	z-index: -1;
+	margin : auto;
 }
 
 #rooms {
+	.bordered;
 	position: absolute;
-	border: 1px solid;
 	width: 400px;
-	height: 450px;
 	left: 50%;
 	margin-left: -200px;
 	top: 100px;
-}
-
-#join-room {
-	position: absolute;
-	bottom: 0;
-	width: 100%;
-}
-
-#create {
-	width: 25%;
-}
-
-#roomname {
-	width: 70%;
-}
-
-.roomdiv {
-	width: 100%;
-	text-align: left;
-}
+	border-radius: 5px;
+	border-color: #1d3643;
 	
-.btn-block {
-	text-align: left;
+	#output-room {
+		//.bordered;
+		height: 400px;
+		//overflow-y: scroll;
+
+		button {
+			.singleRoomName {
+				float: left;
+			}
+			margin: 0;
+		}
+	}
+
+
+	#input-room {
+		margin: 0;
+		//.bordered;
+
+		#input-join {
+			//.bordered;
+			margin: 0;
+			padding: 0;
+		}
+
+		#submit-join {
+			//.bordered;
+			margin: 0;
+			padding: 0;
+			button {
+				width: 95%;
+				float: right;
+			}
+		}
+	}
 }
 	
 .badge {
 	float: right;
+}
+
+#top-container {
+	background-color: #b30000;
 }
 
 
@@ -53,11 +79,4 @@ canvas {
 	top: 610px;
 	left: 50%;
 	margin-left: -150px;
-}
-
-canvas {
-	position: : absolute;
-	display : block;
-	margin : auto;
-	border: none;
 }

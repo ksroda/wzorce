@@ -12,30 +12,38 @@
 	<script src="phaser/phaser.min.js"></script>
 	<!--<script src="https://code.createjs.com/tweenjs-0.6.1.min.js"></script>-->
 	<script src="javascript/blackjack.js"></script>
+	<link rel="stylesheet" href="stylesheets/homepage.css">
 	<link rel="stylesheet" href="stylesheets/blackjack.css">
 </head>
 <body> 
 	<div id="rooms" ng-app="myApp" ng-controller="customersCtrl">
-		<div class="btn-group-vertical roomdiv">
-  		<button ng-repeat="x in rooms | orderBy: 'usersNum':true" type="button" class="btn btn-default btn-block roomEnter">
-  			<span id="singleRoomName">{{ x.name }}</span>
-  			<span class="badge">{{ x.usersNum }}</span>
-  		</button>
+		<div id="output-room">
+			<button ng-repeat="x in rooms | orderBy: 'usersNum':true" type="button" class="btn btn-default btn-block roomEnter">
+				<span class="singleRoomName">{{ x.name }}</span>
+				<span class="badge">{{ x.usersNum }}</span>
+			</button>
 		</div>
-		<div id="join-room">
-			<div class="form-inline">
+		<div id="input-room" class="row">
+			<div id="input-join" class="col-sm-9">
 				  <input type="text" class="form-control" id="roomname" placeholder="Enter Room Name">
+			</div>
+			<div id="submit-join" class="col-sm-3">
 				  <button id="create" type="button" class="btn btn-success">Join Room</button>
 			</div>
 		</div>
 	</div>
-	<div id="game">
-
-
-
-
-
-
+	<div id="top-container">
+		<div id="website-name">
+			Website Name
+		</div>
+		<div id="login" class="row">
+			<div id="sign-in" class="col-sm-6 log-button">
+				Sing In
+			</div>
+			<div id="sign-out" class="col-sm-6 log-button">
+				Sing Out
+			</div>
+		</div>
 	</div>
 	<div class="btn-group actionButtons">
 		<button id="hit" type="button" class="btn btn-success actionButton">Hit</button>

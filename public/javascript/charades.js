@@ -68,6 +68,7 @@ socket.on('update', function(data) {
 	}
 	whoIsDrawing.text = (data.room.currentPlayer.name == player.name) ? "You are drawing" : data.room.currentPlayer.name + " is drawing";
 	timer.text = data.room.timer;
+	iAmDrawing = (data.room.currentPlayer.name == player.name);
 });
 
 socket.on('clear screen', function() {
@@ -83,8 +84,8 @@ socket.on('clear screen', function() {
 socket.on('chat-message', function(message) {
 	$("#right-container #chat #output-chat ul")
 		.append("<li>"+message.sender + ": " + message.content+"</li>");
-	$("#right-container #chat #output-chat")
-		.animate({ scrollTop: $(document).height() }, "fast");
+	var d = $("#right-container #chat #output-chat");
+	d.scrollTop(d.prop("scrollHeight"));
 });
 		
 function sendWelcome(roomName) {
@@ -128,6 +129,7 @@ var lastY;
 var length = 2;
 var currentWord;
 var currentCategory;
+var iAmDrawing;
 var whoIsDrawing;
 var timer;
 
@@ -152,19 +154,21 @@ function create() {
 
 
 function onDown(pointer) {
-	graphics.lineStyle(player.pathProperties.size, player.pathProperties.color, 1);
-	graphics.moveTo(pointer.x, pointer.y);
-	draw = true;
-	lastX = pointer.x;
-	lastY = pointer.y;
-	socket.emit('mouse down', {
-		start: {
-			x: pointer.x,
-			y: pointer.y
-		}, 
-		size: player.pathProperties.size,
-		color: player.pathProperties.color
-	})
+	if(iAmDrawing) {
+		graphics.lineStyle(player.pathProperties.size, player.pathProperties.color, 1);
+		graphics.moveTo(pointer.x, pointer.y);
+		draw = true;
+		lastX = pointer.x;
+		lastY = pointer.y;
+		socket.emit('mouse down', {
+			start: {
+				x: pointer.x,
+				y: pointer.y
+			}, 
+			size: player.pathProperties.size,
+			color: player.pathProperties.color
+		});
+	}
 }
 
 
@@ -174,7 +178,7 @@ function onUp(pointer) {
 
 
 function trace(pointer) {
-    if (draw && (Math.abs(pointer.x - lastX) > length || Math.abs(pointer.y - lastY) > length)) {
+    if (draw && (Math.abs(pointer.x - lastX) > length || Math.abs(pointer.y - lastY) > length) && iAmDrawing) {
       	graphics.lineTo(pointer.x, pointer.y);
 		console.log(i++);
 		lastX = pointer.x;
