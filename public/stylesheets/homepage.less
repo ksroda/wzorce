@@ -6,11 +6,12 @@ body {
 	-webkit-transition: background-color 1s; /* Safari */
     transition: background-color 1s;
     background-color: #333333;
+    color: white;
 }
 
 #top-container {
 	position: fixed;
-	.bordered;
+	//.bordered;
 	height: 60px;
 	width: 100%;
 
@@ -20,7 +21,7 @@ body {
 
 	
 	#website-name {
-		.bordered;
+		//.bordered;
 		float: left;
 		width: 200px;
 		height: 100%;
@@ -29,16 +30,30 @@ body {
 	}
 
 	#login {
-		.bordered;
-		width: 200px;
+		//.bordered;
+		width: 190px;
 		height: 100%;
 		float: right;
 		text-align: center;	
 		margin-right: 100px;
 
 		.log-button {
-			.bordered;
+			//.bordered;
+			border-bottom: 3px solid #808080;
 			height: 100%;
+			width: 47%;
+
+			-webkit-transition: border-bottom 0.5s, margin-top 0.5s; /* Safari */
+		    transition: border-bottom 0.5s, margin-top 0.5s;
+
+			&:hover {
+				border-color: #FF0000;
+				margin-top: 3px;
+			}
+		}
+
+		#sign-out {
+			float: right;
 		}
 	}
 }

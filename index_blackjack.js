@@ -126,15 +126,9 @@ Room.prototype.randomCardFromStack = function(cardForDealer) {
 	});
 }
 
-Room.prototype.userDisconnected = function(playerId) {
+Room.prototype.userDisconnected = function(io, playerId) {
 	if(this.currentPlayer.id === playerId) {
-		var index = this.players.indexOf(this.currentPlayer);
-		index++;
-		if(index > this.players.length - 1) {
-			index = 0;
-		}
-		this.players[this.players.indexOf(this.currentPlayer)].inGame = false;
-		this.currentPlayer = this.players[index];
+		this.changeCurrentPlayer(io, false);
 	}
 
 	for(var i = 0; i < this.players.length; i++) {
@@ -199,13 +193,13 @@ Room.prototype.drawCard = function(cardForDealer) {
 	}
 }
 
-Room.prototype.changeCurrentPlayer = function(io,playerInGame) {
+Room.prototype.changeCurrentPlayer = function(io, playerInGame) {
 	var index = this.players.indexOf(this.currentPlayer);
 	index++;
 	if(index > this.players.length - 1) {
 		index = 0;
 	}
-	this.players[this.players.indexOf(this.currentPlayer)].inGame = playerInGame;
+	this.currentPlayer.inGame = playerInGame;
 	this.currentPlayer = this.players[index];
 }
 
@@ -239,6 +233,7 @@ Room.prototype.gameLoop = function(io) {
 					this.isCardForDealer = true;
 				}
 				this.drawCard(false);
+				this.changeCurrentPlayer(io, true);
 			}			
 		}
 		if(this.players.indexOf(this.currentPlayer) === 0 && this.currentPlayer.cardsNumber == 2){
@@ -282,7 +277,7 @@ Room.prototype.gameLoop = function(io) {
 		timer = 0;
 		if(now - this.controlDealTime > this.timeBetweenCardsDeal) {
 			this.controlDealTime = now;
-			if(this.dealerCardsSum < 17 ) {
+			if(this.dealerCardsSum < 17) {
 				this.drawCard(true);
 				if(this.dealerCardsSum > 21) {
 					for(var i = 0; i < this.players.length; i++) {
