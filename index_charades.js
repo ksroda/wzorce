@@ -16,21 +16,14 @@ charades.createRoom = function(io, roomName, roomIntervals) {
 charades.setOnMouseDown = function(socket) {
 	var self = this;
 	socket.on('mouse down', function(msg) {
-		//var currentPlayer = self.rooms[socket.roomId].currentPlayer;
-		//if(currentPlayer.id = socket.id) {
-			socket.broadcast.to(socket.roomId).emit('mouse down', msg);
-		//}
-		//console.log(msg);
+		socket.broadcast.to(socket.roomId).emit('mouse down', msg);
 	});
 };
 		
 charades.setOnMouseDrag = function(socket) {
 	var self = this;
 	socket.on('mouse drag', function(msg) {
-		//var currentPlayer = self.rooms[socket.roomId].currentPlayer;
-		//if(currentPlayer.id = socket.id) {
-			socket.broadcast.to(socket.roomId).emit('mouse drag', msg);
-		//}
+		socket.broadcast.to(socket.roomId).emit('mouse drag', msg);
 	});
 }
 
@@ -41,8 +34,8 @@ charades.setOnChatMessage = function(io, socket) {
 		if(currentPlayer.id != socket.id) {
 			io.to(socket.roomId).emit('chat-message', msg);
 
-			//console.log(self.rooms[socket.roomId].currentWord.word);
-			if(self.rooms[socket.roomId].currentWord.word.toLowerCase() === msg.content.toLowerCase()) {
+			var correctnessResult = auxiliaryRequire.correctness(msg.content, self.rooms[socket.roomId].currentWord.word);
+			if(correctnessResult === 2) {
 				io.to(socket.roomId).emit('chat-message', {
 					sender: "System",
 					content: "Congratulations! The winner is " + socket.name
@@ -52,6 +45,11 @@ charades.setOnChatMessage = function(io, socket) {
 						self.rooms[socket.roomId].changeCurrentPlayer(io, player);
 					}
 				})
+			} else if(correctnessResult === 1) {
+				io.to(socket.roomId).emit('chat-message', {
+					sender: "System",
+					content: msg.content + " - Really close!"
+				});
 			}
 		}
 	});

@@ -58,3 +58,51 @@ module.exports.getCardsStack = function() {
 
 		return stack;	
 }
+
+
+function spr(slowo,wzorzec){
+	var tab1 =[];
+	var tab2 = [];
+	var licznik = 0;
+
+    for(var i=0;i<wzorzec.length-1;i++){
+        tab1.push(wzorzec.charAt(i)+wzorzec.charAt(i+1));
+    }
+    for(var i=0;i<slowo.length-1;i++){
+        tab2.push(slowo.charAt(i)+slowo.charAt(i+1));
+    }
+
+    for(var i=0;i<slowo.length;i++){
+        for(var j=0;j<wzorzec.length;j++){
+            if(tab1[j] == tab2[i]) licznik++;
+        }
+    }
+
+	return licznik;
+}
+
+module.exports.correctness = function(input, pattern) {
+	if (typeof input == "string" || input instanceof String) {
+        if(input.toLowerCase().trim() === pattern.toLowerCase().trim()) {
+        	return 2; //trim usuwa spacje sprzed i po
+        }
+		var etap1 = input.replace(/\s/g,"").toLowerCase();
+		var etap2 = pattern.replace(/\s/g,"").toLowerCase();
+
+		if(etap1.length<=etap2.length*0.6 || etap1.length>=etap2.length*1.4) {
+			return 0;
+		} else {
+            var etap1 = input.toLowerCase();
+            var etap2 = pattern.toLowerCase();
+            suma = spr(etap1,etap2);
+            if (suma/etap2.length >=0.6) {
+            	return 1
+            };
+            return 0;
+        }
+	}
+	else {
+		return 0
+	};
+
+}
