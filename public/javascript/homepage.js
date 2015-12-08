@@ -27,4 +27,9 @@ $(document).ready(function(){
 		$("#blackjack").css("opacity", "1");
 		$("#hangman").css("opacity", "1");
 	});
+
+	$(".games").on('click', function() {
+		window.location = $(this).find("a").attr("href"); 
+  		return false;
+	});
 });

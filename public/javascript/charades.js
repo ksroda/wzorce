@@ -38,7 +38,7 @@ $(document).ready(function() {
 				$("#right-container #chat #input-chat #send-button button").click();//Trigger search button click event
 	        }
     	});
-
+	$('[data-toggle="tooltip"]').tooltip("show");  
 	//sendWelcome("testowy");
 });
 

@@ -144,7 +144,7 @@ function create() {
 	timer = game.add.text(50, 50, "", style);
 	dealerCardsSum = game.add.text(600, 80, "", style);
 	
-	table.scale.setTo(0.6, 0.6);
+	//table.scale.setTo(0.6, 0.6);
 	table.anchor.set(0.5, 0.5);
 	timer.anchor.set(0.5, 0.5);
 	dealerCardsSum.anchor.set(0.5, 0.5);

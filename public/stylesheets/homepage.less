@@ -27,7 +27,7 @@ body {
 		height: 100%;
 		text-align: center;
 		margin-left: 100px;
-		line-height: 40px;
+		line-height: 45px;
 	}
 
 	#login {
@@ -40,16 +40,17 @@ body {
 
 		.log-button {
 			//.bordered;
-			line-height: 40px;
+			line-height: 45px;
 			border-bottom: 3px solid #808080;
 			height: 100%;
 			width: 47%;
 
-			-webkit-transition: border-bottom 0.5s; /* Safari */
-		    transition: border-bottom 0.5s;
+			-webkit-transition: border-bottom 0.5s, background-color 0.5s; /* Safari */
+		    transition: border-bottom 0.5s, background-color 0.5s;
 
 			&:hover {
-				border-color: #FF0000;
+				border-color: #FFFFFF;
+				background-color: rgba(255,255,255,0.1);
 			}
 		}
 
