@@ -7,7 +7,7 @@ $(document).ready(function() {
 		
 	//jeżeli dodajemy element dynamicznie (append) to tak wygląda funkcja on click jquery
 	$(document).on('click','.roomEnter',function(){
-		sendWelcome($(".roomEnter #singleRoomName").text());
+		sendWelcome($(".singleRoomName", this).text());
 	});
 
 	$(".actionButton").on('click', function() {
