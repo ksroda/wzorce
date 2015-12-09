@@ -1,14 +1,7 @@
-BLACKJACK
-4. Przyciski bet -> 1, 10, 25, 50, 100...
-5. Dlaczego nie działa dla krótszego czasu oczekiwania na ruch gracza
-6. Trójkąt(strzałka) wskazaująca czyj aktualnie jest ruch
-7. Zmniejszyć rozmiar kart na ekranie
-10. Dodanie elementów interfejsu:
-- liczba obstwionych punktów
-!!!11. Trzeba ustawić zmienną spot gracza, decydującą o miejscu w którym się znajduje, czyli pierwszy gracz
-	ma spot = 1, drugi spot = 2, kiedy pierwszy gracz wyjdzie z gry to trzeba zwolnić spot1, 3 gracz dołącza i wchodzi na spot = 1
-12. Jak gracz wyjdzie to usuwanie, jego elementów interfejsu
-13. Karty po stronie klienta nie są usuwane - do naprawy
-14. reakcja na event onDisconnect dla konkretnego pokoju - usunięci gracza ze stołu
-15. Poprawa ułożenia kart w łuk - zmiany w funkcji
-16. Algorytm tasowania do zmiany
+- Przyciski bet -> 1, 10, 25, 50, 100...
+- Trójkąt(strzałka) wskazaująca czyj aktualnie jest ruch
+- Revealing module pattern w pliku database_index
+- Przysyłanie do gracza jego aktualnych statystyk z bazy danych przy użyciu sesji
+- Wzorzec Observer po stronie klienta do sterowania obiektami DOM i elementami interfejsu przy zmianie stanu gry itp
+- Wzorzec Command do rejestrowania wiadomości do gracza, który jest offline
+- System czatu prywatnego

@@ -1,30 +1,32 @@
-var auxiliaryRequire = require('./index_auxiliary.js');
+var auxiliaryRequire = require('./index_auxiliary.js')();
 
-var blackjack = {
-	rooms: {}
-}
+module.exports = function() {
+	var blackjack = {
+		rooms: {}
+	}
 
-blackjack.createRoom = function(io, roomName, roomIntervals) {
-	var room = new Room(roomName, (new Date).getTime());
-	room.startLoop(io, roomIntervals);
-	this.rooms[room.id] = room;
-}
+	blackjack.createRoom = function(io, roomName, roomIntervals) {
+		var room = new Room(roomName, (new Date).getTime());
+		room.startLoop(io, roomIntervals);
+		this.rooms[room.id] = room;
+	}
 
-//-----------------------------------------------------------------Socket---------------------------------------------------
+	//-----------------------------------------------------------------Socket---------------------------------------------------
 
-blackjack.setOnActionChange = function(socket) {
-	var self = this;
-	socket.on('actionButton', function(action) {
-		if(self.rooms[socket.roomId]) {
-			var currentPlayer = self.rooms[socket.roomId].currentPlayer;
-			if(currentPlayer.id === socket.id) {
-				currentPlayer.action = action;
+	blackjack.setOnActionChange = function(socket) {
+		var self = this;
+		socket.on('actionButton', function(action) {
+			if(self.rooms[socket.roomId]) {
+				var currentPlayer = self.rooms[socket.roomId].currentPlayer;
+				if(currentPlayer.id === socket.id) {
+					currentPlayer.action = action;
+				}
 			}
-		}
-	});
-}
+		});
+	}
 
-module.exports = blackjack;
+	return blackjack;
+};
 
 //-------------------------------------------------------------------Room---------------------------------------------------
 
@@ -337,7 +339,7 @@ Room.prototype.gameLoop = function(io) {
 
 	io.to(this.id).emit('update', {
 		cards: this.cards,
-		players: this.players,
+		players: this.playersAll,
 		dealerCardsSum: this.dealerCardsSum,
 		timer: this.timer,
 		currentPlayer: this.currentPlayer,

@@ -1,6 +1,8 @@
-var auxiliaryRequire = require('./index_auxiliary.js');
+var auxiliaryRequire = require('./index_auxiliary.js')();
 
-module.exports.setOnWelcome = function(socket, games, io, roomsIntervals) {
+module.exports = function() {
+
+	var publicSetOnWelcome = function(socket, games, io, roomsIntervals) {
 		socket.on('welcome', function(user) {
 			socket.name = user.name;
 			socket.room = user.room;
@@ -25,8 +27,8 @@ module.exports.setOnWelcome = function(socket, games, io, roomsIntervals) {
 			io.emit('update rooms', games[socket.game].rooms);
 		});
 	};
-	
-module.exports.setOnDisconnect = function(socket, games, io, roomsIntervals) {
+
+	var publicSetOnDisconnect = function(socket, games, io, roomsIntervals) {
 		socket.on('disconnect', function() {
 			if(socket.game) {
 				games[socket.game].rooms[socket.roomId].usersNum--;
@@ -50,9 +52,16 @@ module.exports.setOnDisconnect = function(socket, games, io, roomsIntervals) {
 			}
 		});
 	};
-	
-module.exports.setOnMessage = function(socket, io) {
+
+	var publicSetOnMessage = function(socket, io) {
 		socket.on('message', function(msg) {
 				io.to(socket.roomId).emit('message', msg);
 		});
 	};
+
+	return {
+		setOnWelcome: publicSetOnWelcome,
+		setOnDisconnect: publicSetOnDisconnect,
+		setOnMessage: publicSetOnMessage
+	}
+}

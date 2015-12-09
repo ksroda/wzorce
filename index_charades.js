@@ -1,61 +1,63 @@
-var auxiliaryRequire = require('./index_auxiliary.js');
+var auxiliaryRequire = require('./index_auxiliary.js')();
 var databaseRequire = require('./index_database.js');
 
-var charades = {
-	rooms: {}
-}
+module.exports = function() {
+	var charades = {
+		rooms: {}
+	}
 
-charades.createRoom = function(io, roomName, roomIntervals) {
-	var room = new Room(roomName, (new Date).getTime())	;
-	room.startLoop(io, roomIntervals);
-	this.rooms[room.id] = room;
-}
+	charades.createRoom = function(io, roomName, roomIntervals) {
+		var room = new Room(roomName, (new Date).getTime())	;
+		room.startLoop(io, roomIntervals);
+		this.rooms[room.id] = room;
+	}
 
-//-----------------------------------------------------------------Socket---------------------------------------------------
+	//-----------------------------------------------------------------Socket---------------------------------------------------
 
-charades.setOnMouseDown = function(socket) {
-	var self = this;
-	socket.on('mouse down', function(msg) {
-		socket.broadcast.to(socket.roomId).emit('mouse down', msg);
-	});
-};
-		
-charades.setOnMouseDrag = function(socket) {
-	var self = this;
-	socket.on('mouse drag', function(msg) {
-		socket.broadcast.to(socket.roomId).emit('mouse drag', msg);
-	});
-}
+	charades.setOnMouseDown = function(socket) {
+		var self = this;
+		socket.on('mouse down', function(msg) {
+			socket.broadcast.to(socket.roomId).emit('mouse down', msg);
+		});
+	};
+			
+	charades.setOnMouseDrag = function(socket) {
+		var self = this;
+		socket.on('mouse drag', function(msg) {
+			socket.broadcast.to(socket.roomId).emit('mouse drag', msg);
+		});
+	}
 
-charades.setOnChatMessage = function(io, socket) {
-	var self = this;
-	socket.on('chat-message', function(msg) {
-		var currentPlayer = self.rooms[socket.roomId].currentPlayer;
-		if(currentPlayer.id != socket.id) {
-			io.to(socket.roomId).emit('chat-message', msg);
+	charades.setOnChatMessage = function(io, socket) {
+		var self = this;
+		socket.on('chat-message', function(msg) {
+			var currentPlayer = self.rooms[socket.roomId].currentPlayer;
+			if(currentPlayer.id != socket.id) {
+				io.to(socket.roomId).emit('chat-message', msg);
 
-			var correctnessResult = auxiliaryRequire.correctness(msg.content, self.rooms[socket.roomId].currentWord.word);
-			if(correctnessResult === 2) {
-				io.to(socket.roomId).emit('chat-message', {
-					sender: "System",
-					content: "Congratulations! The winner is " + socket.name
-				});
-				self.rooms[socket.roomId].playersAll.forEach(function(player) {
-					if(player.id === socket.id) {
-						self.rooms[socket.roomId].changeCurrentPlayer(io, player);
-					}
-				})
-			} else if(correctnessResult === 1) {
-				io.to(socket.roomId).emit('chat-message', {
-					sender: "System",
-					content: msg.content + " - Really close!"
-				});
+				var correctnessResult = auxiliaryRequire.correctness(msg.content, self.rooms[socket.roomId].currentWord.word);
+				if(correctnessResult === 2) {
+					io.to(socket.roomId).emit('chat-message', {
+						sender: "System",
+						content: "Congratulations! The winner is " + socket.name
+					});
+					self.rooms[socket.roomId].playersAll.forEach(function(player) {
+						if(player.id === socket.id) {
+							self.rooms[socket.roomId].changeCurrentPlayer(io, player);
+						}
+					})
+				} else if(correctnessResult === 1) {
+					io.to(socket.roomId).emit('chat-message', {
+						sender: "System",
+						content: msg.content + " - Really close!"
+					});
+				}
 			}
-		}
-	});
-}
+		});
+	}
 
-module.exports = charades;
+	return charades;
+};
 
 //-------------------------------------------------------------------Room---------------------------------------------------
 
