@@ -203,6 +203,7 @@ Room.prototype.changeCurrentPlayer = function(playerInGame) {
 	}
 	this.currentPlayer.inGame = playerInGame;
 	this.currentPlayer = this.players[index];
+	this.currentPlayerTime = (new Date()).getTime();
 }
 
 Room.prototype.gameLoop = function(io) {
@@ -264,8 +265,6 @@ Room.prototype.gameLoop = function(io) {
 			}
 		this.timer = Math.ceil((this.timeToThink - (now - this.currentPlayerTime))/1000);
 
-
-		//SPRAWDZIC!!!
 		if(this.players.indexOf(this.currentPlayer) === 0 && this.isRoundStarted){
 			this.controlDealTime = now - this.timeBetweenCardsDeal/2;
 			this.state = "dealersTurn";

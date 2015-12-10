@@ -1,0 +1,39 @@
+<div id="top-container">
+	<div id="website-name">
+		Pattern-Games
+		</div>
+    <div id="you-are-playing-as">
+		<div id="phrase">
+			You are playing as
+		</div>
+		<div id="login">
+			<div id="profile" class="log-button">
+				<%- user.name %>
+				<div id="statistics" class="row">
+					<div id="overallpoints" class="col-sm-6">
+						Points
+						<br/>
+						<%= user.overallPoints %><span class="glyphicon glyphicon-star"></span>
+					</div>
+					<div id="aas" class="col-sm-6">
+						Time
+						<br/>
+						<%= user.overallTime %>h
+					</div>
+				</div>
+			</div>
+			<% if(user.guest) { %>
+				<div id="sign-in" class="log-button">
+					Sign in
+				</div>
+				<div id="register" class="log-button">
+					Register
+				</div>
+			<% } else { %>
+				<div id="sign-out" class="log-button">
+					Sign out
+				</div>
+			<% } %>
+		</div>
+	</div>  
+</div>

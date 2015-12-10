@@ -11,6 +11,9 @@
 	<script src="phaser/phaser.js"></script>
 	<script src="phaser/phaser.min.js"></script>
 	<!--<script src="https://code.createjs.com/tweenjs-0.6.1.min.js"></script>-->
+	<script type="text/javascript">
+		var user = <%- JSON.stringify(user) %>;
+	</script>
 	<script src="javascript/blackjack.js"></script>
 	<link rel="stylesheet" href="stylesheets/homepage.css">
 	<link rel="stylesheet" href="stylesheets/blackjack.css">
@@ -32,19 +35,7 @@
 			</div>
 		</div>
 	</div>
-	<div id="top-container">
-		<div id="website-name">
-			Website Name
-		</div>
-		<div id="login" class="row">
-			<div id="sign-in" class="col-sm-6 log-button">
-				Sing In
-			</div>
-			<div id="sign-out" class="col-sm-6 log-button">
-				Sing Out
-			</div>
-		</div>
-	</div>
+	<%- include top-container.ejs %>
 	<div class="btn-group actionButtons">
 		<button id="hit" type="button" class="btn btn-success actionButton">Hit</button>
 	  	<button id="stand" type="button" class="btn btn-success actionButton">Stand</button>

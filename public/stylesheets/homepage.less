@@ -9,56 +9,7 @@ body {
     color: white;
 }
 
-#top-container {
-	position: fixed;
-	//.bordered;
-	height: 50px;
-	width: 100%;
-
-	-webkit-transition: background-color 1s; /* Safari */
-    transition: background-color 1s;
-    background-color: #222222;
-
-	
-	#website-name {
-		//.bordered;
-		float: left;
-		width: 200px;
-		height: 100%;
-		text-align: center;
-		margin-left: 100px;
-		line-height: 45px;
-	}
-
-	#login {
-		//.bordered;
-		width: 190px;
-		height: 100%;
-		float: right;
-		text-align: center;	
-		margin-right: 100px;
-
-		.log-button {
-			//.bordered;
-			line-height: 45px;
-			border-bottom: 3px solid #808080;
-			height: 100%;
-			width: 47%;
-
-			-webkit-transition: border-bottom 0.5s, background-color 0.5s; /* Safari */
-		    transition: border-bottom 0.5s, background-color 0.5s;
-
-			&:hover {
-				border-color: #FFFFFF;
-				background-color: rgba(255,255,255,0.1);
-			}
-		}
-
-		#sign-out {
-			float: right;
-		}
-	}
-}
+@import "top-container.less";
 
 #centre-containter {
 	@backgroundSizeX: 500px;

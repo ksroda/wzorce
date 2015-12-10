@@ -2,6 +2,16 @@
 $(document).ready(function() {
 	$("#tool-belt").hide();
 	$("#right-container").hide();
+
+	$("#profile").hover(function() {
+		$("#phrase").stop().fadeOut(300);
+	});
+
+	$("#profile").mouseleave(function() {
+		$("#phrase").stop().fadeIn(700);
+	});
+
+	
 	$("#create").on('click', function() {
 		sendWelcome($("#roomname").val());
 	});
@@ -105,6 +115,7 @@ function sendWelcome(roomName) {
 var player = {
 	name: 			"Guest" + Math.floor(Math.random() * 1000),
 	roomName:		0,
+
 	path:			0,
 	pathProperties:	{
 		color:	'black',

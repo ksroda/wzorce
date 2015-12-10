@@ -14,7 +14,13 @@ $(document).ready(function() {
 		socket.emit("actionButton", this.id);
 	});
 
+	$("#profile").hover(function() {
+		$("#phrase").stop().fadeOut(300);
+	});
 
+	$("#profile").mouseleave(function() {
+		$("#phrase").stop().fadeIn(700);
+	});
 });	
 
 
@@ -85,8 +91,8 @@ function sendWelcome(roomName) {
 
 //------------------------------------Player-----------------------------------------------
 var player = {
-	name: 			"Guest" + Math.floor(Math.random() * 1000),
-	roomName:		0,
+	name: 			user.name,
+	roomName:		0
 };
 
 //------------------------------------Phraser-------------------------------------------

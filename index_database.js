@@ -65,7 +65,7 @@ module.exports.retrieveUser = function(user, callback) {
 			callback(0, user);
 		} else {
 			console.log("Statictics successfully fetched");
-			callback(1, user);
+			callback(1, docs[0]);
 		};
 	});
 };

@@ -32,4 +32,12 @@ $(document).ready(function(){
 		window.location = $(this).find("a").attr("href"); 
   		return false;
 	});
+
+	$("#profile").hover(function() {
+		$("#phrase").stop().fadeOut(300);
+	});
+
+	$("#profile").mouseleave(function() {
+		$("#phrase").stop().fadeIn(700);
+	});
 });

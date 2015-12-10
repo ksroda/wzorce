@@ -102,7 +102,7 @@ app.get('/charades/rooms', function(req, res) {
 });
 
 app.get('/blackjack', function(req, res) {
-	res.render('blackjack');
+	renderPageForUser("blackjack", req, res);
 });
 
 app.get('/blackjack/rooms', function(req, res) {
@@ -160,7 +160,8 @@ function renderPageForUserConfirmed(site, req, res) {
 				"user": {
 					name: user.name,
 					overallPoints: user.overallPoints,
-					overallTime: user.overallTime
+					overallTime: user.overallTime,
+					guest: false
 				}
 			});
 		} else {
@@ -174,6 +175,7 @@ function randomGuestPlayer() {
 	return {
 		name: "Guest" + Math.floor(Math.random() * 1000),
 		overallPoints: 100,
-		timeInGames: 0
+		overallTime: 0,
+		guest: true
 	}
 }
