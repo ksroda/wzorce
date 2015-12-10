@@ -6,10 +6,13 @@
   <link rel="stylesheet" href="libraries/bootstrap-3.3.5-dist/css/bootstrap.min.css">
   <script src="libraries/bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>
   <script src="libraries/angular-1.4.8/angular.min.js"></script>
+  <script src="javascript/top-container.js"></script>
+  <link rel="stylesheet" href="stylesheets/top-container.css">
 </head>
 <body> 
-
+<%- include top-container.ejs %>
 <form method="POST">
+	<br/><br/><br/><br/>
 	<%= message %>
 	Name:<input type="text" id="name" name ="name" placeholder="Enter text">
 	Password:<input type="password" id="pwd" name="password" placeholder="Enter password">

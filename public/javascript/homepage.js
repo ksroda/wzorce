@@ -1,3 +1,8 @@
+var socket = io();
+if(!user.guest) {
+	socket.emit('login', user.name);
+}
+
 $(document).ready(function(){
 	$("#blackjack").hover(function() {
 		$("#top-container").css("background", "#b30000");
@@ -26,18 +31,5 @@ $(document).ready(function(){
 		$("#charades").css("opacity", "1");
 		$("#blackjack").css("opacity", "1");
 		$("#hangman").css("opacity", "1");
-	});
-
-	$(".games").on('click', function() {
-		window.location = $(this).find("a").attr("href"); 
-  		return false;
-	});
-
-	$("#profile").hover(function() {
-		$("#phrase").stop().fadeOut(300);
-	});
-
-	$("#profile").mouseleave(function() {
-		$("#phrase").stop().fadeIn(700);
 	});
 });

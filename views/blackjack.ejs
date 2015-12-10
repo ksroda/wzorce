@@ -15,7 +15,8 @@
 		var user = <%- JSON.stringify(user) %>;
 	</script>
 	<script src="javascript/blackjack.js"></script>
-	<link rel="stylesheet" href="stylesheets/homepage.css">
+	<script src="javascript/top-container.js"></script>
+	<link rel="stylesheet" href="stylesheets/top-container.css">
 	<link rel="stylesheet" href="stylesheets/blackjack.css">
 </head>
 <body> 
@@ -38,9 +39,15 @@
 	<%- include top-container.ejs %>
 	<div class="btn-group actionButtons">
 		<button id="hit" type="button" class="btn btn-success actionButton">Hit</button>
-	  	<button id="stand" type="button" class="btn btn-success actionButton">Stand</button>
-	  	<button id="double" type="button" class="btn btn-success actionButton">Double</button>
-	  	<button id="split" type="button" class="btn btn-success actionButton">Split</button>
+		<button id="stand" type="button" class="btn btn-success actionButton">Stand</button>
+		<button id="double" type="button" class="btn btn-success actionButton">Double</button>
+		<button id="split" type="button" class="btn btn-success actionButton">Split</button>
+	</div>
+	<div class="btn-group betButtons">
+		<button id="10" type="button" class="btn btn-success betButton">10</button>
+		<button id="25" type="button" class="btn btn-success betButton">25</button>
+		<button id="50" type="button" class="btn btn-success betButton">50</button>
+		<button id="100" type="button" class="btn btn-success betButton">100</button>
 	</div>
 	<script>
 		var app = angular.module('myApp', []);

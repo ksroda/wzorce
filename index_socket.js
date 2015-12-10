@@ -1,4 +1,5 @@
 var auxiliaryRequire = require('./index_auxiliary.js')();
+var databaseRequire = require('./index_database.js');
 
 module.exports = function() {
 
@@ -8,6 +9,7 @@ module.exports = function() {
 			socket.room = user.room;
 			socket.game = user.game;
 			socket.roomId = socket.game + "." + socket.room;
+
 			socket.join(socket.roomId);
 			
 			if(!games[socket.game].rooms[socket.roomId]) {
@@ -19,7 +21,7 @@ module.exports = function() {
 				name: socket.name,
 				room: socket.room,
 				roomId: socket.roomId,
-				overallPoints: 1000,
+				overallPoints: user.overallPoints,
 				inGame: true
 			}
 
@@ -31,6 +33,7 @@ module.exports = function() {
 	var publicSetOnDisconnect = function(socket, games, io, roomsIntervals) {
 		socket.on('disconnect', function() {
 			if(socket.game) {
+				databaseRequire.updateUserStatistics(games[socket.game].rooms[socket.roomId].findPlayerById(socket.id), socket.startTime);
 				games[socket.game].rooms[socket.roomId].usersNum--;
 					
 				for(var i = 0; i < games[socket.game].rooms[socket.roomId].playersAll.length; i++) {
@@ -46,6 +49,7 @@ module.exports = function() {
 				} else {
 					io.to(socket.roomId).emit('player disconnected', socket.id);
 					games[socket.game].rooms[socket.roomId].userDisconnected(io, socket.id);
+
 				}
 
 				io.emit('update rooms', games[socket.game].rooms);

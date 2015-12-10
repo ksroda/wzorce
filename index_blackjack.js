@@ -13,13 +13,22 @@ module.exports = function() {
 
 	//-----------------------------------------------------------------Socket---------------------------------------------------
 
-	blackjack.setOnActionChange = function(socket) {
+	blackjack.socketHandling = function(socket) {
 		var self = this;
 		socket.on('actionButton', function(action) {
 			if(self.rooms[socket.roomId]) {
 				var currentPlayer = self.rooms[socket.roomId].currentPlayer;
 				if(currentPlayer.id === socket.id) {
 					currentPlayer.action = action;
+				}
+			}
+		});
+
+		socket.on('betButton', function(bet) {
+			if(self.rooms[socket.roomId]) {
+				var player = self.rooms[socket.roomId].findPlayerById(socket.id);
+				if(self.rooms[socket.roomId].state === "bet" && player.overallPoints >= player.pointsBet + parseInt(bet)) {
+					player.pointsBet += parseInt(bet);
 				}
 			}
 		});
@@ -41,7 +50,7 @@ function Room(roomName, currentTime) {
 	this.cards 					= [];
 	this.dealerCardsSum 		= 0;
 	this.dealerCardsNumber 		= 0;
-	this.betTime 				= 5000;
+	this.betTime 				= 10000;
 	this.thisStartTime 			= currentTime;
 	this.timeBetweenCardsDeal 	= 800;
 	this.controlDealTime 		= currentTime;
@@ -64,7 +73,7 @@ Room.prototype.createPlayer = function(player) {
 	player.howManyAces = 0;
 	player.action = "none";
 	player.cardsSum = 0;
-	player.pointsBet = 100;
+	player.pointsBet = 0;
 	player.cards = [];
 
 	player.seat = this.seats.indexOf(false);
@@ -89,6 +98,15 @@ Room.prototype.createPlayer = function(player) {
 		this.usersNum += 1;
 	}
 }
+
+Room.prototype.findPlayerById = function(id) {
+	for(var i = 0; i < this.playersAll.length; i++) {
+		if(this.playersAll[i].id == id) {
+			return this.playersAll[i];
+		};
+	}
+	return undefined; 
+};
 
 
 Room.prototype.startLoop = function(io, roomIntervals) {
@@ -213,15 +231,21 @@ Room.prototype.gameLoop = function(io) {
 		if(now - this.thisStartTime > this.betTime) {
 			this.players = [];
 			for(var i = 0; i < this.playersAll.length; i++){
-				if(this.playersAll[i].pointsBet > 0){
+				if(this.playersAll[i].pointsBet > 0) {
 					this.playersAll[i].inGame = true;
 					this.playersAll[i].overallPoints -= this.playersAll[i].pointsBet;
 					this.players.push(this.playersAll[i]);
 				}
 			}
-			this.players.sort(function(a, b) {return a.seat - b.seat});
-			this.state = "deal";
-			this.currentPlayer = this.players[0];
+
+			if(this.playersInGame() <= 0) {
+				this.thisStartTime = now;
+			} else {
+				this.players.sort(function(a, b) {return a.seat - b.seat});
+				this.state = "deal";
+				this.currentPlayer = this.players[0];
+			}
+
 		}
 		this.controlDealTime = now;
 	} else if (this.state === "deal") {
@@ -315,7 +339,7 @@ Room.prototype.gameLoop = function(io) {
 	} else if (this.state === "reset") {
 		this.cards = [];
 		for(var i = 0; i < this.players.length; i++) {
-			this.players[i].pointsBet = 100;
+			this.players[i].pointsBet = 0;
 			this.players[i].cardsNumber = 0;
 			this.players[i].cardsSum = 0;
 			this.players[i].action = "none";
@@ -350,5 +374,5 @@ Room.prototype.gameLoop = function(io) {
 		this.cards[i].y = this.cards[i].goalY;
 	}
 
-	console.log("Game state: " + this.state + "   currentPlayer: " + this.currentPlayer.name);
+	//console.log("Game state: " + this.state + "   currentPlayer: " + this.currentPlayer.name);
 }

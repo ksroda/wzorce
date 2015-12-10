@@ -8,23 +8,24 @@
 	<script src="libraries/bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>
 	<script src="libraries/angular-1.4.8/angular.min.js"></script>
 	<!--<script src="https://code.createjs.com/tweenjs-0.6.1.min.js"></script>-->
+	<script src="/socket.io/socket.io.js"></script>
+	<script type="text/javascript">
+		var user = <%- JSON.stringify(user) %>;
+	</script>
 	<script src="javascript/homepage.js"></script>
+	
+    <script src="javascript/top-container.js"></script>
+    <link rel="stylesheet" href="stylesheets/top-container.css">
 	<link rel="stylesheet" href="stylesheets/homepage.css">
+	<script>
+
+	</script>
 </head>
-        <body>
-                <%- include top-container.ejs %>
+	<body>
+        	<%- include top-container.ejs %>
                 
-                <!-- <div id="left-container">
-                        <div id="friends-header">
-                                Friends
-                        </div>
-                        <ul class="FriendsList">
-                                <li>Friend1</li>
-                                <li>Friend2</li>
-                                <li>Friend3</li>
-                                <li>Friend4</li>
-                        </ul>
-                </div> -->
+               
+
                 <div id="centre-containter">
                         <div id="blackjack" class="games">
                             <a href="/blackjack"></a>

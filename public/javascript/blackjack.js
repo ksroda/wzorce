@@ -1,6 +1,8 @@
 //------------------------------------JQuery---------------------------------------------
 $(document).ready(function() {
 	$(".actionButtons").hide();
+	$(".betButtons").hide();
+
 	$("#create").on('click', function() {
 		sendWelcome($("#roomname").val());
 	});
@@ -14,12 +16,8 @@ $(document).ready(function() {
 		socket.emit("actionButton", this.id);
 	});
 
-	$("#profile").hover(function() {
-		$("#phrase").stop().fadeOut(300);
-	});
-
-	$("#profile").mouseleave(function() {
-		$("#phrase").stop().fadeIn(700);
+	$(".betButton").on('click', function() {
+		socket.emit("betButton", this.id);
 	});
 });	
 
@@ -66,6 +64,17 @@ socket.on('update', function(data) {
 	if(dealerCardsSum) dealerCardsSum.setText(data.dealerCardsSum);
 
 	currentPlayer = data.currentPlayer;
+	
+	//if(gameState !== data.state) {
+		if(gameState === "bet") {
+			$(".actionButtons").fadeOut();
+			$(".betButtons").fadeIn();
+		} else {
+			$(".actionButtons").fadeIn();
+			$(".betButtons").fadeOut();
+		}
+	//}
+
 	gameState = data.state;
 	
 });
@@ -80,18 +89,20 @@ function sendWelcome(roomName) {
 	socket.emit('welcome', {
 		name:	player.name,
 		room:	roomName,
-		game: 	"blackjack"
+		game: 	"blackjack",
+		overallPoints: player.overallPoints
 	});
 
 	$("canvas").show();
 	$("#rooms").hide();
 	$("#top-container").hide();
-	$(".actionButtons").show();
+	//$(".actionButtons").show();
 };
 
 //------------------------------------Player-----------------------------------------------
 var player = {
 	name: 			user.name,
+	overallPoints:  user.overallPoints, 
 	roomName:		0
 };
 
@@ -165,7 +176,7 @@ function create() {
 	currentPlayerPointer.anchor.set(0.5, 0.5);
 	currentPlayerPointer.scale.setTo(0.1, 0.1);
 
-	//sendWelcome("testowy"); //Na czas testów
+	sendWelcome("testowy"); //Na czas testów
 }
 
 function update() {

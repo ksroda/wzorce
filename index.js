@@ -40,14 +40,14 @@ app.use(express.static(__dirname + '/public'));
 app.set('view engine','ejs');
 
 app.get('/', function(req, res) {
-	renderPageForUser("homepage", req, res);
+	renderPageForUser("homepage", req, res, undefined);
 });
 
 app.get('/login', function(req, res) {
 	if(req.session.user) {
 		res.redirect("/");
 	} else {
-		res.render('login', { "message": undefined } );
+		renderPageForUser("login", req, res, undefined);
 	}
 });
 
@@ -60,7 +60,7 @@ app.post('/login', function(req, res) {
 			};
 			res.redirect("/");
 		} else {
-			res.render('login', { "message": "Wrong username or password" });
+			renderPageForUser("login", req, res, "Wrong username or password");
 		}
 	});
 });
@@ -70,7 +70,7 @@ app.get('/register', function(req, res) {
 	if(req.session.user) {
 		res.redirect("/");
 	} else {
-		res.render('register', { "message": undefined });
+		renderPageForUser("register", req, res, undefined);
 	}
 });
 
@@ -79,7 +79,7 @@ app.post('/register', function(req, res) {
 		if(result) {
 			res.redirect("/login");
 		} else { 
-			res.render('register', { "message": "User already exists" });
+			renderPageForUser("register", req, res, "User already exists");
 		}
 	});
 });
@@ -94,7 +94,7 @@ app.get('/logout', function(req, res) {
 });
 
 app.get('/charades', function(req, res) {
-	res.render('charades');
+	renderPageForUser("charades", req, res, undefined);
 });
 
 app.get('/charades/rooms', function(req, res) {
@@ -102,17 +102,28 @@ app.get('/charades/rooms', function(req, res) {
 });
 
 app.get('/blackjack', function(req, res) {
-	renderPageForUser("blackjack", req, res);
+	renderPageForUser("blackjack", req, res, undefined);
 });
 
 app.get('/blackjack/rooms', function(req, res) {
   res.send(games["blackjack"].rooms);
 });
 
+app.get('/friends', function(req, res) {
+  databaseRequire.getFriends(req.query.who,function(result, friends) {
+  	if(result) {
+  		res.send(friends);
+  	} else {
+  		res.send([]);
+  	}
+  });
+});
+
 app.get('/bonus', function(req, res) {
   res.render('bonus');
 });
 
+var socketUsers = {};
 var roomsIntervals = {};
 var games = {};
 
@@ -120,7 +131,18 @@ games["blackjack"] = blackjackRequire;
 games["charades"] = charadesRequire;
 
 io.on('connection', function(socket) {
+	socket.startTime = (new Date()).getTime();
+
 	socket.emit('id', socket.id);
+
+	socket.on('login', function(login) {
+		socketUsers[login] = socket.id;
+	});
+
+	socket.on('add friend', function(data) {
+		console.log(data.user, data.friend);
+		databaseRequire.addFriend(data.user, data.friend);
+	});
 	
 	socketRequire.setOnWelcome(socket, games, io, roomsIntervals);
 	socketRequire.setOnDisconnect(socket, games, io, roomsIntervals);
@@ -130,30 +152,30 @@ io.on('connection', function(socket) {
 	charadesRequire.setOnMouseDrag(socket);
 	charadesRequire.setOnChatMessage(io, socket);
 
-	blackjackRequire.setOnActionChange(socket);
+	blackjackRequire.socketHandling(socket);
 });
 
 
 
-function renderPageForUser(site, req, res) {
+function renderPageForUser(site, req, res, message) {
 	if(req.session.user) {
 		databaseRequire.validateUser(req.session.user, function(result, user) {
 			if(result) {
-				renderPageForUserConfirmed(site, req, res);
+				renderPageForUserConfirmed(site, req, res, message);
 			} else {
 				res.redirect("/logout");
 			}
 		});
 	} else {
 		res.render(site, { 
-			"user": randomGuestPlayer()
+			"user": randomGuestPlayer(message),
+			"message": message
 		});
 	}
 }
 
 
-
-function renderPageForUserConfirmed(site, req, res) {
+function renderPageForUserConfirmed(site, req, res, message) {
 	databaseRequire.retrieveUser(req.session.user, function(result, user) {
 		if(result) {
 			res.render(site, { 
@@ -162,7 +184,8 @@ function renderPageForUserConfirmed(site, req, res) {
 					overallPoints: user.overallPoints,
 					overallTime: user.overallTime,
 					guest: false
-				}
+				},
+				"message": message
 			});
 		} else {
 			res.redirect("/logout");
@@ -171,7 +194,7 @@ function renderPageForUserConfirmed(site, req, res) {
 }
 
 
-function randomGuestPlayer() {
+function randomGuestPlayer(message) {
 	return {
 		name: "Guest" + Math.floor(Math.random() * 1000),
 		overallPoints: 100,

@@ -2,15 +2,6 @@
 $(document).ready(function() {
 	$("#tool-belt").hide();
 	$("#right-container").hide();
-
-	$("#profile").hover(function() {
-		$("#phrase").stop().fadeOut(300);
-	});
-
-	$("#profile").mouseleave(function() {
-		$("#phrase").stop().fadeIn(700);
-	});
-
 	
 	$("#create").on('click', function() {
 		sendWelcome($("#roomname").val());
@@ -48,8 +39,7 @@ $(document).ready(function() {
 				$("#right-container #chat #input-chat #send-button button").click();//Trigger search button click event
 	        }
     	});
-	$('[data-toggle="tooltip"]').tooltip("show");  
-	//sendWelcome("testowy");
+	$('[data-toggle="tooltip"]').tooltip("show");
 });
 
 

@@ -31,7 +31,8 @@ module.exports.addUser = function(user, callback) {
 			    db.collection("users_statistics").insertOne({
 			    	"name" : user.name,
 			    	"overallPoints": 100,
-			    	"overallTime": 0
+			    	"overallTime": 0,
+			    	"friends": []
 				}, function(err, result) {
 					assert.equal(err, null);
 				    console.log("Inserted a document into the users_statistics collection.");
@@ -69,3 +70,47 @@ module.exports.retrieveUser = function(user, callback) {
 		};
 	});
 };
+
+
+module.exports.updateUserStatistics = function(user, startTime) {
+	db.collection("users_statistics").updateOne(
+		{ 
+			"name" : user.name 
+		},
+		{
+    		$set: { 
+    			"overallPoints": user.overallPoints
+    		},
+    		$inc: {
+    			"overallTime": (new Date()).getTime() - startTime
+    		}
+    	},function(err, results) {
+	      //console.log(results);
+	   });
+}
+
+module.exports.addFriend = function(name, friend) {
+	db.collection("users_statistics").updateOne(
+		{ 
+			"name" : name 
+		},
+		{
+    		$push: { 
+    			"friends": friend
+    		}
+    	},function(err, results) {
+	      //console.log(results);
+	   });
+}
+
+module.exports.getFriends = function(name, callback) {
+	db.collection("users_statistics").find({ "name": name }).toArray(function (err, docs) {
+		if(docs.length == 0) {
+			console.log("Something went wrong");
+			callback(0, undefined);
+		} else {
+			console.log("Statictics successfully fetched");
+			callback(1, docs[0].friends);
+		};
+	});
+}

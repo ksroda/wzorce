@@ -1,3 +1,14 @@
+.bordered {
+	border: 1px solid;
+}
+
+body {
+	-webkit-transition: background-color 1s; /* Safari */
+    transition: background-color 1s;
+    background-color: #333333;
+    color: white;
+}
+
 #top-container {
 	position: fixed;
 	//.bordered;
@@ -93,4 +104,46 @@
 			margin-left: 240px;
 		}
 	}
+}
+
+#left-container {
+	.bordered;
+	position: absolute;
+	width: 270px;
+	height: 500px;
+	top: 50%;
+	margin-top: -225px;
+	margin-left: -240px;
+
+	-webkit-transition: margin-left 0.5s; /* Safari */
+	transition: margin-left 0.5s;
+
+	&:hover {
+		margin-left: 5px;
+	}
+}
+
+#input-friend {
+	.bordered;
+	position: absolute;
+	width: 100%;
+	padding: 0;
+	margin: 0;
+	bottom: 0;
+
+	#input-add {
+		padding: 0;
+		margin: 0;
+	}
+
+	#submit-add {
+		padding: 0;
+		margin: 0;
+
+		#add {
+			margin: 0;
+			width: 90%;
+			float: right;
+		}
+	} 
 }

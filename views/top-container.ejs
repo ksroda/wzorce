@@ -15,25 +15,85 @@
 						<br/>
 						<%= user.overallPoints %><span class="glyphicon glyphicon-star"></span>
 					</div>
-					<div id="aas" class="col-sm-6">
+					<div id="time" class="col-sm-6">
 						Time
 						<br/>
-						<%= user.overallTime %>h
+						<%= Math.floor(user.overallTime/1000/60/60) %>h
 					</div>
 				</div>
 			</div>
 			<% if(user.guest) { %>
 				<div id="sign-in" class="log-button">
 					Sign in
+					<a href="/login"></a>
 				</div>
 				<div id="register" class="log-button">
 					Register
+					<a href="/register"></a>
 				</div>
 			<% } else { %>
 				<div id="sign-out" class="log-button">
 					Sign out
+					<a href="/logout"></a>
 				</div>
 			<% } %>
 		</div>
 	</div>  
 </div>
+
+
+
+<div id="left-container" ng-app="friendsApp" ng-controller="friendsCtrl">
+	<div id="friends-header">
+		Friends
+	</div>
+	<ul class="FriendsList">
+		<li ng-repeat="x in friends">
+			{{ x }}
+		</li>
+	</ul>
+	<div id="input-friend" class="row">
+		<div id="input-add" class="col-sm-9">
+			<input type="text" class="form-control" id="friendname" placeholder="Enter Friend Name">
+		</div>
+		<div id="submit-add" class="col-sm-3">
+			<button id="add" type="button" class="btn btn-success">Add</button>
+		</div>
+	</div>
+</div>
+
+
+<script>
+		var app = angular.module('friendsApp', []);
+		app.controller('friendsCtrl', ["$scope", "$http", function($scope, $http) {
+				$http.get("/friends?who=" + user.name).success(function(response) {
+						$scope.friends = response;
+					});
+					
+				$scope.update = function() {
+					$http.get("/friends?who=" + user.name).success(function(response) {
+						$scope.friends = response;
+					});
+				}
+		}]);
+	</script>
+
+
+
+
+<!-- <div id="rooms" ng-app="myApp" ng-controller="customersCtrl">
+		<div id="output-room">
+			<button ng-repeat="x in rooms | orderBy: 'usersNum':true" type="button" class="btn btn-default btn-block roomEnter">
+				<span class="singleRoomName">{{ x.name }}</span>
+				<span class="badge">{{ x.usersNum }}</span>
+			</button>
+		</div>
+		<div id="input-room" class="row">
+			<div id="input-join" class="col-sm-9">
+				  <input type="text" class="form-control" id="roomname" placeholder="Enter Room Name">
+			</div>
+			<div id="submit-join" class="col-sm-3">
+				  <button id="create" type="button" class="btn btn-success">Join Room</button>
+			</div>
+		</div>
+	</div> -->
