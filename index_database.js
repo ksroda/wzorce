@@ -106,10 +106,10 @@ module.exports.addFriend = function(name, friend) {
 module.exports.getFriends = function(name, callback) {
 	db.collection("users_statistics").find({ "name": name }).toArray(function (err, docs) {
 		if(docs.length == 0) {
-			console.log("Something went wrong");
+			console.log("Cannot fetch friends");
 			callback(0, undefined);
 		} else {
-			console.log("Statictics successfully fetched");
+			console.log("Friends successfully fetched");
 			callback(1, docs[0].friends);
 		};
 	});

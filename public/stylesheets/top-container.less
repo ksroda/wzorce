@@ -107,24 +107,26 @@ body {
 }
 
 #left-container {
-	.bordered;
+	//.bordered;
 	position: absolute;
 	width: 270px;
 	height: 500px;
 	top: 50%;
 	margin-top: -225px;
 	margin-left: -240px;
+	border-radius: 5px;
+	background-color: #222222;
 
-	-webkit-transition: margin-left 0.5s; /* Safari */
-	transition: margin-left 0.5s;
+	-webkit-transition: margin-left 0.5s, background-color 0.5s; /* Safari */
+	transition: margin-left 0.5s, background-color 0.5s;
 
 	&:hover {
-		margin-left: 5px;
+		margin-left: -5px;
 	}
 }
 
 #input-friend {
-	.bordered;
+	//.bordered;
 	position: absolute;
 	width: 100%;
 	padding: 0;

@@ -20,21 +20,9 @@
 	<link rel="stylesheet" href="stylesheets/charades.css">
 </head>
 <body>
-	<div id="rooms" ng-app="myApp" ng-controller="customersCtrl">
-		<div id="output-room">
-			<button ng-repeat="x in rooms | orderBy: 'usersNum':true" type="button" class="btn btn-default btn-block roomEnter">
-				<span class="singleRoomName">{{ x.name }}</span>
-				<span class="badge">{{ x.usersNum }}</span>
-			</button>
-		</div>
-		<div id="input-room" class="row">
-			<div id="input-join" class="col-sm-9">
-				  <input type="text" class="form-control" id="roomname" placeholder="Enter Room Name" data-toggle="tooltip" data-placement="left" title="To create a new room just enter its name here and click join">
-			</div>
-			<div id="submit-join" class="col-sm-3">
-				  <button id="create" type="button" class="btn btn-success">Join Room</button>
-			</div>
-		</div>
+	<div ng-app="myApp">
+		<%- include top-container.ejs %>
+		<%- include angular-rooms-controller.ejs %>
 	</div>
 	<div id="tool-belt">
 		<button id="white" type="button" class="btn btn-default color"></button>
@@ -49,7 +37,6 @@
 			<button id="30" type="button" class="btn btn-default size">30</button>
 		</span>
 	</div>
-	<%- include top-container.ejs %>
 	<div id="right-container">
 		<div id="chat">
 			<div id="output-chat">
@@ -66,19 +53,6 @@
 			</div>
 		</div>
 	</div>
-	<script>
-		var app = angular.module('myApp', []);
-		app.controller('customersCtrl', ["$scope", "$http", function($scope, $http) {
-				$http.get("/charades/rooms").success(function(response) {
-					$scope.rooms = response;
-				});
-					
-				$scope.update = function(rooms) {
-					$scope.$apply(function() {
-						$scope.rooms = rooms;
-					});
-				}
-		}]);
-	</script>
+	<script src="javascript/angular-controllers.js"></script>>
 </body>
 </html>

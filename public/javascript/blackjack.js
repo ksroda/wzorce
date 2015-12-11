@@ -26,6 +26,10 @@ $(document).ready(function() {
 //------------------------------------Socket--------------------------------------------
 var socket = io();
 
+if(!user.guest) {
+	socket.emit('login', user.name);
+}
+
 socket.on('id', function(id) {
 	myId = id;
 });
@@ -176,7 +180,7 @@ function create() {
 	currentPlayerPointer.anchor.set(0.5, 0.5);
 	currentPlayerPointer.scale.setTo(0.1, 0.1);
 
-	sendWelcome("testowy"); //Na czas testów
+	//sendWelcome("testowy"); //Na czas testów
 }
 
 function update() {

@@ -168,7 +168,7 @@ function renderPageForUser(site, req, res, message) {
 		});
 	} else {
 		res.render(site, { 
-			"user": randomGuestPlayer(message),
+			"user": randomGuestPlayer(),
 			"message": message
 		});
 	}
@@ -194,7 +194,7 @@ function renderPageForUserConfirmed(site, req, res, message) {
 }
 
 
-function randomGuestPlayer(message) {
+function randomGuestPlayer() {
 	return {
 		name: "Guest" + Math.floor(Math.random() * 1000),
 		overallPoints: 100,

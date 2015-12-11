@@ -43,7 +43,7 @@
 
 
 
-<div id="left-container" ng-app="friendsApp" ng-controller="friendsCtrl">
+<div id="left-container" ng-controller="friendsCtrl">
 	<div id="friends-header">
 		Friends
 	</div>
@@ -61,39 +61,3 @@
 		</div>
 	</div>
 </div>
-
-
-<script>
-		var app = angular.module('friendsApp', []);
-		app.controller('friendsCtrl', ["$scope", "$http", function($scope, $http) {
-				$http.get("/friends?who=" + user.name).success(function(response) {
-						$scope.friends = response;
-					});
-					
-				$scope.update = function() {
-					$http.get("/friends?who=" + user.name).success(function(response) {
-						$scope.friends = response;
-					});
-				}
-		}]);
-	</script>
-
-
-
-
-<!-- <div id="rooms" ng-app="myApp" ng-controller="customersCtrl">
-		<div id="output-room">
-			<button ng-repeat="x in rooms | orderBy: 'usersNum':true" type="button" class="btn btn-default btn-block roomEnter">
-				<span class="singleRoomName">{{ x.name }}</span>
-				<span class="badge">{{ x.usersNum }}</span>
-			</button>
-		</div>
-		<div id="input-room" class="row">
-			<div id="input-join" class="col-sm-9">
-				  <input type="text" class="form-control" id="roomname" placeholder="Enter Room Name">
-			</div>
-			<div id="submit-join" class="col-sm-3">
-				  <button id="create" type="button" class="btn btn-success">Join Room</button>
-			</div>
-		</div>
-	</div> -->

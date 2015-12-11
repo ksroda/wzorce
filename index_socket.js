@@ -49,8 +49,8 @@ module.exports = function() {
 				} else {
 					io.to(socket.roomId).emit('player disconnected', socket.id);
 					games[socket.game].rooms[socket.roomId].userDisconnected(io, socket.id);
-
-				}
+	
+			}
 
 				io.emit('update rooms', games[socket.game].rooms);
 			}

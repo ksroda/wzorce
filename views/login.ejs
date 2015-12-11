@@ -6,20 +6,57 @@
   <link rel="stylesheet" href="libraries/bootstrap-3.3.5-dist/css/bootstrap.min.css">
   <script src="libraries/bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>
   <script src="libraries/angular-1.4.8/angular.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+	<script type="text/javascript">
+		var user = <%- JSON.stringify(user) %>;
+	</script>
   <script src="javascript/top-container.js"></script>
 	<link rel="stylesheet" href="stylesheets/top-container.css">
+	<link rel="stylesheet" href="stylesheets/login.css">
 </head>
 <body> 
-<%- include top-container.ejs %>
-<form method="POST">
-	<br/><br/><br/><br/>
-  <%= message %>
-  Name:<input type="text" id="name" name ="name" placeholder="Enter text">
-  Password:<input type="password" id="pwd" name="password" placeholder="Enter password">
+<div ng-app="myApp">
+	<%- include top-container.ejs %>
+</div>
+<div id="login-form">
+	<form method="POST">
+		<div id="name" class="row login-position">
+			<div id="name-title" class="col-sm-3 title">
+				<span>
+					Name:
+				</span>
+			</div>
+			<div id="name-input" class="col-sm-9 input">
+				<input type="text" id="name" name="name" placeholder="Enter name">
+			</div>
+		</div>
+		<div id="password" class="row login-position">
+			<div id="password-title" class="col-sm-3 title">
+				<span>
+					Password:
+				</span>
+			</div>
+			<div id="password-input" class="col-sm-9 input">
+				<input type="password" id="pwd" name="password" placeholder="Enter password">
+			</div>
+		</div>
+		<div id="login-button" class="row">
+			<div class="col-sm-3" id="login-button-blank">
+			</div>
+			<div class="col-sm-9" id="login-button-submit">
+				<button type="submit" class="btn btn-danger">Login</button>
+			</div>
+		</div>
+		
+	</form>
+</div>
+<% if(message) { %>
+<div id="message" class="alert alert-danger">
+	<%= message %>
+</div>
+<% } %>
 
-  <button type="submit" class="btn btn-default">Submit</button>
-
-</form>
+<script src="javascript/angular-controllers.js"></script>
 
 </body>
 </html>
