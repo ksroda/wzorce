@@ -5,3 +5,5 @@
 - Wzorzec Observer po stronie klienta do sterowania obiektami DOM i elementami interfejsu przy zmianie stanu gry itp
 - Wzorzec Command do rejestrowania wiadomości do gracza, który jest offline
 - System czatu prywatnego
+
+- blackjack, charades, database - singleton

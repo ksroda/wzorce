@@ -111,7 +111,7 @@ var player = {
 };
 
 //------------------------------------Phraser-------------------------------------------
-var game = new Phaser.Game(1350, 700, Phaser.AUTO, '', { preload: preload, create: create, update: update }, true);
+var game = new Phaser.Game(1350, 700, Phaser.CANVAS, '', { preload: preload, create: create, update: update }, true);
 var cardsGroup;
 
 var cards = {};

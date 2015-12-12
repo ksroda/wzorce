@@ -115,6 +115,15 @@ Room.prototype.userDisconnected = function(io, playerId) {
 	}
 }
 
+Room.prototype.findPlayerById = function(id) {
+	for(var i = 0; i < this.playersAll.length; i++) {
+		if(this.playersAll[i].id == id) {
+			return this.playersAll[i];
+		};
+	}
+	return undefined; 
+};
+
 Room.prototype.gameLoop = function(io) {
 	var now = (new Date()).getTime();
 	switch(this.state) {
