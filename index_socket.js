@@ -1,7 +1,7 @@
 var auxiliaryRequire = require('./index_auxiliary.js')();
 var databaseRequire = require('./index_database.js');
 
-module.exports = function() {
+module.exports = (function() {
 
 	var publicSetOnWelcome = function(socket, games, io, roomsIntervals) {
 		socket.on('welcome', function(user) {
@@ -68,4 +68,4 @@ module.exports = function() {
 		setOnDisconnect: publicSetOnDisconnect,
 		setOnMessage: publicSetOnMessage
 	}
-}
+})();

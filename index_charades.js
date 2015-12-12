@@ -43,6 +43,9 @@ module.exports = function() {
 					});
 					self.rooms[socket.roomId].playersAll.forEach(function(player) {
 						if(player.id === socket.id) {
+							player.localPoints += 100;
+							console.log(player.overallPoints + "   " + (player.overallPoints + 100))
+							player.overallPoints += 100;
 							self.rooms[socket.roomId].changeCurrentPlayer(io, player);
 						}
 					})
@@ -124,6 +127,12 @@ Room.prototype.findPlayerById = function(id) {
 	return undefined; 
 };
 
+Room.prototype.getRanking = function() {
+	return this.playersAll.sort(function(a,b) {
+		return b.localPoints - a.localPoints
+	});
+};
+
 Room.prototype.gameLoop = function(io) {
 	var now = (new Date()).getTime();
 	switch(this.state) {
@@ -163,7 +172,10 @@ Room.prototype.gameLoop = function(io) {
 	}
 
 	io.to(this.id).emit('update', {
-		room: this,
+		currentWord: this.currentWord,
+		currentPlayer: this.currentPlayer,
+		timer: this.timer,
+		ranking: this.getRanking()
 	});
 
 	if(this.currentWord) console.log("Game state: " + this.state + "    Current word: " + this.currentWord["word"] +

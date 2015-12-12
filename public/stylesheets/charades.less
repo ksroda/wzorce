@@ -119,7 +119,7 @@ canvas {
 	background-color: #1d3643;
 	color: white;
 	border-radius: 5px;
-	.bordered;
+	//.bordered;
 
 	#chat {
 		width: 100%;
@@ -171,4 +171,71 @@ canvas {
 		}
 	}
 
+}
+
+#right-container-ranking {
+	position: absolute;
+	right: 10px;
+	width: 350px;
+	top: 390px;
+	background-color: #1d3643;
+	color: white;
+	border-radius: 5px;
+	//.bordered;
+
+	#ranking {
+		//.bordered;
+		
+		height: 250px;
+		padding: 10px;
+		padding-left: 20px;
+		padding-right: 20px;
+		margin: 0;
+
+		#ranking-table-header {
+			// overflow-y: scroll;
+			padding: 0;
+			margin: 0;
+			//.bordered;
+			height: 30px;
+			font-size: 120%;
+			font-weight: bold;
+			border-bottom: 2px solid white;
+			margin-bottom: 5px;
+
+			.position {
+				//.bordered;
+			}
+
+			.name {
+				//.bordered;
+			}
+			.points {
+				//.bordered;
+			}
+		}
+
+		#ranking-table-content {
+			//.bordered;
+			// overflow-y: scroll;
+			height: 20px;
+			.position {
+				//.bordered;
+			}
+
+			ul {
+				list-style-type: none;
+				padding: 0;
+				margin: 0;
+
+				li {
+
+					.row {
+						padding: 0;
+						margin: 0;
+						}
+				}
+			}	
+		}
+	}
 }

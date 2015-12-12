@@ -2,7 +2,6 @@
 <html>
 <head>
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-	<script type="text/javascript" src="paper.js\docs\assets\js\paper.js"></script>
 	<script src="libraries/jquery-1.11.3.min.js"></script>
 
 	<link rel="stylesheet" href="libraries/bootstrap-3.3.5-dist/css/bootstrap.min.css">
@@ -13,6 +12,7 @@
 	<script src="phaser/phaser.min.js"></script>
 	<script type="text/javascript">
 		var user = <%- JSON.stringify(user) %>;
+		var gameName = "charades"; //w angular do wyświetlania pokoi
 	</script>
 	<script src="javascript/charades.js"></script>
 	<script src="javascript/top-container.js"></script>
@@ -53,6 +53,20 @@
 			</div>
 		</div>
 	</div>
-	<script src="javascript/angular-controllers.js"></script>>
+	<div id="right-container-ranking">
+		<div id="ranking">
+			<div id="ranking-table-header" class="row">
+				<div class="position col-sm-1"></div>
+				<div class="name col-sm-6">Name</div>
+				<div class="points col-sm-3">Points</div>
+				<div class="points col-sm-1"></div>
+			</div>
+			<div id="ranking-table-content">
+				<ul>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<script src="javascript/angular-controllers.js"></script>
 </body>
 </html>

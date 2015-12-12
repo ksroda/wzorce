@@ -12,7 +12,7 @@ app.controller('friendsCtrl', ["$scope", "$http", function($scope, $http) {
 }]);
 
 app.controller('customersCtrl', ["$scope", "$http", function($scope, $http) {
-	$http.get("/blackjack/rooms").success(function(response) {
+	$http.get(gameName + "/rooms").success(function(response) {
 		$scope.rooms = response;
 	});
 					

@@ -27,18 +27,20 @@ $(document).ready(function() {
 	$("#right-container #chat #input-chat #send-button button")
 		.on('click', function() {
 			//alert($("#right-container #chat #input-chat #message input").val());
+			var input = $("#right-container #chat #input-chat #message input");
 			socket.emit('chat-message', {
 				sender: player.name,
-				content: $("#right-container #chat #input-chat #message input").val()
+				content: input.val()
 			});
-			$("#right-container #chat #input-chat #message input").val("");
+			input.val("");
 		});
 
 	$("#right-container #chat #input-chat #message input").keypress(function(e){
 			if(e.which == 13) {
-				$("#right-container #chat #input-chat #send-button button").click();//Trigger search button click event
+				$("#right-container #chat #input-chat #send-button button").click();
 	        }
     	});
+
 	$('[data-toggle="tooltip"]').tooltip("show");
 });
 
@@ -61,14 +63,28 @@ socket.on('update rooms', function(rooms) {
 	angular.element($('#rooms')).scope().update(rooms);
 });
 
-socket.on('update', function(data) {
-	if(data.room.currentWord) {
-		currentCategory.text = "Category: " + data.room.currentWord.category;
-		currentWord.text = (data.room.currentPlayer.name == player.name) ? "Word: " + data.room.currentWord.word : "";
+socket.on('update', function(room) {
+	if(room.currentWord) {
+		currentCategory.text = "Category: " + room.currentWord.category;
+		currentWord.text = (room.currentPlayer.name == player.name) ? "Word: " + room.currentWord.word : "";
 	}
-	whoIsDrawing.text = (data.room.currentPlayer.name == player.name) ? "You are drawing" : data.room.currentPlayer.name + " is drawing";
-	timer.text = data.room.timer;
-	iAmDrawing = (data.room.currentPlayer.name == player.name);
+	whoIsDrawing.text = (room.currentPlayer.name == player.name) ? "You are drawing" : room.currentPlayer.name + " is drawing";
+	timer.text = room.timer;
+	iAmDrawing = (room.currentPlayer.name == player.name);
+
+	var rankingUl = $("#right-container-ranking #ranking #ranking-table-content ul");
+	rankingUl.html("");
+	for(var i = 0; i < room.ranking.length; i++) {
+		rankingUl.append("<li>"+
+							"<div class=\"row\">"+
+								"<div class=\"position col-sm-1\">" + (i+1) + "</div>"+
+								"<div class=\"name col-sm-6\">" + room.ranking[i].name + "</div>"+
+								"<div class=\"points col-sm-3\">" + room.ranking[i].localPoints + "</div>"+
+								"<div class=\"points col-sm-1\">" + (room.ranking[i].name == room.currentPlayer.name ? "<span class=\"glyphicon glyphicon-pencil\">" : "") + "</span>"+
+								"</div>"+
+							"</div>"+
+						"</li>");
+	}
 });
 
 socket.on('clear screen', function() {
@@ -92,7 +108,8 @@ function sendWelcome(roomName) {
 	socket.emit('welcome', {
 		name:	player.name,
 		room:	roomName,
-		game: 	"charades"
+		game: 	"charades",
+		overallPoints: player.overallPoints
 	});
 		
 	$("canvas").show();
@@ -103,7 +120,8 @@ function sendWelcome(roomName) {
 
 //------------------------------------Player-----------------------------------------------
 var player = {
-	name: 			"Guest" + Math.floor(Math.random() * 1000),
+	name: 			user.name,
+	overallPoints:  user.overallPoints, 
 	roomName:		0,
 
 	path:			0,
@@ -151,6 +169,8 @@ function create() {
     currentWord = game.add.text(20, 140, "", style);
     
     timer = game.add.text(window.innerWidth - 420, 70, "", style);
+
+    sendWelcome("testowy"); //Na czas testów
 }
 
 

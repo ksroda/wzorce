@@ -12,7 +12,7 @@ var lessMiddleware = require('less-middleware');
 var blackjackRequire = require('./index_blackjack.js')();
 var charadesRequire = require('./index_charades.js')();
 var auxiliaryRequire = require('./index_auxiliary.js')();
-var socketRequire = require('./index_socket.js')();
+var socketRequire = require('./index_socket.js');
 var databaseRequire = require('./index_database.js');
 
 server.listen(port);
@@ -75,13 +75,17 @@ app.get('/register', function(req, res) {
 });
 
 app.post('/register', function(req, res) {
-	databaseRequire.addUser(req.body, function(result, user) {
-		if(result) {
-			res.redirect("/login");
-		} else { 
-			renderPageForUser("register", req, res, "User already exists");
-		}
-	});
+	if(req.body.repeatpassword == req.body.password) {
+		databaseRequire.addUser(req.body, function(result, user) {
+			if(result) {
+				res.redirect("/login");
+			} else { 
+				renderPageForUser("register", req, res, "User already exists");
+			}
+		});
+	} else {
+		renderPageForUser("register", req, res, "Passwords don't match");
+	}
 });
 
 app.get('/logout', function(req, res) {
