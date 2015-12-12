@@ -147,14 +147,16 @@ Room.prototype.randomCardFromStack = function(cardForDealer) {
 }
 
 Room.prototype.userDisconnected = function(io, playerId) {
-	if(this.currentPlayer.id === playerId) {
+	if(this.currentPlayer.id == playerId) {
 		this.changeCurrentPlayer(false);
 	}
 
-	for(var i = 0; i < this.playersAll.length; i++) {
-		if(this.playersAll[i].id === playerId) {
-			this.seats[this.playersAll[i].seat] = false;
-			this.playersAll.splice(i, 1);
+	this.seats[this.findPlayerById(playerId).seat] = false;
+
+
+	for(var i = 0; i < this.players.length; i++) {
+		if(this.players[i].id == playerId) {
+			this.players.splice(i, 1);
 			break;
 		}
 	}

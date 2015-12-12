@@ -33,25 +33,25 @@ module.exports = (function() {
 	var publicSetOnDisconnect = function(socket, games, io, roomsIntervals) {
 		socket.on('disconnect', function() {
 			if(socket.game) {
-				databaseRequire.updateUserStatistics(games[socket.game].rooms[socket.roomId].findPlayerById(socket.id), socket.startTime);
-				games[socket.game].rooms[socket.roomId].usersNum--;
-					
-				for(var i = 0; i < games[socket.game].rooms[socket.roomId].playersAll.length; i++) {
-					if(games[socket.game].rooms[socket.roomId].playersAll[i].id === socket.id) {
-						games[socket.game].rooms[socket.roomId].playersAll.splice(i, 1);
-						break;
-					}
-				}
-			
-				if(games[socket.game].rooms[socket.roomId].usersNum <= 0) {
-					clearInterval(roomsIntervals[games[socket.game].rooms[socket.roomId].interval]);
+				var room = games[socket.game].rooms[socket.roomId];
+				databaseRequire.updateUserStatistics(room.findPlayerById(socket.id), socket.startTime);
+				room.usersNum--;
+
+				if(room.usersNum <= 0) {
+					clearInterval(roomsIntervals[room.interval]);
 					delete games[socket.game].rooms[socket.roomId];
 				} else {
 					io.to(socket.roomId).emit('player disconnected', socket.id);
-					games[socket.game].rooms[socket.roomId].userDisconnected(io, socket.id);
+					room.userDisconnected(io, socket.id);
 	
-			}
-
+					for(var i = 0; i < room.playersAll.length; i++) {
+						if(room.playersAll[i].id === socket.id) {
+							room.playersAll.splice(i, 1);
+							break;
+						}
+					}
+				}
+			
 				io.emit('update rooms', games[socket.game].rooms);
 			}
 		});
