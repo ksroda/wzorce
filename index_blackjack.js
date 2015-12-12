@@ -151,10 +151,10 @@ Room.prototype.userDisconnected = function(io, playerId) {
 		this.changeCurrentPlayer(false);
 	}
 
-	for(var i = 0; i < this.players.length; i++) {
-		if(this.players[i].id === playerId) {
-			this.seats[this.players[i].seat] = false;
-			this.players.splice(i, 1);
+	for(var i = 0; i < this.playersAll.length; i++) {
+		if(this.playersAll[i].id === playerId) {
+			this.seats[this.playersAll[i].seat] = false;
+			this.playersAll.splice(i, 1);
 			break;
 		}
 	}
