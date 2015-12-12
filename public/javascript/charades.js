@@ -2,6 +2,7 @@
 $(document).ready(function() {
 	$("#tool-belt").hide();
 	$("#right-container").hide();
+	$("#right-container-ranking").hide();
 	
 	$("#create").on('click', function() {
 		sendWelcome($("#roomname").val());
@@ -116,6 +117,7 @@ function sendWelcome(roomName) {
 	$("#tool-belt").show();
 	$("#rooms").hide();
 	$("#right-container").show();
+	$("#right-container-ranking").show();
 };
 
 //------------------------------------Player-----------------------------------------------
