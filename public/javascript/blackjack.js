@@ -80,14 +80,20 @@ socket.on('update', function(data) {
 	//}
 
 	gameState = data.state;
-	
-});
 
-socket.on('reset', function() {
-	for(var x in cards) {
-		cards[x].kill();
+	if(gameState == "reset") {
+		for(var x in cards) {
+			cards[x].kill();
+		}
+		cards = [];
 	}
 });
+
+// socket.on('reset', function() {
+// 	for(var x in cards) {
+// 		cards[x].kill();
+// 	}
+// });
 
 function sendWelcome(roomName) {
 	socket.emit('welcome', {
@@ -123,7 +129,7 @@ var myId;
 var arrow;
 var currentPlayerPointer;
 var currentPlayer;
-var gameState;
+var gameState = "bet";
 
 function preload() {
 	var suits = ["hearts", "spades", "clubs", "diamonds"];
@@ -174,7 +180,7 @@ function create() {
 	//arrow.anchor.set(0.45, 0.5);
 	//arrow.scale.setTo(0.5, 0.5);
 
-	currentPlayerPointer = game.add.sprite(1080, 230, "arrow");
+	currentPlayerPointer = game.add.sprite(1080, 290, "arrow");
 	game.physics.enable(currentPlayerPointer, Phaser.Physics.ARCADE);
 	currentPlayerPointer.body.allowRotation = false;
 	currentPlayerPointer.anchor.set(0.5, 0.5);
@@ -190,7 +196,7 @@ function update() {
 	}
 
 	//console.log(currentPlayerPointer);
-	if(currentPlayer && currentPlayerPointer && gameState !== "deal") {
+	if(currentPlayer && currentPlayerPointer && gameState == "game") {
 		var temp = game.input.activePointer;
 		temp.x = currentPlayer.x;
 		temp.y = currentPlayer.y + 60;

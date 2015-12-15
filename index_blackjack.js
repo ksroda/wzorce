@@ -1,5 +1,16 @@
 var auxiliaryRequire = require('./index_auxiliary.js')();
 
+
+function GameState(func) {
+	this.state = func;
+}
+
+GameState.prototype.execute = function(room) {
+	//console.log(room);
+	this.state(room);
+}
+
+
 module.exports = function() {
 	var blackjack = {
 		rooms: {}
@@ -35,9 +46,10 @@ module.exports = function() {
 	}
 
 	return blackjack;
-};
+}
 
 //-------------------------------------------------------------------Room---------------------------------------------------
+
 
 function Room(roomName, currentTime) {
 	this.id 					= "blackjack." + roomName;
@@ -67,6 +79,10 @@ function Room(roomName, currentTime) {
 	this.dealerHowManyAces		= 0;
 	this.seats					= [false, false, false, false, false];
 }
+
+
+
+
 
 Room.prototype.createPlayer = function(player) {
 	player.cardsNumber = 0;
@@ -113,6 +129,7 @@ Room.prototype.startLoop = function(io, roomIntervals) {
 	var intervalId = auxiliaryRequire.randomId();
 	this.interval = intervalId;
 
+	this.changeState(this.bet);
 	var self = this;
 	var interval = setInterval(function() {
 		self.gameLoop(io);
@@ -162,7 +179,7 @@ Room.prototype.userDisconnected = function(io, playerId) {
 	}
 
 	if(this.players.length <= 0) {
-		this.state = "afterGame";
+		this.changeState(this.afterGame);
 	}
 
 }
@@ -173,7 +190,7 @@ Room.prototype.hit = function(now) {
 	this.currentPlayerTime = now;
 	if(this.playersInGame() === 0) {
 		this.controlDealTime = now;
-		this.state = "dealersTurn";
+		this.changeState(this.dealersTurn);
 	} else {
 		this.currentPlayer.action = "none";
 	}
@@ -226,141 +243,171 @@ Room.prototype.changeCurrentPlayer = function(playerInGame) {
 	this.currentPlayerTime = (new Date()).getTime();
 }
 
-Room.prototype.gameLoop = function(io) {
+Room.prototype.changeState = function(loopState) {
+	this.loopState = loopState;
+}
+
+Room.prototype.bet = new GameState(function(room) {
 	var now = (new Date()).getTime();
-	if(this.state === "bet") {
-		this.timer = Math.ceil((this.betTime - (now - this.thisStartTime))/1000);
-		if(now - this.thisStartTime > this.betTime) {
-			this.players = [];
-			for(var i = 0; i < this.playersAll.length; i++){
-				if(this.playersAll[i].pointsBet > 0) {
-					this.playersAll[i].inGame = true;
-					this.playersAll[i].overallPoints -= this.playersAll[i].pointsBet;
-					this.players.push(this.playersAll[i]);
+	room.state = "bet";
+	room.timer = Math.ceil((room.betTime - (now - room.thisStartTime))/1000);
+		if(now - room.thisStartTime > room.betTime) {
+			room.players = [];
+			for(var i = 0; i < room.playersAll.length; i++){
+				if(room.playersAll[i].pointsBet > 0) {
+					room.playersAll[i].inGame = true;
+					room.playersAll[i].overallPoints -= room.playersAll[i].pointsBet;
+					room.players.push(room.playersAll[i]);
 				}
 			}
 
-			if(this.playersInGame() <= 0) {
-				this.thisStartTime = now;
+			if(room.playersInGame() <= 0) {
+				room.thisStartTime = now;
 			} else {
-				this.players.sort(function(a, b) {return a.seat - b.seat});
-				this.state = "deal";
-				this.currentPlayer = this.players[0];
+				room.players.sort(function(a, b) {return a.seat - b.seat});
+				room.changeState(room.deal);
+				room.currentPlayer = room.players[0];
 			}
 
 		}
-		this.controlDealTime = now;
-	} else if (this.state === "deal") {
-		timer = 0;
-		if(now - this.controlDealTime > this.timeBetweenCardsDeal) {
-			this.controlDealTime = now;
-			if(this.isCardForDealer) {
-				this.isCardForDealer = false;
-				this.drawCard(true);
+		room.controlDealTime = now;
+});
+
+Room.prototype.deal = new GameState(function(room) {
+	var now = (new Date()).getTime();
+	room.state = "deal";
+	timer = 0;
+		if(now - room.controlDealTime > room.timeBetweenCardsDeal) {
+			room.controlDealTime = now;
+			if(room.isCardForDealer) {
+				room.isCardForDealer = false;
+				room.drawCard(true);
 			} else {
-				if(this.players.indexOf(this.currentPlayer) === this.players.length - 1) {
-					this.isCardForDealer = true;
+				if(room.players.indexOf(room.currentPlayer) === room.players.length - 1) {
+					room.isCardForDealer = true;
 				}
-				this.drawCard(false);
-				this.changeCurrentPlayer(true);
+				room.drawCard(false);
+				room.changeCurrentPlayer(true);
 			}			
 		}
-		if(this.players.indexOf(this.currentPlayer) === 0 && this.currentPlayer.cardsNumber == 2){
-			this.state = "game";
-			this.currentPlayerTime = (new Date()).getTime();
+		if(room.players.indexOf(room.currentPlayer) === 0 && room.currentPlayer.cardsNumber == 2){
+			room.changeState(room.game);
+			room.currentPlayerTime = (new Date()).getTime();
 		}
-	} else if (this.state === "game") {
-		if(this.currentPlayer.action === "hit") {
-			this.hit(now);
-		} else 
-			if(this.currentPlayer.action === "stand") {
-				this.stand(now);
-		} else 
-			if(this.currentPlayer.action === "double") {
-				this.currentPlayer.action = "none";
-				this.currentPlayer.overallPoints -= this.currentPlayer.pointsBet;
-				this.currentPlayer.pointsBet *= 2;
-				this.hit(now);
-				this.stand(now);
-		} else
-		 	if(this.currentPlayer.action === "split") {
-			 	this.currentPlayer.action = "none";
-				this.currentPlayer.cards[0].goalX -= 30;
-				this.currentPlayer.cards[1].goalX += 30;
-				this.currentPlayer.cards[1].goalY += 25;
-			}
-		this.timer = Math.ceil((this.timeToThink - (now - this.currentPlayerTime))/1000);
+});
 
-		if(this.players.indexOf(this.currentPlayer) === 0 && this.isRoundStarted){
-			this.controlDealTime = now - this.timeBetweenCardsDeal/2;
-			this.state = "dealersTurn";
-		} else if(now - this.currentPlayerTime > this.timeToThink || this.currentPlayer.cardsSum === 21){
-			this.controlDealTime = now - this.timeBetweenCardsDeal/2;
-			this.currentPlayerTime = now;
-			this.changeCurrentPlayer(true);	
-			this.isRoundStarted = true;
+Room.prototype.game = new GameState(function(room) {
+	var now = (new Date()).getTime();
+	room.state = "game";
+if(room.currentPlayer.action === "hit") {
+			room.hit(now);
+		} else 
+			if(room.currentPlayer.action === "stand") {
+				room.stand(now);
+		} else 
+			if(room.currentPlayer.action === "double") {
+				room.currentPlayer.action = "none";
+				room.currentPlayer.overallPoints -= room.currentPlayer.pointsBet;
+				room.currentPlayer.pointsBet *= 2;
+				room.hit(now);
+				room.stand(now);
+		} else
+		 	if(room.currentPlayer.action === "split") {
+			 	room.currentPlayer.action = "none";
+				room.currentPlayer.cards[0].goalX -= 30;
+				room.currentPlayer.cards[1].goalX += 30;
+				room.currentPlayer.cards[1].goalY += 25;
+			}
+		room.timer = Math.ceil((room.timeToThink - (now - room.currentPlayerTime))/1000);
+
+		if(room.players.indexOf(room.currentPlayer) === 0 && room.isRoundStarted){
+			room.controlDealTime = now - room.timeBetweenCardsDeal/2;
+			room.changeState(room.dealersTurn);
+		} else if(now - room.currentPlayerTime > room.timeToThink || room.currentPlayer.cardsSum === 21){
+			room.controlDealTime = now - room.timeBetweenCardsDeal/2;
+			room.currentPlayerTime = now;
+			room.changeCurrentPlayer(true);	
+			room.isRoundStarted = true;
 		}
-	} else if (this.state === "dealersTurn") {
-		timer = 0;
-		if(now - this.controlDealTime > this.timeBetweenCardsDeal) {
-			this.controlDealTime = now;
-			if(this.dealerCardsSum < 17 && this.playersInGame() !== 0) {
-				this.drawCard(true);
-				if(this.dealerCardsSum > 21) {
-					for(var i = 0; i < this.players.length; i++) {
-						if(this.players[i].inGame) {
-							this.players[i].overallPoints += 2 * this.players[i].pointsBet;
+});
+
+
+Room.prototype.dealersTurn = new GameState(function(room) {
+	var now = (new Date()).getTime();
+	room.state = "dealersTurn";
+	timer = 0;
+		if(now - room.controlDealTime > room.timeBetweenCardsDeal) {
+			room.controlDealTime = now;
+			if(room.dealerCardsSum < 17 && room.playersInGame() !== 0) {
+				room.drawCard(true);
+				if(room.dealerCardsSum > 21) {
+					for(var i = 0; i < room.players.length; i++) {
+						if(room.players[i].inGame) {
+							room.players[i].overallPoints += 2 * room.players[i].pointsBet;
 						} else {
-							this.players[i].overallPoints += this.players[i].pointsBet;
+							room.players[i].overallPoints += room.players[i].pointsBet;
 						}
 					}
-					this.state = "afterGame";
-					this.afterGameControlTime = now;
+					room.changeState(room.afterGame);
+					room.afterGameControlTime = now;
 				}
 			} else {
-				for(var i = 0; i < this.players.length; i++) {
-					if(this.players[i].inGame) {
-						if(this.players[i].cardsSum > this.dealerCardsSum) {
-							this.players[i].overallPoints += 2 * this.players[i].pointsBet;
-						} else if(this.players[i].cardsSum === this.dealerCardsSum) {
-							this.players[i].overallPoints += this.players[i].pointsBet;
+				for(var i = 0; i < room.players.length; i++) {
+					if(room.players[i].inGame) {
+						if(room.players[i].cardsSum > room.dealerCardsSum) {
+							room.players[i].overallPoints += 2 * room.players[i].pointsBet;
+						} else if(room.players[i].cardsSum === room.dealerCardsSum) {
+							room.players[i].overallPoints += room.players[i].pointsBet;
 						}
 					}
 				}
-				this.state = "afterGame";
-				this.afterGameControlTime = now;
+				room.changeState(room.afterGame);
+				room.afterGameControlTime = now;
 			}	
 		}
-	} else if (this.state === "afterGame") {
-		this.timer = Math.ceil((this.afterGameTime - (now - this.afterGameControlTime))/1000);
-		if(now - this.afterGameControlTime > this.afterGameTime) {
-			this.afterGameControlTime = now;
-			this.state = "reset";
-			io.to(this.id).emit('reset');
-		}
-	} else if (this.state === "reset") {
-		this.cards = [];
-		for(var i = 0; i < this.players.length; i++) {
-			this.players[i].pointsBet = 0;
-			this.players[i].cardsNumber = 0;
-			this.players[i].cardsSum = 0;
-			this.players[i].action = "none";
-			this.players[i].howManyAces = 0;
-			this.players[i].cards = [];
-		}
-		this.state = "bet";
-		this.currentPlayer = 0;
-		this.dealerCardsSum = 0;
-		this.dealerCardsNumber = 0;
-		this.thisStartTime = (new Date()).getTime();
-		this.controlDealTime = (new Date()).getTime(),
-		this.isCardForDealer = false;
-		this.isRoundStarted = false;
-		if(this.cardsStack.length <= 100) this.cardsStack = auxiliaryRequire.getCardsStack();
-		this.currentPlayerTime = (new Date()).getTime();
-		this.dealerHowManyAces = 0;
-	}
+	});
 
+
+Room.prototype.afterGame = new GameState(function(room) {
+	var now = (new Date()).getTime();
+	room.state = "afterGame";
+	room.timer = Math.ceil((room.afterGameTime - (now - room.afterGameControlTime))/1000);
+		if(now - room.afterGameControlTime > room.afterGameTime) {
+			room.afterGameControlTime = now;
+			room.changeState(room.reset);
+			//io.to(room.id).emit('reset');
+		}
+});
+
+
+Room.prototype.reset = new GameState(function(room) {
+	var now = (new Date()).getTime();
+	room.state = "reset";
+	room.cards = [];
+		for(var i = 0; i < room.players.length; i++) {
+			room.players[i].pointsBet = 0;
+			room.players[i].cardsNumber = 0;
+			room.players[i].cardsSum = 0;
+			room.players[i].action = "none";
+			room.players[i].howManyAces = 0;
+			room.players[i].cards = [];
+		}
+		room.changeState(room.bet);
+		room.currentPlayer = 0;
+		room.dealerCardsSum = 0;
+		room.dealerCardsNumber = 0;
+		room.thisStartTime = (new Date()).getTime();
+		room.controlDealTime = (new Date()).getTime(),
+		room.isCardForDealer = false;
+		room.isRoundStarted = false;
+		if(room.cardsStack.length <= 100) room.cardsStack = auxiliaryRequire.getCardsStack();
+		room.currentPlayerTime = (new Date()).getTime();
+		room.dealerHowManyAces = 0;
+});
+
+
+Room.prototype.gameLoop = function(io) {
+	this.loopState.execute(this);
 
 	io.to(this.id).emit('update', {
 		cards: this.cards,
@@ -375,6 +422,12 @@ Room.prototype.gameLoop = function(io) {
 		this.cards[i].x = this.cards[i].goalX;
 		this.cards[i].y = this.cards[i].goalY;
 	}
-
 	//console.log("Game state: " + this.state + "   currentPlayer: " + this.currentPlayer.name);
 }
+
+
+
+// (function() {
+// 	console.log("hello");
+// })();
+
