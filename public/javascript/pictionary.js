@@ -93,7 +93,7 @@ function sendWelcome(roomName) {
 	socket.emit('welcome', {
 		name:	player.name,
 		room:	roomName,
-		game: 	"charades",
+		game: 	"pictionary",
 		overallPoints: player.overallPoints
 	});
 		

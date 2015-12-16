@@ -13,7 +13,7 @@ MongoClient.connect(url, function(err, database) {
 
 
 module.exports.setRandomWord = function(room) {
-	db.collection("charades_dictionary").find().toArray(function (err, docs) {
+	db.collection("pictionary_dictionary").find().toArray(function (err, docs) {
 		assert.equal(err, null);
   		room.currentWord = docs[Math.floor(Math.random() * docs.length)];
  	});

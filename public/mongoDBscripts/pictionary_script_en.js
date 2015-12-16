@@ -1,4 +1,4 @@
-db.charades_dictionary.drop();
+db.pictionary_dictionary.drop();
 
 
 var easy = ("Thing;Stop;Alligator;Dance;Skip;Football;Kick;Head;Sunglasses;Pinch;Chair;Jump;"+
@@ -67,7 +67,7 @@ var books = ("Book;The Hobbit;James Bond;The Da Vinci Code;Curious George;Franke
 	"The Great Gatsby;Twilight;The Picture of Dorian Gray").split(";");
 
 
-db.charades_dictionary.insert(joinCollections([easy, moderate, hard, very_hard, animals ,idiom, characters, movies, series, books]));
+db.pictionary_dictionary.insert(joinCollections([easy, moderate, hard, very_hard, animals ,idiom, characters, movies, series, books]));
 
 function translateToJSON(list) {
 	var result = [];

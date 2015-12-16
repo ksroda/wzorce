@@ -10,7 +10,7 @@ var port = process.env.PORT || 5000;
 var bodyParser = require('body-parser');
 var lessMiddleware = require('less-middleware');
 var blackjackRequire = require('./index_blackjack.js').getInstance();
-var charadesRequire = require('./index_charades.js').getInstance();
+var pictionaryRequire = require('./index_pictionary.js').getInstance();
 var auxiliaryRequire = require('./index_auxiliary.js')();
 var socketRequire = require('./index_socket.js');
 var databaseRequire = require('./index_database.js');
@@ -97,12 +97,12 @@ app.get('/logout', function(req, res) {
 	}
 });
 
-app.get('/charades', function(req, res) {
-	renderPageForUser("charades", req, res, undefined);
+app.get('/pictionary', function(req, res) {
+	renderPageForUser("pictionary", req, res, undefined);
 });
 
-app.get('/charades/rooms', function(req, res) {
-  res.send(games["charades"].rooms);
+app.get('/pictionary/rooms', function(req, res) {
+  res.send(games["pictionary"].rooms);
 });
 
 app.get('/blackjack', function(req, res) {
@@ -132,7 +132,7 @@ var roomsIntervals = {};
 var games = {};
 
 games["blackjack"] = blackjackRequire;
-games["charades"] = charadesRequire;
+games["pictionary"] = pictionaryRequire;
 
 io.on('connection', function(socket) {
 	socket.startTime = (new Date()).getTime();
@@ -152,9 +152,9 @@ io.on('connection', function(socket) {
 	socketRequire.setOnDisconnect(socket, games, io, roomsIntervals);
 	//socketRequire.setOnMessage(socket, io);
 
-	charadesRequire.setOnMouseDown(socket);
-	charadesRequire.setOnMouseDrag(socket);
-	charadesRequire.setOnChatMessage(io, socket);
+	pictionaryRequire.setOnMouseDown(socket);
+	pictionaryRequire.setOnMouseDrag(socket);
+	pictionaryRequire.setOnChatMessage(io, socket);
 
 	blackjackRequire.socketHandling(socket);
 });

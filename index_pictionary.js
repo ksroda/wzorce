@@ -16,11 +16,11 @@ module.exports = (function () {
  
   function init() {
  
-   var charades = {
+   var pictionary = {
 		rooms: {}
 	}
 
-	charades.createRoom = function(io, roomName, roomIntervals) {
+	pictionary.createRoom = function(io, roomName, roomIntervals) {
 		var room = new Room(roomName, (new Date).getTime())	;
 		room.startLoop(io, roomIntervals);
 		this.rooms[room.id] = room;
@@ -28,21 +28,21 @@ module.exports = (function () {
 
 	//-----------------------------------------------------------------Socket---------------------------------------------------
 
-	charades.setOnMouseDown = function(socket) {
+	pictionary.setOnMouseDown = function(socket) {
 		var self = this;
 		socket.on('mouse down', function(msg) {
 			socket.broadcast.to(socket.roomId).emit('mouse down', msg);
 		});
 	};
 			
-	charades.setOnMouseDrag = function(socket) {
+	pictionary.setOnMouseDrag = function(socket) {
 		var self = this;
 		socket.on('mouse drag', function(msg) {
 			socket.broadcast.to(socket.roomId).emit('mouse drag', msg);
 		});
 	}
 
-	charades.setOnChatMessage = function(io, socket) {
+	pictionary.setOnChatMessage = function(io, socket) {
 		var self = this;
 		socket.on('chat-message', function(msg) {
 			var currentPlayer = self.rooms[socket.roomId].currentPlayer;
@@ -73,7 +73,7 @@ module.exports = (function () {
 		});
 	}
 
-	return charades;
+	return pictionary;
  
   };
  
@@ -98,7 +98,7 @@ module.exports = (function () {
 //-------------------------------------------------------------------Room---------------------------------------------------
 
 function Room(roomName, currentTime) {
-	this.id 					= "charades." + roomName;
+	this.id 					= "pictionary." + roomName;
 	this.name 					= roomName;
 	this.usersNum 				= 0;
 	this.playersAll 			= [];
