@@ -269,7 +269,7 @@ function create() {
     
     timer = game.add.text(window.innerWidth - 420, 70, "", style);
 
-    sendWelcome("testowy"); //Na czas testów
+    //sendWelcome("testowy"); //Na czas testów
 }
 
 
