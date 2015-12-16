@@ -108,5 +108,4 @@ module.exports = function() {
 		getCardsStack: publicGetCardsStack,
 		correctness: publicCorrectness
 	}
-
 }

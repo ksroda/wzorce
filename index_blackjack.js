@@ -6,13 +6,14 @@ function GameState(func) {
 }
 
 GameState.prototype.execute = function(room) {
-	//console.log(room);
 	this.state(room);
 }
 
-
-module.exports = function() {
-	var blackjack = {
+module.exports = (function () {
+  var instance;
+ 
+  function init() {
+ 	var blackjack = {
 		rooms: {}
 	}
 
@@ -21,7 +22,6 @@ module.exports = function() {
 		room.startLoop(io, roomIntervals);
 		this.rooms[room.id] = room;
 	}
-
 	//-----------------------------------------------------------------Socket---------------------------------------------------
 
 	blackjack.socketHandling = function(socket) {
@@ -44,9 +44,23 @@ module.exports = function() {
 			}
 		});
 	}
-
 	return blackjack;
-}
+  };
+  
+  return {
+    getInstance: function () {
+      if ( !instance ) {
+        instance = init();
+      }
+      return instance;
+    }
+  };
+})();
+
+
+// module.exports = function() {
+	
+// }
 
 //-------------------------------------------------------------------Room---------------------------------------------------
 
@@ -424,10 +438,3 @@ Room.prototype.gameLoop = function(io) {
 	}
 	//console.log("Game state: " + this.state + "   currentPlayer: " + this.currentPlayer.name);
 }
-
-
-
-// (function() {
-// 	console.log("hello");
-// })();
-

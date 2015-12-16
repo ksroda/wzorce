@@ -9,8 +9,8 @@ var port = process.env.PORT || 5000;
 
 var bodyParser = require('body-parser');
 var lessMiddleware = require('less-middleware');
-var blackjackRequire = require('./index_blackjack.js')();
-var charadesRequire = require('./index_charades.js')();
+var blackjackRequire = require('./index_blackjack.js').getInstance();
+var charadesRequire = require('./index_charades.js').getInstance();
 var auxiliaryRequire = require('./index_auxiliary.js')();
 var socketRequire = require('./index_socket.js');
 var databaseRequire = require('./index_database.js');

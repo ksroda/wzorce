@@ -47,46 +47,7 @@ socket.on('update rooms', function(rooms) {
 });
 
 socket.on('update', function(data) {
-	for(var i = 0; i < data.cards.length; i++) {
-		if(!cards[data.cards[i].id]) {
-			createCard(data.cards[i]);
-		} else {
-			cards[data.cards[i].id].updateGoal(data.cards[i]);
-		}
-	}
-
-	for(var i = 0; i < data.players.length; i++) {
-		if(!userInfo[data.players[i].id]) {
-			userInfo[data.players[i].id] = new UserInfo(data.players[i]);
-		} else {
-			userInfo[data.players[i].id].update(data.players[i]);
-		}
-	}
-
-
-	if(timer) timer.setText(data.timer);
-	if(dealerCardsSum) dealerCardsSum.setText(data.dealerCardsSum);
-
-	currentPlayer = data.currentPlayer;
-	
-	//if(gameState !== data.state) {
-		if(gameState === "bet") {
-			$(".actionButtons").fadeOut();
-			$(".betButtons").fadeIn();
-		} else {
-			$(".actionButtons").fadeIn();
-			$(".betButtons").fadeOut();
-		}
-	//}
-
-	gameState = data.state;
-
-	if(gameState == "reset") {
-		for(var x in cards) {
-			cards[x].kill();
-		}
-		cards = [];
-	}
+	subject.notify(data);
 });
 
 // socket.on('reset', function() {
@@ -131,6 +92,117 @@ var currentPlayerPointer;
 var currentPlayer;
 var gameState = "bet";
 
+
+function Observer(func) {
+  this.update = func;
+}
+
+function ObserverList(){
+  this.observerList = [];
+}
+ 
+ObserverList.prototype.add = function( obj ){
+  return this.observerList.push( obj );
+};
+ 
+ObserverList.prototype.count = function(){
+  return this.observerList.length;
+};
+ 
+ObserverList.prototype.get = function( index ){
+  if( index > -1 && index < this.observerList.length ){
+    return this.observerList[ index ];
+  }
+};
+ 
+ObserverList.prototype.indexOf = function( obj, startIndex ){
+  var i = startIndex;
+ 
+  while( i < this.observerList.length ){
+    if( this.observerList[i] === obj ){
+      return i;
+    }
+    i++;
+  }
+ 
+  return -1;
+};
+ 
+ObserverList.prototype.removeAt = function( index ){
+  this.observerList.splice( index, 1 );
+};
+
+
+function Subject(){
+  this.observers = new ObserverList();
+}
+ 
+Subject.prototype.addObserver = function( observer ){
+  this.observers.add( observer );
+};
+ 
+Subject.prototype.removeObserver = function( observer ){
+  this.observers.removeAt( this.observers.indexOf( observer, 0 ) );
+};
+ 
+Subject.prototype.notify = function( context ){
+  var observerCount = this.observers.count();
+  for(var i=0; i < observerCount; i++){
+    this.observers.get(i).update( context );
+  }
+};
+
+
+
+var subject = new Subject();
+
+subject.addObserver(new Observer(function(data) {
+	for(var i = 0; i < data.cards.length; i++) {
+		if(!cards[data.cards[i].id]) {
+			createCard(data.cards[i]);
+		} else {
+			cards[data.cards[i].id].updateGoal(data.cards[i]);
+		}
+	}
+}));
+
+subject.addObserver(new Observer(function(data) {
+	for(var i = 0; i < data.players.length; i++) {
+		if(!userInfo[data.players[i].id]) {
+			userInfo[data.players[i].id] = new UserInfo(data.players[i]);
+		} else {
+			userInfo[data.players[i].id].update(data.players[i]);
+		}
+	}
+}));
+
+subject.addObserver(new Observer(function(data) {
+	if(timer) timer.setText(data.timer);
+	if(dealerCardsSum) dealerCardsSum.setText(data.dealerCardsSum);
+	currentPlayer = data.currentPlayer;
+}));
+
+subject.addObserver(new Observer(function(data) {
+	gameState = data.state;
+	if(gameState === "bet") {
+			$(".actionButtons").fadeOut();
+			$(".betButtons").fadeIn();
+		} else {
+			$(".actionButtons").fadeIn();
+			$(".betButtons").fadeOut();
+		}
+}));
+
+
+subject.addObserver(new Observer(function(data) {
+	if(gameState == "reset") {
+		for(var x in cards) {
+			cards[x].kill();
+		}
+		cards = [];
+	}
+}));
+
 function preload() {
 	var suits = ["hearts", "spades", "clubs", "diamonds"];
 		var symbols = [
@@ -158,7 +230,6 @@ function preload() {
 		}
 	game.load.image("table", "cards/table.png");
 	game.load.image("arrow", "assets/arrow.png");
-	game.load.image("blank", "assets/blank.png");
 }
 
 function create() {
@@ -208,32 +279,14 @@ function update() {
 	
 }
 
-//UWAGA DEKORATOR
 function createCard(card) {
-	cards[card.id] = cardsGroup.create(card.x, card.y, card.type);
+	cards[card.id] = new DecoratedCard(cardsGroup.create(card.x, card.y, card.type), card);
+	// anchor.set(0,0) -> współrzędne obrazka w jego lewym górnym rogu
+	// anchor.set(0.5,0.5) -> współrzędne obrazka w jego środku
 	cards[card.id].anchor.set(0.5, 0.5);
 
-	cards[card.id].properties = {
-		value: card.value,
-		goalX: card.goalX,
-		goalY: card.goalY
-	};
-
-	cards[card.id].move = function() {
-		var temp = game.input.activePointer;
-		temp.x = this.properties.goalX;
-		temp.y = this.properties.goalY;
-		game.physics.arcade.moveToPointer(this, 50, temp, 300);
-	}
-
-	cards[card.id].updateGoal = function(card) {
-		this.properties.goalX = card.goalX;
-		this.properties.goalY = card.goalY;
-	}
-
 	game.physics.enable(cards[card.id], Phaser.Physics.ARCADE);
-	cards[card.id].body.allowRotation = false;
-	//cards[card.id].scale.setTo(0.5, 0.5);
+	//cards[card.id].body.allowRotation = true;
 }
 
 function UserInfo(player) {
@@ -252,4 +305,28 @@ UserInfo.prototype.update = function(player) {
 	this.cardsSum.setText(player.howManyAces > 0 ? player.cardsSum + "/" + (player.cardsSum - 10) : player.cardsSum);
 	this.pointsBet.setText(player.pointsBet);
 	if(player.id === myId) this.overallPoints.setText("Overall points: " + player.overallPoints);
+}
+
+
+//UWAGA DEKORATOR
+function DecoratedCard(cardObject, cardProperties) {
+	cardObject.properties = {
+		value: cardProperties.value,
+		goalX: cardProperties.goalX,
+		goalY: cardProperties.goalY
+	};
+
+	cardObject.move = function() {
+		var temp = game.input.activePointer;
+		temp.x = this.properties.goalX;
+		temp.y = this.properties.goalY;
+		game.physics.arcade.moveToPointer(this, 50, temp, 300);
+	}
+
+	cardObject.updateGoal = function(newCard) {
+		this.properties.goalX = newCard.goalX;
+		this.properties.goalY = newCard.goalY;
+	}
+
+	return cardObject;
 }

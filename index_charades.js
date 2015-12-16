@@ -1,8 +1,22 @@
 var auxiliaryRequire = require('./index_auxiliary.js')();
 var databaseRequire = require('./index_database.js');
 
-module.exports = function() {
-	var charades = {
+
+function GameState(func) {
+	this.state = func;
+}
+
+GameState.prototype.execute = function(io, room) {
+	this.state(io, room);
+}
+
+module.exports = (function () {
+
+  var instance;
+ 
+  function init() {
+ 
+   var charades = {
 		rooms: {}
 	}
 
@@ -60,7 +74,26 @@ module.exports = function() {
 	}
 
 	return charades;
-};
+ 
+  };
+ 
+  return {
+ 
+    // Get the Singleton instance if one exists
+    // or create one if it doesn't
+    getInstance: function () {
+ 
+      if ( !instance ) {
+        instance = init();
+      }
+ 
+      return instance;
+    }
+ 
+  };
+ 
+})();
+
 
 //-------------------------------------------------------------------Room---------------------------------------------------
 
@@ -94,6 +127,7 @@ Room.prototype.startLoop = function(io, roomIntervals) {
 	this.interval = intervalId;
 
 	var self = this;
+	this.changeState(this.beginning);
 	var interval = setInterval(function() {
 		self.gameLoop(io);
 	}, 500);
@@ -108,13 +142,18 @@ Room.prototype.setRandomWord = function() {
 Room.prototype.changeCurrentPlayer = function(io, player) {
 	this.currentPlayer = player;
 	this.drawingControlTime = (new Date()).getTime();
-	this.state = "beginning";
+	this.changeState(this.beginning);
 	io.to(this.id).emit('clear screen');
 }
 
 Room.prototype.userDisconnected = function(io, playerId) {
 	if(this.currentPlayer.id === playerId) {
-		this.changeCurrentPlayer(io, this.playersAll[Math.floor(Math.random() * this.playersAll.length)]);
+		var index = this.playersAll.indexOf(this.currentPlayer);
+		index++;
+		if(index > this.playersAll.length - 1) {
+			index = 0;
+		}
+		this.changeCurrentPlayer(io, this.playersAll[index]);
 	}
 }
 
@@ -133,43 +172,54 @@ Room.prototype.getRanking = function() {
 	});
 };
 
-Room.prototype.gameLoop = function(io) {
+Room.prototype.changeState = function(loopState) {
+	this.loopState = loopState;
+}
+
+Room.prototype.beginning = new GameState(function(io, room) {
 	var now = (new Date()).getTime();
-	switch(this.state) {
-		case "beginning":
-			this.setRandomWord();
-			this.drawingControlTime = (new Date()).getTime();
-  			this.state = "drawing time";
-			break;
-		case "drawing time":
-			this.playersAll.forEach(function(player) {
-				if(player.guessedWord) {
-					this.currentPlayer = player;
-					player.localPoints += this.pointsForWin;
-					player.overallPoints += this.pointsForWin;
-					io.to(this.id).emit("player who won", {
-						player: player,
-						currentWord: this.currentWord
-					});
-					this.afterGameControlTime = now;
-					this.state = "after game";
-				}
-			});
-			this.timer = Math.ceil((this.drawingTime - (now - this.drawingControlTime))/1000);
-			if(now - this.drawingControlTime > this.drawingTime) {
-				this.changeCurrentPlayer(io, this.playersAll[Math.floor(Math.random() * this.playersAll.length)]);
-			}
-			break;
-		case "after game":
-			//if(now - this.afterGameControlTime > this.afterGameTime) {
-			//	this.afterGameControlTime = now;
-				this.playersAll.forEach(function(player) {
+	room.state = "beginning";
+	room.setRandomWord();
+	room.drawingControlTime = (new Date()).getTime();
+  	room.changeState(room.drawing);
+});
+
+Room.prototype.drawing = new GameState(function(io, room) {
+	var now = (new Date()).getTime();
+	room.state = "drawing time";
+	room.playersAll.forEach(function(player) {
+	if(player.guessedWord) {
+		room.currentPlayer = player;
+			player.localPoints += room.pointsForWin;
+			player.overallPoints += room.pointsForWin;
+			io.to(room.id).emit("player who won", {
+			player: player,
+			currentWord: room.currentWord
+		});
+		room.afterGameControlTime = now;
+		room.changeState(room.afterGame);
+	}
+	});
+	room.timer = Math.ceil((room.drawingTime - (now - room.drawingControlTime))/1000);
+	if(now - room.drawingControlTime > room.drawingTime) {
+		room.changeCurrentPlayer(io, room.playersAll[Math.floor(Math.random() * room.playersAll.length)]);
+	}
+});
+
+Room.prototype.afterGame = new GameState(function(io, room) {
+	var now = (new Date()).getTime();
+	room.state = "after game";
+	//if(now - room.afterGameControlTime > room.afterGameTime) {
+			//	room.afterGameControlTime = now;
+				room.playersAll.forEach(function(player) {
 					player.guessedWord = false;
 				})
-				this.state = "beginning";
+				room.changeState(room.beginning);
 			//}
-			break;
-	}
+});
+
+Room.prototype.gameLoop = function(io) {
+	this.loopState.execute(io, this);
 
 	io.to(this.id).emit('update', {
 		currentWord: this.currentWord,
