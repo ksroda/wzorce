@@ -92,7 +92,7 @@ var currentPlayerPointer;
 var currentPlayer;
 var gameState = "bet";
 
-
+//-----------------------------------Observer-------------------------------------------
 function Observer(func) {
   this.update = func;
 }
@@ -266,14 +266,16 @@ function update() {
 		cards[i].move();
 	}
 
-	//console.log(currentPlayerPointer);
 	if(currentPlayer && currentPlayerPointer && gameState == "game") {
 		var temp = game.input.activePointer;
 		temp.x = currentPlayer.x;
 		temp.y = currentPlayer.y + 60;
 		game.physics.arcade.moveToPointer(currentPlayerPointer, 50, temp, 300);
-		//console.log(currentPlayerPointer);
-		//arrow.rotation = game.physics.arcade.angleBetween(arrow, { x: currentPlayerPointer.position.x, y: currentPlayerPointer.position.y });
+	} else {
+		var temp = game.input.activePointer;
+		temp.x = 675;
+		temp.y = 220;
+		game.physics.arcade.moveToPointer(currentPlayerPointer, 50, temp, 300);
 	}
 
 	
@@ -284,16 +286,14 @@ function createCard(card) {
 	// anchor.set(0,0) -> współrzędne obrazka w jego lewym górnym rogu
 	// anchor.set(0.5,0.5) -> współrzędne obrazka w jego środku
 	cards[card.id].anchor.set(0.5, 0.5);
-
 	game.physics.enable(cards[card.id], Phaser.Physics.ARCADE);
-	//cards[card.id].body.allowRotation = true;
 }
 
 function UserInfo(player) {
 	this.name = game.add.text(player.x, player.y + 100, player.name, style);
 	this.cardsSum = game.add.text(player.x - 70, player.y, player.cardsSum, style);
 	this.pointsBet = game.add.text(player.x, player.y + 80, player.pointsBet, style);
-	if(player.id === myId) this.overallPoints = game.add.text(100, 600, "Overll points: " + player.overallPoints, style);
+	if(player.id === myId) this.overallPoints = game.add.text(100, 600, "Overall points: " + player.overallPoints, style);
 
 	this.name.anchor.set(0.5, 0.5);
 	this.cardsSum.anchor.set(0.5, 0.5);
@@ -308,7 +308,6 @@ UserInfo.prototype.update = function(player) {
 }
 
 
-//UWAGA DEKORATOR
 function DecoratedCard(cardObject, cardProperties) {
 	cardObject.properties = {
 		value: cardProperties.value,

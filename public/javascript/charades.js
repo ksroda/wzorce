@@ -139,7 +139,7 @@ var whoIsDrawing;
 var timer;
 
 
-
+//--------------------------------Observer------------------------------------------
 function Observer(func) {
   this.update = func;
 }
@@ -263,9 +263,9 @@ function create() {
 
     var style = { font: "30px Arial", fill: "black", align: "center" };
 
-    whoIsDrawing = game.add.text(20, 70, "", style);
-    currentCategory = game.add.text(20, 105, "Category:", style);
-    currentWord = game.add.text(20, 140, "", style);
+    whoIsDrawing = game.add.text(40, 70, "", style);
+    currentCategory = game.add.text(40, 105, "Category:", style);
+    currentWord = game.add.text(40, 140, "", style);
     
     timer = game.add.text(window.innerWidth - 420, 70, "", style);
 

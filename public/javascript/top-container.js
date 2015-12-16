@@ -1,5 +1,5 @@
 $(document).ready(function() {
-	$(".games, .log-button").on('click', function() {
+	$(".games, .log-button, #website-name").on('click', function() {
 		window.location = $(this).find("a").attr("href"); 
 		return false;
 	});
