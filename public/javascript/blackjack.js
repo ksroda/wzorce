@@ -39,6 +39,7 @@ socket.on('player disconnected', function(playerId) {
 		userInfo[playerId].name.kill();
 		userInfo[playerId].cardsSum.kill();
 		userInfo[playerId].pointsBet.kill();
+		userInfo[playerId].status.kill();
 	}
 });
 
@@ -229,6 +230,7 @@ function preload() {
 		}
 	game.load.image("table", "cards/table.png");
 	game.load.image("arrow", "assets/arrow.png");
+	//game.load.image("title", "assets/title.png");
 
 	game.load.spritesheet("status", "assets/status.png", 109, 33, 4);
 }
@@ -293,19 +295,23 @@ function createCard(card) {
 }
 
 function UserInfo(player) {
+	//this.nameBackground = statusGroup.create(player.x, player.y + 110, "title");
 	this.name = game.add.text(player.x, player.y + 100, player.name, style);
-	this.cardsSum = game.add.text(player.x - 80, player.y, player.cardsSum, style);
+	this.cardsSum = game.add.text(player.x - 80, player.y + 20, player.cardsSum, style);
 	this.pointsBet = game.add.text(player.x, player.y + 80, player.pointsBet, style);
 	if(player.id === myId) this.overallPoints = game.add.text(100, 600, "Overall points: " + player.overallPoints, style);
-	this.status = statusGroup.create(player.x, player.y, "status");
+	this.status = statusGroup.create(player.x - 80, player.y - 10, "status");
 	this.status.anchor.set(0.5, 0.5);
-	//this.status.scale.setTo(0.4, 0.4);
+	this.status.scale.setTo(0.6, 0.6);
 
 	this.status.animations.add('win', [2], 1, false);
 	this.status.animations.add('lose', [1], 1, false);
 	this.status.animations.add('push', [0], 1, false);
 	this.status.animations.add('none', [3], 1, false);
 	this.status.animations.play('none');
+
+	//this.nameBackground.anchor.set(0.5, 0.5);
+	//this.nameBackground.scale.setTo(0.6, 0.6);
 
 	this.name.anchor.set(0.5, 0.5);
 	this.cardsSum.anchor.set(0.5, 0.5);
