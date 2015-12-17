@@ -181,7 +181,12 @@ Room.prototype.randomCardFromStack = function(cardForDealer) {
 
 Room.prototype.userDisconnected = function(io, playerId) {
 	if(this.currentPlayer.id == playerId) {
-		this.changeCurrentPlayer(false);
+		if(this.players.length === 1) {
+			this.afterGameControlTime = (new Date()).getTime();
+			this.changeState(this.afterGame);
+		} else {
+			this.changeCurrentPlayer(false);
+		}
 	}
 
 	this.seats[this.findPlayerById(playerId).seat] = false;
@@ -194,7 +199,8 @@ Room.prototype.userDisconnected = function(io, playerId) {
 		}
 	}
 
-	if(this.players.length <= 0) {
+	if(this.players.length <= 0 && this.state != "bet") {
+		this.afterGameControlTime = (new Date()).getTime();
 		this.changeState(this.afterGame);
 	}
 
@@ -315,10 +321,10 @@ Room.prototype.deal = new GameState(function(room) {
 Room.prototype.game = new GameState(function(room) {
 	var now = (new Date()).getTime();
 	room.state = "game";
-if(room.currentPlayer.action === "hit") {
+	if(room.currentPlayer.action === "hit") {
 			room.hit(now);
-		} else 
-			if(room.currentPlayer.action === "stand") {
+	} else 
+		if(room.currentPlayer.action === "stand") {
 				room.stand(now);
 		} else 
 			if(room.currentPlayer.action === "double") {
