@@ -22,6 +22,7 @@ module.exports = (function () {
 		room.startLoop(io, roomIntervals);
 		this.rooms[room.id] = room;
 	}
+
 	//-----------------------------------------------------------------Socket---------------------------------------------------
 
 	blackjack.socketHandling = function(socket) {
@@ -105,6 +106,7 @@ Room.prototype.createPlayer = function(player) {
 	player.cardsSum = 0;
 	player.pointsBet = 0;
 	player.cards = [];
+	player.gameResult = "none";
 
 	player.seat = this.seats.indexOf(false);
 	if(player.seat !== -1) {
@@ -356,10 +358,13 @@ Room.prototype.dealersTurn = new GameState(function(room) {
 				room.drawCard(true);
 				if(room.dealerCardsSum > 21) {
 					for(var i = 0; i < room.players.length; i++) {
+						room.players[i].gameResult = "lose";
 						if(room.players[i].inGame) {
 							room.players[i].overallPoints += 2 * room.players[i].pointsBet;
+							room.players[i].gameResult = "win";
 						} else {
 							room.players[i].overallPoints += room.players[i].pointsBet;
+							room.players[i].gameResult = "push";
 						}
 					}
 					room.changeState(room.afterGame);
@@ -367,11 +372,14 @@ Room.prototype.dealersTurn = new GameState(function(room) {
 				}
 			} else {
 				for(var i = 0; i < room.players.length; i++) {
+					room.players[i].gameResult = "lose";
 					if(room.players[i].inGame) {
 						if(room.players[i].cardsSum > room.dealerCardsSum) {
 							room.players[i].overallPoints += 2 * room.players[i].pointsBet;
+							room.players[i].gameResult = "win";
 						} else if(room.players[i].cardsSum === room.dealerCardsSum) {
 							room.players[i].overallPoints += room.players[i].pointsBet;
+							room.players[i].gameResult = "push";
 						}
 					}
 				}
@@ -405,6 +413,7 @@ Room.prototype.reset = new GameState(function(room) {
 			room.players[i].action = "none";
 			room.players[i].howManyAces = 0;
 			room.players[i].cards = [];
+			room.players[i].gameResult = "none";
 		}
 		room.changeState(room.bet);
 		room.currentPlayer = 0;

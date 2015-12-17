@@ -80,6 +80,7 @@ var player = {
 //------------------------------------Phraser-------------------------------------------
 var game = new Phaser.Game(1350, 700, Phaser.CANVAS, '', { preload: preload, create: create, update: update }, true);
 var cardsGroup;
+var statusGroup;
 
 var cards = {};
 var style = { font: "18px Arial", fill: "#FFFFFF", align: "center" };
@@ -94,62 +95,60 @@ var gameState = "bet";
 
 //-----------------------------------Observer-------------------------------------------
 function Observer(func) {
-  this.update = func;
+	this.update = func;
 }
 
 function ObserverList(){
-  this.observerList = [];
+	this.observerList = [];
 }
  
-ObserverList.prototype.add = function( obj ){
-  return this.observerList.push( obj );
+ObserverList.prototype.add = function(obj){
+	return this.observerList.push(obj);
 };
- 
+
 ObserverList.prototype.count = function(){
-  return this.observerList.length;
+	return this.observerList.length;
+};
+
+ObserverList.prototype.get = function(index){
+	if(index >= 0 && index < this.observerList.length){
+    	return this.observerList[index];
+  	}
 };
  
-ObserverList.prototype.get = function( index ){
-  if( index > -1 && index < this.observerList.length ){
-    return this.observerList[ index ];
-  }
+ObserverList.prototype.indexOf = function(obj, startIndex){
+	var i = startIndex;
+ 	while( i < this.observerList.length ){
+ 		if( this.observerList[i] === obj ){
+ 			return i;
+ 		}
+ 		i++;
+ 	}
+ 	return -1;
 };
  
-ObserverList.prototype.indexOf = function( obj, startIndex ){
-  var i = startIndex;
- 
-  while( i < this.observerList.length ){
-    if( this.observerList[i] === obj ){
-      return i;
-    }
-    i++;
-  }
- 
-  return -1;
-};
- 
-ObserverList.prototype.removeAt = function( index ){
-  this.observerList.splice( index, 1 );
+ObserverList.prototype.removeAt = function(index){
+	this.observerList.splice(index, 1);
 };
 
 
 function Subject(){
-  this.observers = new ObserverList();
+	this.observers = new ObserverList();
 }
  
-Subject.prototype.addObserver = function( observer ){
-  this.observers.add( observer );
+Subject.prototype.addObserver = function(observer){
+	this.observers.add(observer);
 };
  
-Subject.prototype.removeObserver = function( observer ){
-  this.observers.removeAt( this.observers.indexOf( observer, 0 ) );
+Subject.prototype.removeObserver = function(observer){
+	this.observers.removeAt(this.observers.indexOf(observer, 0) );
 };
  
-Subject.prototype.notify = function( context ){
-  var observerCount = this.observers.count();
-  for(var i=0; i < observerCount; i++){
-    this.observers.get(i).update( context );
-  }
+Subject.prototype.notify = function(context){
+	var observerCount = this.observers.count();
+	for(var i = 0; i < observerCount; i++) {
+		this.observers.get(i).update(context);
+	}
 };
 
 
@@ -230,6 +229,8 @@ function preload() {
 		}
 	game.load.image("table", "cards/table.png");
 	game.load.image("arrow", "assets/arrow.png");
+
+	game.load.spritesheet("status", "assets/status.png", 109, 33, 4);
 }
 
 function create() {
@@ -239,6 +240,7 @@ function create() {
 	var table = game.add.sprite(675, 280, "table");
 	game.physics.startSystem(Phaser.Physics.ARCADE);
 	cardsGroup = game.add.group();
+	
 	timer = game.add.text(50, 50, "", style);
 	dealerCardsSum = game.add.text(600, 80, "", style);
 	
@@ -256,6 +258,7 @@ function create() {
 	currentPlayerPointer.body.allowRotation = false;
 	currentPlayerPointer.anchor.set(0.5, 0.5);
 	currentPlayerPointer.scale.setTo(0.1, 0.1);
+	statusGroup = game.add.group();
 
 	//sendWelcome("testowy"); //Na czas testów
 }
@@ -291,9 +294,18 @@ function createCard(card) {
 
 function UserInfo(player) {
 	this.name = game.add.text(player.x, player.y + 100, player.name, style);
-	this.cardsSum = game.add.text(player.x - 70, player.y, player.cardsSum, style);
+	this.cardsSum = game.add.text(player.x - 80, player.y, player.cardsSum, style);
 	this.pointsBet = game.add.text(player.x, player.y + 80, player.pointsBet, style);
 	if(player.id === myId) this.overallPoints = game.add.text(100, 600, "Overall points: " + player.overallPoints, style);
+	this.status = statusGroup.create(player.x, player.y, "status");
+	this.status.anchor.set(0.5, 0.5);
+	//this.status.scale.setTo(0.4, 0.4);
+
+	this.status.animations.add('win', [2], 1, false);
+	this.status.animations.add('lose', [1], 1, false);
+	this.status.animations.add('push', [0], 1, false);
+	this.status.animations.add('none', [3], 1, false);
+	this.status.animations.play('none');
 
 	this.name.anchor.set(0.5, 0.5);
 	this.cardsSum.anchor.set(0.5, 0.5);
@@ -305,6 +317,7 @@ UserInfo.prototype.update = function(player) {
 	this.cardsSum.setText(player.howManyAces > 0 ? player.cardsSum + "/" + (player.cardsSum - 10) : player.cardsSum);
 	this.pointsBet.setText(player.pointsBet);
 	if(player.id === myId) this.overallPoints.setText("Overall points: " + player.overallPoints);
+	this.status.animations.play(player.gameResult);
 }
 
 
