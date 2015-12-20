@@ -29,6 +29,6 @@ $(document).ready(function() {
 			friend: $("#friendname").val()
 		});
 
-		angular.element($('#left-container')).scope().update();
+		angular.element($('#left-container')).scope().updateFriends();
 	});	
 });

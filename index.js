@@ -102,7 +102,7 @@ app.get('/pictionary', function(req, res) {
 });
 
 app.get('/pictionary/rooms', function(req, res) {
-  res.send(games["pictionary"].rooms);
+  res.send(auxiliaryRequire.objectToArray(games["pictionary"].rooms));
 });
 
 app.get('/blackjack', function(req, res) {

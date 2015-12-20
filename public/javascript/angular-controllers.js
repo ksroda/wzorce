@@ -4,7 +4,7 @@ app.controller('friendsCtrl', ["$scope", "$http", function($scope, $http) {
 		$scope.friends = response;
 	});
 					
-	$scope.update = function() {
+	$scope.updateFriends = function() {
 		$http.get("/friends?who=" + user.name).success(function(response) {
 			$scope.friends = response;
 		});

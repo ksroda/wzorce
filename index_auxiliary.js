@@ -102,10 +102,19 @@ module.exports = function() {
 
 	}
 
+	var publicObjectToArray = function(object) {
+		var result = [];
+		for(var x in object) {
+			result.push(object[x]);
+		}
+		return result;
+	}
+
 
 	return {
 		randomId: publicRandomId,
 		getCardsStack: publicGetCardsStack,
-		correctness: publicCorrectness
+		correctness: publicCorrectness,
+		objectToArray: publicObjectToArray
 	}
 }
