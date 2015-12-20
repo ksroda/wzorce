@@ -10,9 +10,12 @@ $(document).ready(function(){
 		$("body").css("background", "black");
 		$("#pictionary").css("opacity", "0.1");
 		$("#hangman").css("opacity", "0.1");
+		// $("#website-name").css("background-image", "url(\"stylesheets/img/titleblack.png\")");
+		$("#titleblack").css("opacity", "1");
+		$("#titleblue, #titlegray, #titleyellow").css("opacity", "0");
 
-		$("#titleblack").stop().fadeIn(500);
-		$("#titlegray, #titleblue, #titleyellow").stop().fadeOut(500);
+		// $("#titleblack").stop().fadeIn(500);
+		// $("#titlegray, #titleblue, #titleyellow").stop().fadeOut(500);
 	});
 
 	$("#hangman").hover(function() {
@@ -21,9 +24,12 @@ $(document).ready(function(){
 		$("body").css("background", "#F8B346");
 		$("#blackjack").css("opacity", "0.1");
 		$("#pictionary").css("opacity", "0.1");
+		// $("#website-name").css("background-image", "url(\"stylesheets/img/titleyellow.png\")");
+		$("#titleyellow").css("opacity", "1");
+		$("#titleblue, #titlegray, #titleblack").css("opacity", "0");
 
-		$("#titleyellow").stop().fadeIn(500);
-		$("#titlegray, #titleblue, #titleblack").stop().fadeOut(500);
+		// $("#titleyellow").stop().fadeIn(500);
+		// $("#titlegray, #titleblue, #titleblack").stop().fadeOut(500);
 	});
 
 	$("#pictionary").hover(function() {
@@ -32,9 +38,12 @@ $(document).ready(function(){
 		$("body").css("background", "#4a87a8");
 		$("#blackjack").css("opacity", "0.1");
 		$("#hangman").css("opacity", "0.1");
+		// $("#website-name").css("background-image", "url(\"stylesheets/img/titleblue.png\")");
+		$("#titleblue").css("opacity", "1");
+		$("#titleblack, #titlegray, #titleyellow").css("opacity", "0");
 
-		$("#titleblue").stop().fadeIn(500);
-		$("#titlegray, #titleblack, #titleyellow").stop().fadeOut(500);
+		// $("#titleblue").stop().fadeIn(500);
+		// $("#titlegray, #titleblack, #titleyellow").stop().fadeOut(500);
 	});
 
 	$(".games").mouseout(function() {
@@ -44,8 +53,11 @@ $(document).ready(function(){
 		$("#pictionary").css("opacity", "1");
 		$("#blackjack").css("opacity", "1");
 		$("#hangman").css("opacity", "1");
+		// $("#website-name").css("background-image", "url(\"stylesheets/img/titlegray.png\")");
+		$("#titlegray").css("opacity", "1");
+		$("#titleblue, #titleblack, #titleyellow").css("opacity", "0");
 
-		$("#titlegray").stop().fadeIn(500);
-		$("#titleblack, #titleblue, #titleyellow").stop().fadeOut(500);
+		// $("#titlegray").stop().fadeIn(500);
+		// $("#titleblack, #titleblue, #titleyellow").stop().fadeOut(500);
 	});
 });

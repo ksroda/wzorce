@@ -2,7 +2,7 @@
 $(document).ready(function() {
 	$(".actionButtons").hide();
 	$(".betButtons").hide();
-	$("#titleblack").show();
+	// $("#titleblack").show();
 
 	$("#create").on('click', function() {
 		sendWelcome($("#roomname").val());
