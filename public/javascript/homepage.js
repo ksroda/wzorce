@@ -10,6 +10,9 @@ $(document).ready(function(){
 		$("body").css("background", "black");
 		$("#pictionary").css("opacity", "0.1");
 		$("#hangman").css("opacity", "0.1");
+
+		$("#titleblack").stop().fadeIn(500);
+		$("#titlegray, #titleblue, #titleyellow").stop().fadeOut(500);
 	});
 
 	$("#hangman").hover(function() {
@@ -18,6 +21,9 @@ $(document).ready(function(){
 		$("body").css("background", "#F8B346");
 		$("#blackjack").css("opacity", "0.1");
 		$("#pictionary").css("opacity", "0.1");
+
+		$("#titleyellow").stop().fadeIn(500);
+		$("#titlegray, #titleblue, #titleblack").stop().fadeOut(500);
 	});
 
 	$("#pictionary").hover(function() {
@@ -26,6 +32,9 @@ $(document).ready(function(){
 		$("body").css("background", "#4a87a8");
 		$("#blackjack").css("opacity", "0.1");
 		$("#hangman").css("opacity", "0.1");
+
+		$("#titleblue").stop().fadeIn(500);
+		$("#titlegray, #titleblack, #titleyellow").stop().fadeOut(500);
 	});
 
 	$(".games").mouseout(function() {
@@ -35,5 +44,8 @@ $(document).ready(function(){
 		$("#pictionary").css("opacity", "1");
 		$("#blackjack").css("opacity", "1");
 		$("#hangman").css("opacity", "1");
+
+		$("#titlegray").stop().fadeIn(500);
+		$("#titleblack, #titleblue, #titleyellow").stop().fadeOut(500);
 	});
 });

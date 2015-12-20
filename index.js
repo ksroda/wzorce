@@ -20,7 +20,7 @@ console.log("Listening on " + port);
 var io = sio.listen(server);
 
 app.use(bodyParser.urlencoded({ extended: true }))
-app.use(bodyParser.json());
+//app.use(bodyParser.json());
 
 app.use(session({
   secret: 'marekkamilapaulina',

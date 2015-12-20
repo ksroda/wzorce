@@ -3,6 +3,7 @@ $(document).ready(function() {
 	$("#tool-belt").hide();
 	$("#right-container").hide();
 	$("#right-container-ranking").hide();
+	$("#titleblue").show();
 	
 	$("#create").on('click', function() {
 		sendWelcome($("#roomname").val());

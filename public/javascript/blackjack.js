@@ -2,6 +2,7 @@
 $(document).ready(function() {
 	$(".actionButtons").hide();
 	$(".betButtons").hide();
+	$("#titleblack").show();
 
 	$("#create").on('click', function() {
 		sendWelcome($("#roomname").val());
@@ -19,6 +20,8 @@ $(document).ready(function() {
 	$(".betButton").on('click', function() {
 		socket.emit("betButton", this.id);
 	});
+
+	$('[data-toggle="tooltip"]').tooltip("show");
 });	
 
 
