@@ -1,64 +1,42 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="myApp">
 <head>
-    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-    <title>Pattern Games</title>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+	<title>Pattern Games</title>
 	<script src="libraries/jquery-1.11.3.min.js"></script>
 
 	<link rel="stylesheet" href="libraries/bootstrap-3.3.5-dist/css/bootstrap.min.css">
 	<script src="libraries/bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>
 	<script src="libraries/angular-1.4.8/angular.min.js"></script>
-	<!--<script src="https://code.createjs.com/tweenjs-0.6.1.min.js"></script>-->
+	<!-- // <script src="libraries/angular-1.4.8/angular-route.js"></script> -->
 	<script src="/socket.io/socket.io.js"></script>
 	<script type="text/javascript">
 		var user = <%- JSON.stringify(user) %>;
 	</script>
 	<script src="javascript/homepage.js"></script>
-    <script src="javascript/top-container.js"></script>
-    <link rel="stylesheet" href="stylesheets/top-container.css">
+	<script src="javascript/top-container.js"></script>
+	<link rel="stylesheet" href="stylesheets/top-container.css">
 	<link rel="stylesheet" href="stylesheets/homepage.css">
 	<script>
 
 	</script>
 </head>
 	<body>
-		<div ng-app="myApp">
-        	<%- include top-container.ejs %>
-        </div>
-                
-               
-
-                <div id="centre-containter">
-                        <div id="blackjack" class="games">
-                            <a href="/blackjack"></a>
-                        </div>
-                        <div id="pictionary" class="games">
-                            <a href="/pictionary"></a>  
-                        </div>
-                        <div id="hangman" class="games">
-                            <a href="/hangman"></a> 
-                        </div>
-                </div>
-               <!--  <div id="RightContainer">
-                        <div id="Chat">
-                                <div id="OutputChat">
-                                        <ul class="ChatList">
-                                                <li>User1: Bla bla bla</li>
-                                                <li>User1: Bla bla bla</li>
-                                                <li>User1: Bla bla bla</li>
-                                                <li>User1: Bla bla bla</li>
-                                        </ul>
-                                </div>
-                                <div id="InputChat">
-                                        <div id="Type">
-                                                Input
-                                        </div>
-                                        <div id="SendButton">
-                                                Send
-                                        </div>
-                                </div>
-                        </div>
-                </div>       -->  
-                <script src="javascript/angular-controllers.js"></script>
-        </body>
+		<%- include top-container.ejs %>
+		<div id="centre-containter">
+			<div id="blackjack" class="games">
+				<a href="/blackjack"></a>
+			</div>
+			<div id="pictionary" class="games">
+				<a href="/pictionary"></a>
+			</div>
+			<div id="hangman" class="games">
+				<a href="/hangman"></a>
+			</div>
+		</div>
+		<script type="text/javascript">
+			var app = angular.module('myApp', []);
+		</script>
+		<script src="javascript/angular-controllers.js"></script>
+	</body>
 </html>

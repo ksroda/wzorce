@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="myApp">
 <head>
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
 	<title>Pattern Games</title>
@@ -8,6 +8,7 @@
 	<link rel="stylesheet" href="libraries/bootstrap-3.3.5-dist/css/bootstrap.min.css">
 	<script src="libraries/bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>
 	<script src="libraries/angular-1.4.8/angular.min.js"></script>
+	<script src="libraries/angular-1.4.8/angular-route.js"></script>
 	<script src="/socket.io/socket.io.js"></script>
 	<script src="phaser/phaser.js"></script>
 	<script src="phaser/phaser.min.js"></script>
@@ -15,29 +16,43 @@
 		var user = <%- JSON.stringify(user) %>;
 		var gameName = "blackjack"; //w angular do wyświetlania pokoi
 	</script>
-	<script src="javascript/blackjack.js"></script>
+	<script src="javascript/blackjack-setup.js"></script>
 	<script src="javascript/top-container.js"></script>
 	<link rel="stylesheet" href="stylesheets/top-container.css">
 	<link rel="stylesheet" href="stylesheets/blackjack.css">
 </head>
 <body> 
-	<div ng-app="myApp">
-		<%- include top-container.ejs %>
-		<%- include angular-rooms-controller.ejs %>
-	</div>
-	
-	<div class="btn-group actionButtons">
-		<button id="hit" type="button" class="btn btn-success actionButton">Hit</button>
-		<button id="stand" type="button" class="btn btn-success actionButton">Stand</button>
-		<button id="double" type="button" class="btn btn-success actionButton">Double</button>
-		<button id="split" type="button" class="btn btn-success actionButton">Split</button>
-	</div>
-	<div class="btn-group betButtons">
-		<button id="10" type="button" class="btn btn-default betButton">10</button>
-		<button id="25" type="button" class="btn btn-default betButton">25</button>
-		<button id="50" type="button" class="btn btn-default betButton">50</button>
-		<button id="100" type="button" class="btn btn-default betButton">100</button>
-	</div>
+	<%- include top-container.ejs %>
+	<div ng-view></div>
+
+	<script type="text/javascript">
+		var app = angular.module('myApp', ['ngRoute']);
+		app.config(function($routeProvider) {
+			$routeProvider
+				.when('/',
+					{
+						controller: 'roomsController',
+						templateUrl:'blackjack-rooms.ejs'
+					})
+				.when('/game',
+					{
+						controller: 'buttonsController',
+						templateUrl:'blackjack-game.ejs'
+					})
+				.otherwise({ redirectTo: '/' });
+		});
+		app.controller('buttonsController', ["$scope", "$http", function($scope, $http) {	
+			$scope.triggerActionButton = function(action) {
+				// alert(action);
+				socket.emit("actionButton", action);
+			}
+
+			$scope.triggerBetButton = function(bet) {
+				// alert(action);
+				socket.emit("betButton", bet);
+			}
+		}]);
+	</script>
 	<script src="javascript/angular-controllers.js"></script>
 </body>
 </html>

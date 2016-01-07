@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="myApp">
 <head>
   <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
   <script src="libraries/jquery-1.11.3.min.js"></script>
@@ -15,9 +15,7 @@
 	<link rel="stylesheet" href="stylesheets/login.css">
 </head>
 <body> 
-<div ng-app="myApp">
-	<%- include top-container.ejs %>
-</div>
+<%- include top-container.ejs %>
 <div id="login-form">
 	<form method="POST">
 		<div id="name" class="row login-position">
@@ -56,7 +54,9 @@
 </div>
 <% } %>
 
-<script src="javascript/angular-controllers.js"></script>
-
+<script type="text/javascript">
+	var app = angular.module('myApp', []);
+</script>
+<!-- <script src="javascript/angular-controllers.js"></script> -->
 </body>
 </html>
