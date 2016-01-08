@@ -126,41 +126,14 @@ subject.addObserver(new Observer(function(data) {
 }));
 
 function preload() {
-	game.load.image("arrow", "assets/arrow.png");
+
 }
 
 var loadingText;
 
 function create() {
-
-	game.time.desiredFps = 30;
-
-	game.physics.startSystem(Phaser.Physics.ARCADE);
-	cardsGroup = game.add.group();
-	
-	timer = game.add.text(50, 50, "", style);
-	dealerCardsSum = game.add.text(600, 80, "", style);
-	
-	//table.scale.setTo(0.6, 0.6);
-	
-	timer.anchor.set(0.5, 0.5);
-	dealerCardsSum.anchor.set(0.5, 0.5);
-
-	//arrow = game.add.sprite(675, 30, "arrow");
-	//arrow.anchor.set(0.45, 0.5);
-	//arrow.scale.setTo(0.5, 0.5);
-
-	currentPlayerPointer = game.add.sprite(1080, 290, "arrow");
-	currentPlayerPointer.visible = false;
-	game.physics.enable(currentPlayerPointer, Phaser.Physics.ARCADE);
-	currentPlayerPointer.body.allowRotation = false;
-	currentPlayerPointer.anchor.set(0.5, 0.5);
-	currentPlayerPointer.scale.setTo(0.1, 0.1);
-	statusGroup = game.add.group();
-
 	// game.load.onLoadStart.add(loadStart, this);
 	game.load.onLoadComplete.add(loadComplete, this);
-
 	var style = { font: "30px Arial", fill: "#FFFFFF", align: "center" };
 	loadingText = game.add.text(675, 280, "Loading...", style);
 	startLoading();
@@ -192,6 +165,7 @@ function startLoading() {
 			}
 		}
 	game.load.image("table", "cards/table.png");
+	game.load.image("arrow", "assets/arrow.png");
 	//game.load.image("title", "assets/title.png");
 
 	game.load.spritesheet("status", "assets/status.png", 109, 33, 4);
@@ -202,39 +176,63 @@ function startLoading() {
 function loadComplete() {
 	// $("canvas").hide();
 	loadingText.setText("");
+	game.time.desiredFps = 30;
+
 
 	var table = game.add.sprite(675, 280, "table");
-	table.anchor.set(0.5, 0.5);
+	game.physics.startSystem(Phaser.Physics.ARCADE);
+	cardsGroup = game.add.group();
 	
-	currentPlayerPointer.visible = true;
+	timer = game.add.text(50, 50, "", style);
+	dealerCardsSum = game.add.text(600, 80, "", style);
+	
+	//table.scale.setTo(0.6, 0.6);
+	table.anchor.set(0.5, 0.5);
+	timer.anchor.set(0.5, 0.5);
+	dealerCardsSum.anchor.set(0.5, 0.5);
+
+	//arrow = game.add.sprite(675, 30, "arrow");
+	//arrow.anchor.set(0.45, 0.5);
+	//arrow.scale.setTo(0.5, 0.5);
+
+	currentPlayerPointer = game.add.sprite(1080, 290, "arrow");
+	game.physics.enable(currentPlayerPointer, Phaser.Physics.ARCADE);
+	currentPlayerPointer.body.allowRotation = false;
+	currentPlayerPointer.anchor.set(0.5, 0.5);
+	currentPlayerPointer.scale.setTo(0.1, 0.1);
+	statusGroup = game.add.group();
+
 	//sendWelcome("testowy"); //Na czas testów
 	gameLoaded = true;
 }
 
 function update() {
-	for(var i in cards) {
-		cards[i].move();
-	}
-
-	if(currentPlayer && currentPlayerPointer && gameState == "game") {
-		var temp = game.input.activePointer;
-		temp.x = currentPlayer.x;
-		temp.y = currentPlayer.y + 60;
-		if(currentPlayer.split) {
-			if(currentPlayer.hand === "right") {
-				temp.x = currentPlayer.x + 40;
-			} else {
-				temp.x = currentPlayer.x - 40;
-			}
+	if(gameLoaded) {
+		for(var i in cards) {
+			cards[i].move();
 		}
-		game.physics.arcade.moveToPointer(currentPlayerPointer, 50, temp, 300);
-	} else {
-		var temp = game.input.activePointer;
-		temp.x = 675;
-		temp.y = 220;
-		game.physics.arcade.moveToPointer(currentPlayerPointer, 50, temp, 300);
-	}
 
+		if(currentPlayer && currentPlayerPointer && gameState == "game") {
+			var temp = game.input.activePointer;
+			temp.x = currentPlayer.x;
+			temp.y = currentPlayer.y + 60;
+			if(currentPlayer.split) {
+				if(currentPlayer.hand === "right") {
+					temp.x = currentPlayer.x + 40;
+				} else {
+					temp.x = currentPlayer.x - 40;
+				}
+			}
+			game.physics.arcade.moveToPointer(currentPlayerPointer, 50, temp, 300);
+		} else {
+			var temp = game.input.activePointer;
+			temp.x = 675;
+			temp.y = 220;
+			game.physics.arcade.moveToPointer(currentPlayerPointer, 50, temp, 300);
+		}
+
+	}
+	
 	
 }
 

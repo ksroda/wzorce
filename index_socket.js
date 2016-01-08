@@ -26,7 +26,7 @@ module.exports = (function() {
 			}
 
 			games[socket.game].rooms[socket.roomId].createPlayer(player);
-			io.emit('update rooms', games[socket.game].rooms);
+			socket.broadcast.emit('update rooms', games[socket.game].rooms);
 		});
 	};
 

@@ -48,7 +48,10 @@ socket.on('player disconnected', function(playerId) {
 });
 
 socket.on('update rooms', function(rooms) {
-	angular.element($('#rooms')).scope().update(rooms);
+	var controller = angular.element($('#rooms')).scope();
+	if(controller) {
+		controller.update(rooms);
+	}
 });
 
 socket.on('update', function(data) {
