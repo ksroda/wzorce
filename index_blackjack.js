@@ -250,6 +250,7 @@ Room.prototype.stand = function(now) {
 
 Room.prototype.split= function(now) {
 	this.currentPlayer.action = "none";
+	this.currentPlayerTime = now;
 	this.currentPlayer.cards[0].goalX -= 40;
 	this.currentPlayer.cards[1].goalX = this.currentPlayer.cards[0].goalX + 80;
 	this.currentPlayer.cards[1].goalY += 25;
