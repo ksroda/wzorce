@@ -126,6 +126,20 @@ subject.addObserver(new Observer(function(data) {
 }));
 
 function preload() {
+
+}
+
+var loadingText;
+
+function create() {
+
+	// game.load.onLoadStart.add(loadStart, this);
+	game.load.onLoadComplete.add(loadComplete, this);
+	loadingText = game.add.text(100, 100, "Loading...", {fill: "#ffffff" });
+	startLoading();
+}
+
+function startLoading() {
 	var suits = ["hearts", "spades", "clubs", "diamonds"];
 		var symbols = [
 			{ type: 2	},
@@ -155,11 +169,15 @@ function preload() {
 	//game.load.image("title", "assets/title.png");
 
 	game.load.spritesheet("status", "assets/status.png", 109, 33, 4);
+
+	game.load.start();
 }
 
-function create() {
+function loadComplete() {
 	// $("canvas").hide();
+	loadingText.setText("");
 	game.time.desiredFps = 30;
+
 
 	var table = game.add.sprite(675, 280, "table");
 	game.physics.startSystem(Phaser.Physics.ARCADE);
