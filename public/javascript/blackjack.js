@@ -136,6 +136,7 @@ function create() {
 	game.load.onLoadComplete.add(loadComplete, this);
 	var style = { font: "30px Arial", fill: "#FFFFFF", align: "center" };
 	loadingText = game.add.text(675, 280, "Loading...", style);
+	loadingText.anchor.set(0.5, 0.5);
 	startLoading();
 }
 
