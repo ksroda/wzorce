@@ -8,6 +8,15 @@ app.controller('friendsController', ["$scope", "$http", "$location", function($s
 			$scope.friends = response;
 		});
 	}
+
+	$scope.addFriend = function() {
+		console.log(user.name);
+		socket.emit('add friend', {
+			user: user.name,
+			friend: $scope.friendName
+		});
+		$scope.updateFriends();
+	}
 }]);
 
 app.controller('roomsController', ["$scope", "$http", "$location", function($scope, $http, $location) {
@@ -22,11 +31,13 @@ app.controller('roomsController', ["$scope", "$http", "$location", function($sco
 	}
 
 	$scope.enterRoom = function(room) {
+		userAllowedToEnterGame = true;
 		sendWelcome(room);
 		$location.path("/game");
 	}
 
 	$scope.createRoom = function() {
+		userAllowedToEnterGame = true;
 		sendWelcome($scope.roomEntered);
 		$location.path("/game");
 	}

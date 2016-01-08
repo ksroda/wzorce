@@ -1,3 +1,7 @@
+if(!userAllowedToEnterGame) {
+	window.location = "#/";
+};
+
 //------------------------------------Phraser-------------------------------------------
 var game = new Phaser.Game(1350, 700, Phaser.CANVAS, 'phaser', { preload: preload, create: create, update: update }, true);
 var cardsGroup;
@@ -184,7 +188,6 @@ function create() {
 }
 
 function update() {
-
 	for(var i in cards) {
 		cards[i].move();
 	}
@@ -193,6 +196,13 @@ function update() {
 		var temp = game.input.activePointer;
 		temp.x = currentPlayer.x;
 		temp.y = currentPlayer.y + 60;
+		if(currentPlayer.split) {
+			if(currentPlayer.hand === "right") {
+				temp.x = currentPlayer.x + 40;
+			} else {
+				temp.x = currentPlayer.x - 40;
+			}
+		}
 		game.physics.arcade.moveToPointer(currentPlayerPointer, 50, temp, 300);
 	} else {
 		var temp = game.input.activePointer;
@@ -234,6 +244,24 @@ function UserInfo(player) {
 	this.name.anchor.set(0.5, 0.5);
 	this.cardsSum.anchor.set(0.5, 0.5);
 	this.pointsBet.anchor.set(0.5, 0.5);
+
+
+	this.splitProperties = {
+		cardsSum: game.add.text(player.x + 110, player.y + 20, "", style),
+		pointsBet: game.add.text(player.x + 40, player.y + 80, "", style),
+		status: statusGroup.create(player.x + 110, player.y - 10, "status")
+	}
+
+	this.splitProperties.status.anchor.set(0.5, 0.5);
+	this.splitProperties.status.scale.setTo(0.6, 0.6);
+	this.splitProperties.status.animations.add('win', [2], 1, false);
+	this.splitProperties.status.animations.add('lose', [1], 1, false);
+	this.splitProperties.status.animations.add('push', [0], 1, false);
+	this.splitProperties.status.animations.add('none', [3], 1, false);
+	this.splitProperties.status.animations.play('none');
+
+	this.splitProperties.cardsSum.anchor.set(0.5, 0.5);
+	this.splitProperties.pointsBet.anchor.set(0.5, 0.5);
 }
 
 UserInfo.prototype.update = function(player) {
@@ -242,6 +270,23 @@ UserInfo.prototype.update = function(player) {
 	this.pointsBet.setText(player.pointsBet);
 	if(player.id === myId) this.overallPoints.setText("Overall points: " + player.overallPoints);
 	this.status.animations.play(player.gameResult);
+	
+	if(player.split) {
+		this.splitProperties.cardsSum.setText(player.splitProperties.howManyAces > 0 ? player.splitProperties.cardsSum + 
+			"/" + (player.splitProperties.cardsSum - 10) : player.splitProperties.cardsSum);
+		this.cardsSum.x = player.x - 110;
+		this.status.x = player.x - 110;
+		this.pointsBet.x = player.x - 40;
+		this.splitProperties.pointsBet.setText(player.splitProperties.pointsBet);
+		this.splitProperties.status.animations.play(player.splitProperties.gameResult);
+	} else {
+		this.cardsSum.x = player.x - 80;
+		this.status.x = player.x - 80;
+		this.pointsBet.x = player.x;
+		this.splitProperties.pointsBet.setText("");
+		this.splitProperties.cardsSum.setText("");
+		this.splitProperties.status.animations.play('none');
+	}
 }
 
 

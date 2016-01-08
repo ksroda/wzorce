@@ -59,10 +59,10 @@
 			</ul>
 			<div id="input-friend" class="row">
 				<div id="input-add" class="col-sm-9">
-					<input type="text" class="form-control" id="friendname" placeholder="Enter Friend Name">
+					<input type="text" class="form-control" id="friendname" placeholder="Enter Friend Name" ng-model="friendName">
 				</div>
 				<div id="submit-add" class="col-sm-3">
-					<button id="add" type="button" class="btn btn-success">Add</button>
+					<button id="add" type="button" class="btn btn-success" ng-click="addFriend()">Add</button>
 				</div>
 			</div>
 		</div>

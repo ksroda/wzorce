@@ -97,8 +97,6 @@ function Room(roomName, currentTime) {
 
 
 
-
-
 Room.prototype.createPlayer = function(player) {
 	player.cardsNumber = 0;
 	player.howManyAces = 0;
@@ -107,6 +105,18 @@ Room.prototype.createPlayer = function(player) {
 	player.pointsBet = 0;
 	player.cards = [];
 	player.gameResult = "none";
+
+	player.split = false;
+	player.hand = "right";
+	player.splitProperties = {
+		cardsSum: 0,
+		cardsNumber: 0,
+		howManyAces: 0,
+		cards: [],
+		pointsBet: 0,
+		gameResult: "none",
+		inGame: true
+	}
 
 	player.seat = this.seats.indexOf(false);
 	if(player.seat !== -1) {
@@ -162,6 +172,14 @@ Room.prototype.playersInGame = function() {
 	return result;
 }
 
+Room.prototype.splitPlayersInGame = function() {
+	var result = 0;
+	for(var i = 0; i < this.players.length; i++) {
+		if(this.players[i].splitProperties.inGame) result++;
+	}
+	return result;
+}
+
 Room.prototype.randomCardFromStack = function(cardForDealer) {
 	//var cardIndex = Math.floor(Math.random() * this.cardsStack.length);
 	var cardIndex = this.cardsStack.length - 1;
@@ -173,7 +191,7 @@ Room.prototype.randomCardFromStack = function(cardForDealer) {
   		type: 	card.type,
 		x: 		1200,
 		y: 		100,
-		goalX: 	(cardForDealer ? this.dealerX + this.dealerCardsNumber * 25 : this.currentPlayer.x + this.currentPlayer.cardsNumber * 25),
+		goalX: 	(cardForDealer ? this.dealerX + this.dealerCardsNumber * 25 : this.currentPlayer.x + this.currentPlayer.cardsNumber * 20),
 		goalY: 	(cardForDealer ? this.dealerY : this.currentPlayer.y - this.currentPlayer.cardsNumber * 25),
 		value: 	card.value
 	});
@@ -218,19 +236,40 @@ Room.prototype.hit = function(now) {
 	}
 }
 
-
 Room.prototype.stand = function(now) {
 	this.currentPlayer.action = "none";
-	this.changeCurrentPlayer(true);	
-	this.isRoundStarted = true;
 	this.currentPlayerTime = now;
+	if(this.currentPlayer.split && this.currentPlayer.hand === "right") {
+		this.currentPlayer.hand = "left";
+		this.currentPlayer.splitProperties.inGame = true;
+	} else {
+		this.isRoundStarted = true;
+		this.changeCurrentPlayer(true);
+	}
+}
+
+Room.prototype.split= function(now) {
+	this.currentPlayer.action = "none";
+	this.currentPlayer.cards[0].goalX -= 40;
+	this.currentPlayer.cards[1].goalX = this.currentPlayer.cards[0].goalX + 80;
+	this.currentPlayer.cards[1].goalY += 25;
+
+	this.currentPlayer.split = true;
+	this.currentPlayer.cardsNumber = 1;
+	this.currentPlayer.splitProperties.cardsNumber = 1;
+	this.currentPlayer.splitProperties.cards.push(this.currentPlayer.cards.pop());
+	this.currentPlayer.splitProperties.howManyAces = (this.currentPlayer.splitProperties.cards[0].value === 11 ? 1 : 0);
+	this.currentPlayer.howManyAces = (this.currentPlayer.cards[0].value === 11 ? 1 : 0);
+	this.currentPlayer.splitProperties.cardsSum = this.currentPlayer.splitProperties.cards[0].value;
+	this.currentPlayer.cardsSum = this.currentPlayer.cards[0].value;
+	this.currentPlayer.splitProperties.pointsBet = this.currentPlayer.pointsBet;
+	this.currentPlayer.overallPoints -= this.currentPlayer.pointsBet;
 }
 
 Room.prototype.drawCard = function(cardForDealer) {
 	var card = this.randomCardFromStack(cardForDealer);
-	this.cards.push(card);
-
 	if(cardForDealer) {		
+		this.cards.push(card);
 		this.dealerCardsSum += card.value;
 		this.dealerCardsNumber += 1;
 		if(card.value === 11) this.dealerHowManyAces += 1;
@@ -239,18 +278,43 @@ Room.prototype.drawCard = function(cardForDealer) {
 			--this.dealerHowManyAces;
 		}
 	} else {
-		this.currentPlayer.cards.push(card);
-		this.currentPlayer.cardsSum += card.value;
-		this.currentPlayer.cardsNumber += 1;
-		if(card.value === 11) this.currentPlayer.howManyAces += 1;
-		if(this.currentPlayer.cardsSum > 21) {
-			if(this.currentPlayer.howManyAces > 0) {
-				this.currentPlayer.cardsSum -= 10;
-				--this.currentPlayer.howManyAces;
-			} else {
-				this.changeCurrentPlayer(false);	
+		if(this.currentPlayer.split && this.currentPlayer.hand === "right") {
+			card.goalX = this.currentPlayer.x + this.currentPlayer.splitProperties.cardsNumber * 20 + 40;
+			card.goalY = this.currentPlayer.y - this.currentPlayer.splitProperties.cardsNumber * 25;
+			this.cards.push(card);
+			this.currentPlayer.splitProperties.cards.push(card);
+			this.currentPlayer.splitProperties.cardsSum += card.value;
+			this.currentPlayer.splitProperties.cardsNumber += 1;
+			if(card.value === 11) this.currentPlayer.splitProperties.howManyAces += 1;
+			if(this.currentPlayer.splitProperties.cardsSum > 21) {
+				if(this.currentPlayer.splitProperties.howManyAces > 0) {
+					this.currentPlayer.splitProperties.cardsSum -= 10;
+					--this.currentPlayer.splitProperties.howManyAces;
+				} else {
+					// this.changeCurrentPlayer(false);	
+					this.currentPlayer.hand = "left";
+					this.currentPlayer.splitProperties.inGame = false;
+				}
+			}
+		} else {
+			if(this.currentPlayer.split && this.currentPlayer.hand === "left") {
+				card.goalX -= 40;
+			}
+			this.cards.push(card);
+			this.currentPlayer.cards.push(card);
+			this.currentPlayer.cardsSum += card.value;
+			this.currentPlayer.cardsNumber += 1;
+			if(card.value === 11) this.currentPlayer.howManyAces += 1;
+			if(this.currentPlayer.cardsSum > 21) {
+				if(this.currentPlayer.howManyAces > 0) {
+					this.currentPlayer.cardsSum -= 10;
+					--this.currentPlayer.howManyAces;
+				} else {
+					this.changeCurrentPlayer(false);	
+				}
 			}
 		}
+		
 	}
 }
 
@@ -329,16 +393,18 @@ Room.prototype.game = new GameState(function(room) {
 		} else 
 			if(room.currentPlayer.action === "double") {
 				room.currentPlayer.action = "none";
-				room.currentPlayer.overallPoints -= room.currentPlayer.pointsBet;
-				room.currentPlayer.pointsBet *= 2;
+				if(room.currentPlayer.split && room.currentPlayer.hand == "right") {
+					room.currentPlayer.overallPoints -= room.currentPlayer.splitProperties.pointsBet;
+					room.currentPlayer.splitProperties.pointsBet *= 2;
+				} else {
+					room.currentPlayer.overallPoints -= room.currentPlayer.pointsBet;
+					room.currentPlayer.pointsBet *= 2;
+				}
 				room.hit(now);
 				room.stand(now);
 		} else
 		 	if(room.currentPlayer.action === "split") {
-			 	room.currentPlayer.action = "none";
-				room.currentPlayer.cards[0].goalX -= 30;
-				room.currentPlayer.cards[1].goalX += 30;
-				room.currentPlayer.cards[1].goalY += 25;
+			 	room.split(now);
 			}
 		room.timer = Math.ceil((room.timeToThink - (now - room.currentPlayerTime))/1000);
 
@@ -350,6 +416,9 @@ Room.prototype.game = new GameState(function(room) {
 			room.currentPlayerTime = now;
 			room.changeCurrentPlayer(true);	
 			room.isRoundStarted = true;
+		} else if(room.currentPlayer.splitProperties.cardsSum === 21) {
+			room.currentPlayer.hand = "left";
+			room.currentPlayer.splitProperties.inGame = true;
 		}
 });
 
@@ -360,7 +429,7 @@ Room.prototype.dealersTurn = new GameState(function(room) {
 	timer = 0;
 		if(now - room.controlDealTime > room.timeBetweenCardsDeal) {
 			room.controlDealTime = now;
-			if(room.dealerCardsSum < 17 && room.playersInGame() !== 0) {
+			if(room.dealerCardsSum < 17 && (room.playersInGame() !== 0 || room.splitPlayersInGame() !== 0)) {
 				room.drawCard(true);
 				if(room.dealerCardsSum > 21) {
 					for(var i = 0; i < room.players.length; i++) {
@@ -372,6 +441,17 @@ Room.prototype.dealersTurn = new GameState(function(room) {
 							room.players[i].overallPoints += room.players[i].pointsBet;
 							room.players[i].gameResult = "push";
 						}
+						if(room.players[i].split) {
+							room.players[i].splitProperties.gameResult = "lose";
+							if(room.players[i].splitProperties.inGame) {
+								room.players[i].overallPoints += 2 * room.players[i].splitProperties.pointsBet;
+								room.players[i].splitProperties.gameResult = "win";
+							} else {
+								room.players[i].overallPoints += room.players[i].splitProperties.pointsBet;
+								room.players[i].splitProperties.gameResult = "push";
+							}
+						}
+
 					}
 					room.changeState(room.afterGame);
 					room.afterGameControlTime = now;
@@ -386,6 +466,18 @@ Room.prototype.dealersTurn = new GameState(function(room) {
 						} else if(room.players[i].cardsSum === room.dealerCardsSum) {
 							room.players[i].overallPoints += room.players[i].pointsBet;
 							room.players[i].gameResult = "push";
+						}
+					}
+					if(room.players[i].split) {
+						room.players[i].splitProperties.gameResult = "lose";
+						if(room.players[i].splitProperties.inGame) {
+							if(room.players[i].splitProperties.cardsSum > room.dealerCardsSum) {
+								room.players[i].overallPoints += 2 * room.players[i].splitProperties.pointsBet;
+								room.players[i].splitProperties.gameResult = "win";
+							} else if(room.players[i].splitProperties.cardsSum === room.dealerCardsSum) {
+								room.players[i].overallPoints += room.players[i].splitProperties.pointsBet;
+								room.players[i].splitProperties.gameResult = "push";
+							}
 						}
 					}
 				}
@@ -420,6 +512,18 @@ Room.prototype.reset = new GameState(function(room) {
 			room.players[i].howManyAces = 0;
 			room.players[i].cards = [];
 			room.players[i].gameResult = "none";
+
+			room.players[i].split = false;
+			room.players[i].hand = "right";
+			room.players[i].splitProperties = {
+				cardsSum: 0,
+				cardsNumber: 0,
+				howManyAces: 0,
+				cards: [],
+				pointsBet: 0,
+				gameResult: "none",
+				inGame: true
+			}
 		}
 		room.changeState(room.bet);
 		room.currentPlayer = 0;

@@ -22,13 +22,7 @@ $(document).ready(function() {
 
 	$("#submit-add").hide();
 
-	$("#add").on('click', function() {
-		console.log(user.name);
-		socket.emit('add friend', {
-			user: user.name,
-			friend: $("#friendname").val()
-		});
-
-		angular.element($('#left-container')).scope().updateFriends();
-	});	
+	// $("#add").on('click', function() {
+		
+	// });	
 });

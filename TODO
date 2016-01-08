@@ -1,9 +1,0 @@
-- Przyciski bet -> 1, 10, 25, 50, 100...
-- Trójkąt(strzałka) wskazaująca czyj aktualnie jest ruch
-- Revealing module pattern w pliku database_index
-- Przysyłanie do gracza jego aktualnych statystyk z bazy danych przy użyciu sesji
-- Wzorzec Observer po stronie klienta do sterowania obiektami DOM i elementami interfejsu przy zmianie stanu gry itp
-- Wzorzec Command do rejestrowania wiadomości do gracza, który jest offline
-- System czatu prywatnego
-
-- blackjack, charades, database - singleton
