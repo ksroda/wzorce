@@ -126,12 +126,36 @@ subject.addObserver(new Observer(function(data) {
 }));
 
 function preload() {
-
+	game.load.image("arrow", "assets/arrow.png");
 }
 
 var loadingText;
 
 function create() {
+
+	game.time.desiredFps = 30;
+
+	game.physics.startSystem(Phaser.Physics.ARCADE);
+	cardsGroup = game.add.group();
+	
+	timer = game.add.text(50, 50, "", style);
+	dealerCardsSum = game.add.text(600, 80, "", style);
+	
+	//table.scale.setTo(0.6, 0.6);
+	
+	timer.anchor.set(0.5, 0.5);
+	dealerCardsSum.anchor.set(0.5, 0.5);
+
+	//arrow = game.add.sprite(675, 30, "arrow");
+	//arrow.anchor.set(0.45, 0.5);
+	//arrow.scale.setTo(0.5, 0.5);
+
+	currentPlayerPointer = game.add.sprite(1080, 290, "arrow");
+	game.physics.enable(currentPlayerPointer, Phaser.Physics.ARCADE);
+	currentPlayerPointer.body.allowRotation = false;
+	currentPlayerPointer.anchor.set(0.5, 0.5);
+	currentPlayerPointer.scale.setTo(0.1, 0.1);
+	statusGroup = game.add.group();
 
 	// game.load.onLoadStart.add(loadStart, this);
 	game.load.onLoadComplete.add(loadComplete, this);
@@ -165,7 +189,6 @@ function startLoading() {
 			}
 		}
 	game.load.image("table", "cards/table.png");
-	game.load.image("arrow", "assets/arrow.png");
 	//game.load.image("title", "assets/title.png");
 
 	game.load.spritesheet("status", "assets/status.png", 109, 33, 4);
@@ -176,31 +199,10 @@ function startLoading() {
 function loadComplete() {
 	// $("canvas").hide();
 	loadingText.setText("");
-	game.time.desiredFps = 30;
-
 
 	var table = game.add.sprite(675, 280, "table");
-	game.physics.startSystem(Phaser.Physics.ARCADE);
-	cardsGroup = game.add.group();
-	
-	timer = game.add.text(50, 50, "", style);
-	dealerCardsSum = game.add.text(600, 80, "", style);
-	
-	//table.scale.setTo(0.6, 0.6);
 	table.anchor.set(0.5, 0.5);
-	timer.anchor.set(0.5, 0.5);
-	dealerCardsSum.anchor.set(0.5, 0.5);
-
-	//arrow = game.add.sprite(675, 30, "arrow");
-	//arrow.anchor.set(0.45, 0.5);
-	//arrow.scale.setTo(0.5, 0.5);
-
-	currentPlayerPointer = game.add.sprite(1080, 290, "arrow");
-	game.physics.enable(currentPlayerPointer, Phaser.Physics.ARCADE);
-	currentPlayerPointer.body.allowRotation = false;
-	currentPlayerPointer.anchor.set(0.5, 0.5);
-	currentPlayerPointer.scale.setTo(0.1, 0.1);
-	statusGroup = game.add.group();
+	
 
 	//sendWelcome("testowy"); //Na czas testów
 	gameLoaded = true;
