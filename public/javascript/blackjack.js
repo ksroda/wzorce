@@ -151,7 +151,7 @@ function create() {
 	//arrow.scale.setTo(0.5, 0.5);
 
 	currentPlayerPointer = game.add.sprite(1080, 290, "arrow");
-	currentPlayer.visible = false;
+	currentPlayerPointer.visible = false;
 	game.physics.enable(currentPlayerPointer, Phaser.Physics.ARCADE);
 	currentPlayerPointer.body.allowRotation = false;
 	currentPlayerPointer.anchor.set(0.5, 0.5);
@@ -206,7 +206,7 @@ function loadComplete() {
 	var table = game.add.sprite(675, 280, "table");
 	table.anchor.set(0.5, 0.5);
 	
-	currentPlayer.visible = true;
+	currentPlayerPointer.visible = true;
 	//sendWelcome("testowy"); //Na czas testów
 	gameLoaded = true;
 }
