@@ -185,6 +185,7 @@ function create() {
 	statusGroup = game.add.group();
 
 	//sendWelcome("testowy"); //Na czas testów
+	gameLoaded = true;
 }
 
 function update() {
@@ -247,9 +248,9 @@ function UserInfo(player) {
 
 
 	this.splitProperties = {
-		cardsSum: game.add.text(player.x + 110, player.y + 20, "", style),
+		cardsSum: game.add.text(player.x + 120, player.y + 20, "", style),
 		pointsBet: game.add.text(player.x + 40, player.y + 80, "", style),
-		status: statusGroup.create(player.x + 110, player.y - 10, "status")
+		status: statusGroup.create(player.x + 120, player.y - 10, "status")
 	}
 
 	this.splitProperties.status.anchor.set(0.5, 0.5);
@@ -274,8 +275,8 @@ UserInfo.prototype.update = function(player) {
 	if(player.split) {
 		this.splitProperties.cardsSum.setText(player.splitProperties.howManyAces > 0 ? player.splitProperties.cardsSum + 
 			"/" + (player.splitProperties.cardsSum - 10) : player.splitProperties.cardsSum);
-		this.cardsSum.x = player.x - 110;
-		this.status.x = player.x - 110;
+		this.cardsSum.x = player.x - 120;
+		this.status.x = player.x - 120;
 		this.pointsBet.x = player.x - 40;
 		this.splitProperties.pointsBet.setText(player.splitProperties.pointsBet);
 		this.splitProperties.status.animations.play(player.splitProperties.gameResult);

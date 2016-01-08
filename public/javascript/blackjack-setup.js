@@ -28,6 +28,7 @@ $(document).ready(function() {
 		
 //------------------------------------Socket--------------------------------------------
 var socket = io();
+var gameLoaded = false;
 
 if(!user.guest) {
 	socket.emit('login', user.name);
@@ -51,7 +52,9 @@ socket.on('update rooms', function(rooms) {
 });
 
 socket.on('update', function(data) {
-	subject.notify(data);
+	if(gameLoaded) {
+		subject.notify(data);
+	}
 });
 
 // socket.on('reset', function() {
