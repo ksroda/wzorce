@@ -151,6 +151,7 @@ function create() {
 	//arrow.scale.setTo(0.5, 0.5);
 
 	currentPlayerPointer = game.add.sprite(1080, 290, "arrow");
+	currentPlayer.visible = false;
 	game.physics.enable(currentPlayerPointer, Phaser.Physics.ARCADE);
 	currentPlayerPointer.body.allowRotation = false;
 	currentPlayerPointer.anchor.set(0.5, 0.5);
@@ -159,7 +160,9 @@ function create() {
 
 	// game.load.onLoadStart.add(loadStart, this);
 	game.load.onLoadComplete.add(loadComplete, this);
-	loadingText = game.add.text(100, 100, "Loading...", {fill: "#ffffff" });
+
+	var style = { font: "30px Arial", fill: "#FFFFFF", align: "center" };
+	loadingText = game.add.text(675, 280, "Loading...", style);
 	startLoading();
 }
 
@@ -203,7 +206,7 @@ function loadComplete() {
 	var table = game.add.sprite(675, 280, "table");
 	table.anchor.set(0.5, 0.5);
 	
-
+	currentPlayer.visible = true;
 	//sendWelcome("testowy"); //Na czas testów
 	gameLoaded = true;
 }
