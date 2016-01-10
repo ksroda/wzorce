@@ -1,3 +1,4 @@
+userAllowedToEnterGame = false;
 if(!userAllowedToEnterGame) {
 	window.location = "#/";
 };

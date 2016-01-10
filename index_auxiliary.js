@@ -47,9 +47,11 @@ module.exports = function() {
 			
 			var stack = cards.concat(cards).concat(cards).concat(cards);
 
-			for(var i = 0; i < 1000; i++) {
-				var card = stack.splice(Math.floor(Math.random() * stack.length), 1);
+			var stackLength = stack.length;
+			for(var i = 0; i < stack.length; i++) {
+				var card = stack.splice(Math.floor(Math.random() * stackLength), 1);
 				stack = stack.concat(card);
+				stackLength--;
 			}
 
 			return stack;	
@@ -116,7 +118,6 @@ module.exports = function() {
 
 
 	var publicGenerateChatName = function(string1, string2) {
-		// Miejsce na kod
 
 		if (string1 == string2) return string1+"!"+string2;
 

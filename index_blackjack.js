@@ -175,7 +175,7 @@ Room.prototype.playersInGame = function() {
 Room.prototype.splitPlayersInGame = function() {
 	var result = 0;
 	for(var i = 0; i < this.players.length; i++) {
-		if(this.players[i].splitProperties.inGame) result++;
+		if(this.players[i].splitProperties.inGame && this.players[i].split) result++;
 	}
 	return result;
 }
@@ -248,7 +248,7 @@ Room.prototype.stand = function(now) {
 	}
 }
 
-Room.prototype.split= function(now) {
+Room.prototype.split = function(now) {
 	this.currentPlayer.action = "none";
 	this.currentPlayerTime = now;
 	this.currentPlayer.cards[0].goalX -= 40;
@@ -434,22 +434,23 @@ Room.prototype.dealersTurn = new GameState(function(room) {
 				room.drawCard(true);
 				if(room.dealerCardsSum > 21) {
 					for(var i = 0; i < room.players.length; i++) {
-						room.players[i].gameResult = "lose";
-						if(room.players[i].inGame) {
-							room.players[i].overallPoints += 2 * room.players[i].pointsBet;
-							room.players[i].gameResult = "win";
+						var player = room.players[i];
+						player.gameResult = "lose";
+						if(player.inGame) {
+							player.overallPoints += 2 * player.pointsBet;
+							player.gameResult = "win";
 						} else {
-							room.players[i].overallPoints += room.players[i].pointsBet;
-							room.players[i].gameResult = "push";
+							player.overallPoints += player.pointsBet;
+							player.gameResult = "push";
 						}
-						if(room.players[i].split) {
-							room.players[i].splitProperties.gameResult = "lose";
-							if(room.players[i].splitProperties.inGame) {
-								room.players[i].overallPoints += 2 * room.players[i].splitProperties.pointsBet;
-								room.players[i].splitProperties.gameResult = "win";
+						if(player.split) {
+							player.splitProperties.gameResult = "lose";
+							if(player.splitProperties.inGame) {
+								player.overallPoints += 2 * player.splitProperties.pointsBet;
+								player.splitProperties.gameResult = "win";
 							} else {
-								room.players[i].overallPoints += room.players[i].splitProperties.pointsBet;
-								room.players[i].splitProperties.gameResult = "push";
+								player.overallPoints += player.splitProperties.pointsBet;
+								player.splitProperties.gameResult = "push";
 							}
 						}
 
@@ -459,25 +460,32 @@ Room.prototype.dealersTurn = new GameState(function(room) {
 				}
 			} else {
 				for(var i = 0; i < room.players.length; i++) {
-					room.players[i].gameResult = "lose";
-					if(room.players[i].inGame) {
-						if(room.players[i].cardsSum > room.dealerCardsSum) {
-							room.players[i].overallPoints += 2 * room.players[i].pointsBet;
-							room.players[i].gameResult = "win";
-						} else if(room.players[i].cardsSum === room.dealerCardsSum) {
-							room.players[i].overallPoints += room.players[i].pointsBet;
-							room.players[i].gameResult = "push";
+					var player = room.players[i];
+					player.gameResult = "lose";
+					if(player.inGame) {
+						if(player.cardsSum > room.dealerCardsSum) {
+							player.overallPoints += 2 * player.pointsBet;
+							player.gameResult = "win";
+						} else if(player.cardsSum === room.dealerCardsSum) {
+							if(player.cardsSum === 21 && player.cardsNumber === 2 
+								&& player.cardsNumber < room.dealerCardsNumber) {
+								player.overallPoints += Math.floor(3/2 * player.pointsBet) + player.pointsBet;
+								player.gameResult = "win";
+							} else {
+								player.overallPoints += player.pointsBet;
+								player.gameResult = "push";
+							}
 						}
 					}
-					if(room.players[i].split) {
-						room.players[i].splitProperties.gameResult = "lose";
-						if(room.players[i].splitProperties.inGame) {
-							if(room.players[i].splitProperties.cardsSum > room.dealerCardsSum) {
-								room.players[i].overallPoints += 2 * room.players[i].splitProperties.pointsBet;
-								room.players[i].splitProperties.gameResult = "win";
-							} else if(room.players[i].splitProperties.cardsSum === room.dealerCardsSum) {
-								room.players[i].overallPoints += room.players[i].splitProperties.pointsBet;
-								room.players[i].splitProperties.gameResult = "push";
+					if(player.split) {
+						player.splitProperties.gameResult = "lose";
+						if(player.splitProperties.inGame) {
+							if(player.splitProperties.cardsSum > room.dealerCardsSum) {
+								player.overallPoints += 2 * player.splitProperties.pointsBet;
+								player.splitProperties.gameResult = "win";
+							} else if(player.splitProperties.cardsSum === room.dealerCardsSum) {
+								player.overallPoints += player.splitProperties.pointsBet;
+								player.splitProperties.gameResult = "push";
 							}
 						}
 					}
