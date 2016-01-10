@@ -404,7 +404,7 @@ Room.prototype.game = new GameState(function(room) {
 				room.hit(now);
 				room.stand(now);
 		} else
-		 	if(room.currentPlayer.action === "split") {
+		 	if(room.currentPlayer.action === "split" && !room.currentPlayer.split) {
 			 	room.split(now);
 			}
 		room.timer = Math.ceil((room.timeToThink - (now - room.currentPlayerTime))/1000);
