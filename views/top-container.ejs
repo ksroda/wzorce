@@ -48,6 +48,7 @@
 		</div>
 
 
+		<% if(!user.guest) { %>
 		<div id="left-container" ng-controller="friendsController">
 			<div id="friends-header">
 				Friends
@@ -80,3 +81,5 @@
 				</div>
 			</div>
 		</div>
+
+		<% } %>

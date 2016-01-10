@@ -1,6 +1,7 @@
 if(!userAllowedToEnterGame) {
+	userAllowedToEnterGame = false;
 	window.location = "#/";
-};
+} else {
 
 //---------------------------------Phaser-------------------------------------------
 var game = new Phaser.Game(window.innerWidth, window.innerHeight, Phaser.CANVAS, 'phaser', { create: create, update: update, render: render });
@@ -206,3 +207,5 @@ $(document).ready(function() {
 		}
     });
 });
+
+};
