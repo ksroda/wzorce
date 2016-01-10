@@ -1,8 +1,7 @@
-userAllowedToEnterGame = false;
 if(!userAllowedToEnterGame) {
+	userAllowedToEnterGame = false;
 	window.location = "#/";
 } else {
-
 
 
 //------------------------------------Phraser-------------------------------------------
@@ -335,5 +334,6 @@ function DecoratedCard(cardObject, cardProperties) {
 
 	return cardObject;
 }
+
 
 };
