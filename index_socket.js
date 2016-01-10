@@ -58,14 +58,40 @@ module.exports = (function() {
 	};
 
 	var publicSetOnMessage = function(socket, io) {
-		socket.on('message', function(msg) {
-				io.to(socket.roomId).emit('message', msg);
+		socket.on('message', function(data) {
+			var chatName = auxiliaryRequire.generateChatName(data.from, data.to);
+			console.log(JSON.stringify(data) + "  " + chatName);
+			// socket.broadcast.to(chatName).emit('message', 'enjoy the game');
+			socket.emit('message', {
+				from: data.to,
+				to: data.from,
+				content: "<b>" + data.from + "</b>: " + data.content,
+				messageIcon: false
+			});
+
+			socket.broadcast.to(chatName).emit('message', {
+				from: data.from,
+				to: data.to,
+				content: "<b>" + data.from + "</b>: "+ data.content,
+				messageIcon: true
+			});
+			// console.log(data.from + "    " + data.to + "   " + data.content);
+		});
+	};
+
+	var publicSetOnJoinChatRequest = function(socket, io) {
+		socket.on('join me to friends chats', function(data) {
+			for(var i = 0; i < data.friends.length; i++) {
+				console.log(auxiliaryRequire.generateChatName(data.name, data.friends[i]));
+				socket.join(auxiliaryRequire.generateChatName(data.name, data.friends[i]));
+			}
 		});
 	};
 
 	return {
 		setOnWelcome: publicSetOnWelcome,
 		setOnDisconnect: publicSetOnDisconnect,
-		setOnMessage: publicSetOnMessage
+		setOnMessage: publicSetOnMessage,
+		setOnJoinChatRequest: publicSetOnJoinChatRequest
 	}
 })();

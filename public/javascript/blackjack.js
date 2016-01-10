@@ -23,7 +23,7 @@ function Observer(func) {
 	this.update = func;
 }
 
-function ObserverList(){
+function ObserverList() {
 	this.observerList = [];
 }
  
@@ -231,10 +231,7 @@ function update() {
 			temp.y = 220;
 			game.physics.arcade.moveToPointer(currentPlayerPointer, 50, temp, 300);
 		}
-
 	}
-	
-	
 }
 
 function createCard(card) {
@@ -242,6 +239,7 @@ function createCard(card) {
 	// anchor.set(0,0) -> współrzędne obrazka w jego lewym górnym rogu
 	// anchor.set(0.5,0.5) -> współrzędne obrazka w jego środku
 	cards[card.id].anchor.set(0.5, 0.5);
+	cards[card.id].scale.setTo(0.8, 0.8);
 	game.physics.enable(cards[card.id], Phaser.Physics.ARCADE);
 }
 

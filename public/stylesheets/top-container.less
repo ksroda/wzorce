@@ -1,6 +1,6 @@
 @import url('http://fonts.googleapis.com/css?family=Yantramanav');
 .bordered {
-	border: 1px solid;
+	border: 1px solid black;
 }
 
 body {
@@ -138,7 +138,7 @@ body {
 	//.bordered;
 	position: absolute;
 	width: 270px;
-	height: 500px;
+	height: 70%;
 	top: 50%;
 	margin-top: -225px;
 	margin-left: -240px;
@@ -151,6 +151,19 @@ body {
 	&:hover {
 		margin-left: -5px;
 	}
+
+	#friends-header {
+		width: 100%;
+		text-align: center;
+		margin-left: 5px;
+		margin-bottom: 10px;
+		margin-top: 10px;
+		font-size: 150%;
+	}
+
+	#friends-list {
+		overflow: scroll;
+	}
 }
 
 #input-friend {
@@ -159,7 +172,7 @@ body {
 	width: 100%;
 	padding: 0;
 	margin: 0;
-	bottom: 0;
+	bottom: -40px;
 
 	#input-add {
 		padding: 0;
@@ -176,4 +189,75 @@ body {
 			float: right;
 		}
 	} 
+}
+
+.friends-list {
+	list-style-type: none;
+	padding: 0;
+	margin: 0;
+	margin-left: 5px;
+
+	li {
+		button {
+			border-radius: 0px;
+			background-color: transparent;
+			// opacity: 0.5;
+			border: none;
+			// border-bottom: 2px solid black;
+			border-bottom: 2px solid #808080;
+			height: 30px;
+			text-align: left;
+
+			span {
+				margin-left: 10px;
+			}
+
+			&:hover, &:active {
+				// background-color: #222222;
+				background-color: rgba(255,255,255,0.1);
+				// border-bottom: 2px solid black;
+				border-color: #FFFFFF;
+			}
+		}
+	}
+}
+
+.chat-friend-button {
+	width: 100%;
+
+	.got-message {
+		float: right;
+		display: none;
+	}
+}
+
+.chat-friend {
+	width: auto;
+	height: auto;
+	// .bordered;
+
+	.chat-friend-messages {
+		.bordered;
+		height: 200px;
+		overflow-y: auto;
+		
+		ul {
+			// text-align: left;
+			list-style-type: none;
+			// .bordered;
+
+			li {
+				// .bordered;
+				margin-left: -30px;
+			}
+		}
+	}
+
+	.chat-friend-input {
+		width: 100%;
+
+		input {
+			height: 30px;
+		}
+	}
 }

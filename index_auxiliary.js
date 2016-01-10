@@ -110,11 +110,126 @@ module.exports = function() {
 		return result;
 	}
 
+	var isLetter = function(str) {
+	  return str.length === 1 && str.match(/[a-z|A-Z]/i);
+	}
+
+
+	var publicGenerateChatName = function(string1, string2) {
+		// Miejsce na kod
+
+		if (string1 == string2) return string1+"!"+string2;
+
+		else if (string1.length<=string2.length) { //1 krotsza
+
+			for (var i = 0; i< string1.length; i++){
+
+				if (isNaN(parseInt(string1.charAt(i))) && !isLetter(string1.charAt(i))){ //1 to znak
+					console.log("jestem 1");
+					if (!isNaN(parseInt(string2.charAt(i))) || isLetter(string2.charAt(i))){ //2 to nie znak
+						return string2+"!"+string1;
+					}
+					else{//2 to tez znak
+						//to nic
+					}
+				}
+				else{//1 to nie znak 
+					if (!isNaN(parseInt(string2.charAt(i))) || isLetter(string2.charAt(i))){ //2 to nie znak
+						//to nic
+					}
+					else{//2 to znak 
+						return string1+"!"+string2;
+
+					}
+				} 
+
+				if (string1.charCodeAt(i)>=48 && string1.charCodeAt(i)<=57) { //cyfra
+					if (string2.charCodeAt(i)>=48 && string2.charCodeAt(i)<=57) { // tez cyfra
+						//to nic 
+					}
+					else{ //2 to nie cyfra 
+						return string2+"!"+string1;
+					}
+				}
+				else {//1 to nie cyfra
+					if (string2.charCodeAt(i)>=48 && string2.charCodeAt(i)<=57) { // 2 to cyfra
+						return string1+"!"+string2;
+											}
+											else{ //2 to nie cyfra 
+												//to nic 
+											}
+				}
+
+				if (string1.charCodeAt(i) < string2.charCodeAt(i)){
+					//pierwszy = string1;
+					return string1+"!"+string2;
+				}
+				else if (string1.charCodeAt(i) > string2.charCodeAt(i)) {
+					return string2+"!"+string1;
+				}
+			}
+
+			return string1+"!"+string2;
+		}
+
+		else{
+
+			for (var i = 0; i < string2.length; i++){
+	 
+				if (isNaN(parseInt(string2.charAt(i))) && !isLetter(string2.charAt(i))){ //2 to znak
+					//console.log("jestem tu 2");
+					if (!isNaN(parseInt(string1.charAt(i))) || isLetter(string1.charAt(i))){ //1 to nie znak
+						return string1+"!"+string2;
+					}
+					else{//1 to tez znak
+						//to nic
+					}
+				}
+				else{//2 to nie znak 
+					if (!isNaN(parseInt(string1.charAt(i))) || isLetter(string1.charAt(i))){ //1 to nie znak
+						//to nic
+					}
+					else{//1 to znak 
+						return string2+"!"+string1;
+
+					}
+				}
+
+				if (string2.charCodeAt(i)>=48 && string2.charCodeAt(i)<=57) { //cyfra
+					if (string1.charCodeAt(i)>=48 && string1.charCodeAt(i)<=57) { // tez cyfra
+						//to nic 
+					}
+					else{ //2 to nie cyfra 
+						return string1+"!"+string2;
+					}
+				}
+				else {//1 to nie cyfra
+					if (string1.charCodeAt(i)>=48 && string1.charCodeAt(i)<=57) { // 2 to cyfra
+						return string2+"!"+string1;
+											}
+											else{ //2 to nie cyfra 
+												//to nic 
+											}
+				}
+
+				if (string2.charCodeAt(i) < string1.charCodeAt(i)){
+					return string2+"!"+string1;
+				}
+				else if (string2.charCodeAt(i) > string1.charCodeAt(i)) {
+					return string1+"!"+string2;
+				}
+			}
+
+			return string2+"!"+string1;
+		}		
+	}
+
 
 	return {
 		randomId: publicRandomId,
 		getCardsStack: publicGetCardsStack,
 		correctness: publicCorrectness,
-		objectToArray: publicObjectToArray
+		objectToArray: publicObjectToArray,
+		generateChatName: publicGenerateChatName
 	}
 }

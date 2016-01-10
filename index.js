@@ -114,7 +114,7 @@ app.get('/blackjack/rooms', function(req, res) {
 });
 
 app.get('/friends', function(req, res) {
-  databaseRequire.getFriends(req.query.who,function(result, friends) {
+  databaseRequire.getFriends(req.query.who, function(result, friends) {
   	if(result) {
   		res.send(friends);
   	} else {
@@ -150,7 +150,8 @@ io.on('connection', function(socket) {
 	
 	socketRequire.setOnWelcome(socket, games, io, roomsIntervals);
 	socketRequire.setOnDisconnect(socket, games, io, roomsIntervals);
-	//socketRequire.setOnMessage(socket, io);
+	socketRequire.setOnMessage(socket, io);
+	socketRequire.setOnJoinChatRequest(socket, io);
 
 	pictionaryRequire.setOnMouseDown(socket);
 	pictionaryRequire.setOnMouseDrag(socket);
@@ -203,6 +204,7 @@ function randomGuestPlayer() {
 		name: "Guest" + Math.floor(Math.random() * 1000),
 		overallPoints: 100,
 		overallTime: 0,
+		friends: [],
 		guest: true
 	}
 }

@@ -52,9 +52,23 @@
 			<div id="friends-header">
 				Friends
 			</div>
-			<ul class="FriendsList">
+			<ul class="friends-list">
 				<li ng-repeat="x in friends">
-					{{ x }}
+					<button type="button" class="chat-friend-button" data-target="#{{ x }}">
+						<span>{{ x }}<span>
+						<span class="got-message glyphicon glyphicon-envelope"></span>
+					</button>
+					<div id="{{ x }}" class="chat-window collapse">
+						<div class="chat-friend">
+							<div class="chat-friend-messages">
+								<ul>
+								</ul>
+							</div>
+							<div class="chat-friend-input">
+								<input type="text" class="form-control chat-friend-input-input" placeholder="Enter Message" ng-keypress="keyPressed($event, x, 'msg'+x)" id="msg{{ x }}">
+							</div>
+						</div>
+					</div>
 				</li>
 			</ul>
 			<div id="input-friend" class="row">

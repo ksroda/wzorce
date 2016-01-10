@@ -18,11 +18,33 @@ $(document).ready(function() {
 
 	$("#left-container").mouseleave(function() {
 		$("#submit-add").stop().fadeOut(500);
+		$(".chat-window").stop().slideUp();
 	});
 
 	$("#submit-add").hide();
 
-	// $("#add").on('click', function() {
-		
-	// });	
+
+	$(document).on('click', ".chat-friend-button", function() {
+		// alert();
+		$(".chat-window").not($(this).attr("data-target")).stop().slideUp();
+		$($(this).attr("data-target")).stop().slideDown();
+		$($(this).attr("data-target")).find("input").focus();
+		$(this).find(".got-message").hide();
+	});
 });
+
+if(socket) {
+	socket.on('message', function(data) {
+		// console.log(data.from + "   " + data.to + "   " + data.content);
+		$("#" + data.from + " .chat-friend .chat-friend-messages ul")
+			.append("<li>" + data.content + "</li>");
+
+		var d = $("#" + data.from + " .chat-friend .chat-friend-messages");
+		d.scrollTop(d.prop("scrollHeight"));
+
+		if(data.messageIcon) {
+			$("button[data-target='#" + data.from  + "'] .got-message").show();
+		}
+	});
+}
+
