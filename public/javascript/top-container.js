@@ -25,7 +25,6 @@ $(document).ready(function() {
 
 
 	$(document).on('click', ".chat-friend-button", function() {
-		// alert();
 		$(".chat-window").not($(this).attr("data-target")).stop().slideUp();
 		$($(this).attr("data-target")).stop().slideDown();
 		$($(this).attr("data-target")).find("input").focus();
@@ -46,5 +45,17 @@ if(socket) {
 			$("button[data-target='#" + data.from  + "'] .got-message").show();
 		}
 	});
-}
 
+	socket.on('online', function(roomName) {
+		var clients = roomName.split("_");
+		$("#online" + clients[0] + ".online-status, #online" + clients[1] + ".online-status").show();
+		// alert(roomName);
+		// console.log(roomName +" just went online");
+	});
+
+	socket.on('offline', function(roomName) {
+		var clients = roomName.split("_");
+		$("#online" + clients[0] + ".online-status, #online" + clients[1] + ".online-status").hide();
+		// console.log(roomName +" just went offline");
+	});
+}

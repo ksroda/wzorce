@@ -119,7 +119,7 @@ module.exports = function() {
 
 	var publicGenerateChatName = function(string1, string2) {
 
-		if (string1 == string2) return string1+"!"+string2;
+		if (string1 == string2) return string1+"_"+string2;
 
 		else if (string1.length<=string2.length) { //1 krotsza
 
@@ -128,7 +128,7 @@ module.exports = function() {
 				if (isNaN(parseInt(string1.charAt(i))) && !isLetter(string1.charAt(i))){ //1 to znak
 					console.log("jestem 1");
 					if (!isNaN(parseInt(string2.charAt(i))) || isLetter(string2.charAt(i))){ //2 to nie znak
-						return string2+"!"+string1;
+						return string2+"_"+string1;
 					}
 					else{//2 to tez znak
 						//to nic
@@ -139,7 +139,7 @@ module.exports = function() {
 						//to nic
 					}
 					else{//2 to znak 
-						return string1+"!"+string2;
+						return string1+"_"+string2;
 
 					}
 				} 
@@ -149,12 +149,12 @@ module.exports = function() {
 						//to nic 
 					}
 					else{ //2 to nie cyfra 
-						return string2+"!"+string1;
+						return string2+"_"+string1;
 					}
 				}
 				else {//1 to nie cyfra
 					if (string2.charCodeAt(i)>=48 && string2.charCodeAt(i)<=57) { // 2 to cyfra
-						return string1+"!"+string2;
+						return string1+"_"+string2;
 											}
 											else{ //2 to nie cyfra 
 												//to nic 
@@ -163,14 +163,14 @@ module.exports = function() {
 
 				if (string1.charCodeAt(i) < string2.charCodeAt(i)){
 					//pierwszy = string1;
-					return string1+"!"+string2;
+					return string1+"_"+string2;
 				}
 				else if (string1.charCodeAt(i) > string2.charCodeAt(i)) {
-					return string2+"!"+string1;
+					return string2+"_"+string1;
 				}
 			}
 
-			return string1+"!"+string2;
+			return string1+"_"+string2;
 		}
 
 		else{
@@ -180,7 +180,7 @@ module.exports = function() {
 				if (isNaN(parseInt(string2.charAt(i))) && !isLetter(string2.charAt(i))){ //2 to znak
 					//console.log("jestem tu 2");
 					if (!isNaN(parseInt(string1.charAt(i))) || isLetter(string1.charAt(i))){ //1 to nie znak
-						return string1+"!"+string2;
+						return string1+"_"+string2;
 					}
 					else{//1 to tez znak
 						//to nic
@@ -191,7 +191,7 @@ module.exports = function() {
 						//to nic
 					}
 					else{//1 to znak 
-						return string2+"!"+string1;
+						return string2+"_"+string1;
 
 					}
 				}
@@ -201,12 +201,12 @@ module.exports = function() {
 						//to nic 
 					}
 					else{ //2 to nie cyfra 
-						return string1+"!"+string2;
+						return string1+"_"+string2;
 					}
 				}
 				else {//1 to nie cyfra
 					if (string1.charCodeAt(i)>=48 && string1.charCodeAt(i)<=57) { // 2 to cyfra
-						return string2+"!"+string1;
+						return string2+"_"+string1;
 											}
 											else{ //2 to nie cyfra 
 												//to nic 
@@ -214,14 +214,14 @@ module.exports = function() {
 				}
 
 				if (string2.charCodeAt(i) < string1.charCodeAt(i)){
-					return string2+"!"+string1;
+					return string2+"_"+string1;
 				}
 				else if (string2.charCodeAt(i) > string1.charCodeAt(i)) {
-					return string1+"!"+string2;
+					return string1+"_"+string2;
 				}
 			}
 
-			return string2+"!"+string1;
+			return string2+"_"+string1;
 		}		
 	}
 

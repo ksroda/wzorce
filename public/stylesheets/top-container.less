@@ -198,7 +198,7 @@ body {
 	margin-left: 5px;
 
 	li {
-		button {
+		.chat-friend-button {
 			border-radius: 0px;
 			background-color: transparent;
 			// opacity: 0.5;
@@ -207,9 +207,10 @@ body {
 			border-bottom: 2px solid #808080;
 			height: 30px;
 			text-align: left;
+			width: 100%;
 
-			span {
-				margin-left: 10px;
+			.chatroom-name {
+				margin-left: 30px;
 			}
 
 			&:hover, &:active {
@@ -218,18 +219,28 @@ body {
 				// border-bottom: 2px solid black;
 				border-color: #FFFFFF;
 			}
+
+			.got-message {
+				float: right;
+				display: none;
+			}
+
+			.online-status, .offline-status {
+				position: absolute;
+				width: 10px;
+				height: auto;
+				margin-top: 5px;
+				left: 20px;
+			}
+
+			.online-status {
+				display: none;
+			}
+
 		}
 	}
 }
 
-.chat-friend-button {
-	width: 100%;
-
-	.got-message {
-		float: right;
-		display: none;
-	}
-}
 
 .chat-friend {
 	width: auto;

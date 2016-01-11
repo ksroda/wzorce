@@ -32,6 +32,13 @@ module.exports = (function() {
 
 	var publicSetOnDisconnect = function(socket, games, io, roomsIntervals) {
 		socket.on('disconnect', function() {
+			// console.log(Object.keys(socket.adapter.rooms));
+			var rooms = Object.keys(socket.adapter.rooms);
+			for(var i = 0; i < rooms.length; i++) {
+				if(rooms[i].indexOf("_") !== -1) {
+					io.in(rooms[i]).emit('offline', rooms[i]);
+				}
+			}
 			if(socket.game) {
 				var room = games[socket.game].rooms[socket.roomId];
 				databaseRequire.updateUserStatistics(room.findPlayerById(socket.id), socket.startTime);
@@ -82,8 +89,16 @@ module.exports = (function() {
 	var publicSetOnJoinChatRequest = function(socket, io) {
 		socket.on('join me to friends chats', function(data) {
 			for(var i = 0; i < data.friends.length; i++) {
-				console.log(auxiliaryRequire.generateChatName(data.name, data.friends[i]));
-				socket.join(auxiliaryRequire.generateChatName(data.name, data.friends[i]));
+				// console.log(auxiliaryRequire.generateChatName(data.name, data.friends[i]));
+				var roomName = auxiliaryRequire.generateChatName(data.name, data.friends[i]);
+				socket.join(roomName);
+				socket.broadcast.to(roomName).emit('online', roomName);
+				var room = io.sockets.adapter.rooms[roomName];
+				// console.log(Object.keys(room).length);
+				if(Object.keys(room).length > 1) {
+					socket.emit('online', roomName);
+				}
+				// console.log(io.sockets.adapter.rooms);
 			}
 		});
 	};
