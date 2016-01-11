@@ -11,6 +11,7 @@ var bodyParser = require('body-parser');
 var lessMiddleware = require('less-middleware');
 var blackjackRequire = require('./index_blackjack.js').getInstance();
 var pictionaryRequire = require('./index_pictionary.js').getInstance();
+var hangmanRequire = require('./index_hangman.js').getInstance();
 var auxiliaryRequire = require('./index_auxiliary.js')();
 var socketRequire = require('./index_socket.js');
 var databaseRequire = require('./index_database.js');
@@ -97,6 +98,15 @@ app.get('/logout', function(req, res) {
 	}
 });
 
+
+app.get('/hangman', function(req, res) {
+	renderPageForUser("hangman", req, res, undefined);
+});
+
+app.get('/hangman/rooms', function(req, res) {
+  res.send(auxiliaryRequire.objectToArray(games["hangman"].rooms));
+});
+
 app.get('/pictionary', function(req, res) {
 	renderPageForUser("pictionary", req, res, undefined);
 });
@@ -133,6 +143,7 @@ var games = {};
 
 games["blackjack"] = blackjackRequire;
 games["pictionary"] = pictionaryRequire;
+games["hangman"] = hangmanRequire;
 
 io.on('connection', function(socket) {
 	socket.startTime = (new Date()).getTime();

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+	<title>Pattern Games</title>
+	<script src="libraries/jquery-1.11.3.min.js"></script>
+
+	<link rel="stylesheet" href="libraries/bootstrap-3.3.5-dist/css/bootstrap.min.css">
+	<script src="libraries/bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>
+	<script src="libraries/angular-1.4.8/angular.min.js"></script>
+	<script src="libraries/angular-1.4.8/angular-route.js"></script>
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="phaser/phaser.js"></script>
+	<script src="phaser/phaser.min.js"></script>
+	<script type="text/javascript">
+		var user = <%- JSON.stringify(user) %>;
+		var gameName = "hangman"; //w angular do wyświetlania pokoi
+		var userAllowedToEnterGame = false;
+	</script>
+	<script src="javascript/hangman-setup.js"></script>
+	<script src="javascript/top-container.js"></script>
+	<link rel="stylesheet" href="stylesheets/top-container.css">
+	<link rel="stylesheet" href="stylesheets/hangman.css">
+</head>
+<body>
+	<%- include top-container.ejs %>
+	<div ng-view></div>
+
+	<script type="text/javascript">
+		var app = angular.module('myApp', ['ngRoute']);
+		app.config(function($routeProvider) {
+			$routeProvider
+				.when('/',
+					{
+						controller: 'roomsController',
+						templateUrl:'rooms.ejs'
+					})
+				.when('/game',
+					{
+						controller: 'hangmanController',
+						templateUrl:'hangman-game.ejs'
+					})
+				.otherwise({ redirectTo: '/' });
+		});
+		app.controller('hangmanController', ["$scope", "$http", function($scope, $http) {	
+			
+		}]);
+	</script>
+	<script src="javascript/angular-controllers.js"></script>
+</body>
+</html>

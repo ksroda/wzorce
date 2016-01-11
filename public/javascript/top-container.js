@@ -58,4 +58,12 @@ if(socket) {
 		$("#online" + clients[0] + ".online-status, #online" + clients[1] + ".online-status").hide();
 		// console.log(roomName +" just went offline");
 	});
+
+
+	socket.on('update rooms', function(rooms) {
+		var controller = angular.element($('#rooms')).scope();
+		if(controller) {
+			controller.update(rooms);
+		}
+	});
 }

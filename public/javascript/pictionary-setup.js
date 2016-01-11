@@ -53,9 +53,9 @@ socket.on('mouse drag', function(position) {
 	graphics.lineTo(position.x, position.y);
 });
 		
-socket.on('update rooms', function(rooms) {
-	angular.element($('#rooms')).scope().update(rooms);
-});
+// socket.on('update rooms', function(rooms) {
+// 	angular.element($('#rooms')).scope().update(rooms);
+// });
 
 socket.on('update', function(room) {
 	subject.notify(room);
