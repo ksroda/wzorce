@@ -11,9 +11,9 @@ var socket = io();
 // 	angular.element($('#rooms')).scope().update(rooms);
 // });
 
-socket.on('update', function(room) {
-	subject.notify(room);
-});
+// socket.on('update', function(room) {
+// 	subject.notify(room);
+// });
 		
 function sendWelcome(roomName) {
 	socket.emit('welcome', {

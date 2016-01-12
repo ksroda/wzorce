@@ -42,6 +42,7 @@ $(document).ready(function() {
 
 //------------------------------------Socket----------------------------------------------
 var socket = io();
+var gameLoaded = false;
 
 socket.on('mouse down', function(properties) {
 	console.log(properties);
@@ -57,9 +58,9 @@ socket.on('mouse drag', function(position) {
 // 	angular.element($('#rooms')).scope().update(rooms);
 // });
 
-socket.on('update', function(room) {
-	subject.notify(room);
-});
+// socket.on('update', function(room) {
+// 	subject.notify(room);
+// });
 
 socket.on('clear screen', function() {
 	graphics.kill();

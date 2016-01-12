@@ -54,15 +54,9 @@ socket.on('player disconnected', function(playerId) {
 // 	}
 // });
 
-socket.on('update', function(data) {
-	if(gameLoaded) {
-		subject.notify(data);
-	}
-});
-
-// socket.on('reset', function() {
-// 	for(var x in cards) {
-// 		cards[x].kill();
+// socket.on('update', function(data) {
+// 	if(gameLoaded) {
+// 		subject.notify(data);
 // 	}
 // });
 

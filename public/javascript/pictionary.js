@@ -148,6 +148,7 @@ function create() {
     currentWord = game.add.text(40, 140, "", style);
     
     timer = game.add.text(window.innerWidth - 420, 70, "", style);
+    gameLoaded = true;
 
     //sendWelcome("testowy"); //Na czas testów
 }
