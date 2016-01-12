@@ -40,6 +40,10 @@ app.use(express.static(__dirname + '/public'));
 
 app.set('view engine','ejs');
 
+app.get('/undefined', function(req, res) {
+	res.redirect("/");
+});
+
 app.get('/', function(req, res) {
 	renderPageForUser("homepage", req, res, undefined);
 });

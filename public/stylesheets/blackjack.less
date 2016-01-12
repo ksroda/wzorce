@@ -93,22 +93,42 @@ canvas {
 
 
 .actionButton {
-	width: 80px;
+	width: 60px;
+	margin-top: -30px;
+	margin-left: 5px;
+	-webkit-transition: margin-top 0.1s; /* Safari */
+    transition: margin-top 0.1s;
+
+	&:hover {
+		margin-top: -40px
+	}
 }
 
 .actionButtons {
 	position: absolute;
 	top: 610px;
 	left: 50%;
-	margin-left: -160px;
+	margin-left: -170px;
 	display: none;
 }
 
 .betButtons {
 	.actionButtons;
 	display: none;
+	// margin-left: -170px;
 }
 
 .betButton {
-	.actionButton
+	// .actionButton
+	// position: absolute;
+	width: 60px;
+	margin-top: -30px;
+	margin-left: 5px;
+	-webkit-transition: margin-top 0.1s; /* Safari */
+    transition: margin-top 0.1s;
+
+	&:hover {
+		margin-top: -40px
+	}
 }
+
