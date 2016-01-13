@@ -3,6 +3,13 @@ if(!userAllowedToEnterGame) {
 	window.location = "#/";
 } else {
 
+var height = window.innerHeight;
+var width = window.innerWidth;
+
+$(document).ready(function() {
+	// $('#phaser').css("margin-left", width);
+	// alert($('#phaser').width() + "   " + window.innerWidth);
+});
 
 //------------------------------------Phraser-------------------------------------------
 var game = new Phaser.Game(1350, 700, Phaser.CANVAS, 'phaser', { preload: preload, create: create, update: update }, true);
@@ -19,6 +26,8 @@ var arrow;
 var currentPlayerPointer;
 var currentPlayer;
 var gameState = "bet";
+
+
 
 //-----------------------------------Observer-------------------------------------------
 function Observer(func) {
@@ -135,6 +144,20 @@ var loadingText;
 
 function create() {
 	// game.load.onLoadStart.add(loadStart, this);
+	// alert(game.width);
+	// var s = game.width/game.height;
+	
+	var s = 1350/700;
+	if(window.innerWidth/window.innerHeight > 1350/700) {
+		game.height = window.innerHeight;
+		game.width = window.innerHeight * s;
+	} else {
+		game.width = window.innerWidth;
+		game.height = window.innerWidth/s;
+	}
+	game.scale.refresh();
+
+
 	game.load.onLoadComplete.add(loadComplete, this);
 	var style = { font: "30px Arial", fill: "#FFFFFF", align: "center" };
 	loadingText = game.add.text(675, 280, "Loading...", style);
