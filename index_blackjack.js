@@ -159,7 +159,7 @@ Room.prototype.startLoop = function(io, roomIntervals) {
 	var self = this;
 	var interval = setInterval(function() {
 		self.gameLoop(io);
-	}, 500);
+	}, 100);
 	
 	roomIntervals[intervalId] = interval;
 }
@@ -189,10 +189,10 @@ Room.prototype.randomCardFromStack = function(cardForDealer) {
 	return ({
 		id: 	auxiliaryRequire.randomId(),
   		type: 	card.type,
-		x: 		1200,
-		y: 		100,
-		goalX: 	(cardForDealer ? this.dealerX + this.dealerCardsNumber * 25 : this.currentPlayer.x + this.currentPlayer.cardsNumber * 20),
-		goalY: 	(cardForDealer ? this.dealerY : this.currentPlayer.y - this.currentPlayer.cardsNumber * 25),
+		x: 		1150,
+		y: 		60,
+		goalX: 	(cardForDealer ? this.dealerX + this.dealerCardsNumber * 20 : this.currentPlayer.x + this.currentPlayer.cardsNumber * 15),
+		goalY: 	(cardForDealer ? this.dealerY : this.currentPlayer.y - this.currentPlayer.cardsNumber * 20),
 		value: 	card.value
 	});
 }
@@ -253,7 +253,7 @@ Room.prototype.split = function(now) {
 	this.currentPlayerTime = now;
 	this.currentPlayer.cards[0].goalX -= 40;
 	this.currentPlayer.cards[1].goalX = this.currentPlayer.cards[0].goalX + 80;
-	this.currentPlayer.cards[1].goalY += 25;
+	this.currentPlayer.cards[1].goalY += 20;
 
 	this.currentPlayer.split = true;
 	this.currentPlayer.cardsNumber = 1;
@@ -280,8 +280,8 @@ Room.prototype.drawCard = function(cardForDealer) {
 		}
 	} else {
 		if(this.currentPlayer.split && this.currentPlayer.hand === "right") {
-			card.goalX = this.currentPlayer.x + this.currentPlayer.splitProperties.cardsNumber * 20 + 40;
-			card.goalY = this.currentPlayer.y - this.currentPlayer.splitProperties.cardsNumber * 25;
+			card.goalX = this.currentPlayer.x + this.currentPlayer.splitProperties.cardsNumber * 15 + 40;
+			card.goalY = this.currentPlayer.y - this.currentPlayer.splitProperties.cardsNumber * 20;
 			this.cards.push(card);
 			this.currentPlayer.splitProperties.cards.push(card);
 			this.currentPlayer.splitProperties.cardsSum += card.value;

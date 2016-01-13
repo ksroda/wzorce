@@ -169,6 +169,7 @@ function startLoading() {
 		}
 	game.load.image("table", "cards/table.png");
 	game.load.image("arrow", "assets/arrow.png");
+	game.load.image("deck", "assets/deck4.png");
 	//game.load.image("title", "assets/title.png");
 
 	game.load.spritesheet("status", "assets/status.png", 109, 33, 4);
@@ -183,6 +184,14 @@ function loadComplete() {
 
 
 	var table = game.add.sprite(675, 280, "table");
+
+	for(var i = 0; i < 7; i++) {
+		var deck = game.add.sprite(1150 + i * 1, 60 - i, "deck");
+		deck.anchor.set(0.5, 0.5);	
+	}
+	
+	// deck.scale.setTo(0.1, 0.1);
+
 	game.physics.startSystem(Phaser.Physics.ARCADE);
 	cardsGroup = game.add.group();
 	

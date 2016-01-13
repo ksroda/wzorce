@@ -52,7 +52,7 @@ module.exports = (function () {
 				var correctnessResult = auxiliaryRequire.correctness(msg.content, self.rooms[socket.roomId].currentWord.word);
 				if(correctnessResult === 2) {
 					io.to(socket.roomId).emit('chat-message', {
-						sender: "System",
+						sender: "system-win",
 						content: "Congratulations! The winner is " + socket.name
 					});
 					self.rooms[socket.roomId].playersAll.forEach(function(player) {
@@ -65,7 +65,7 @@ module.exports = (function () {
 					})
 				} else if(correctnessResult === 1) {
 					io.to(socket.roomId).emit('chat-message', {
-						sender: "System",
+						sender: "system-close",
 						content: msg.content + " - Really close!"
 					});
 				}
@@ -130,7 +130,7 @@ Room.prototype.startLoop = function(io, roomIntervals) {
 	this.changeState(this.beginning);
 	var interval = setInterval(function() {
 		self.gameLoop(io);
-	}, 500);
+	}, 100);
 	
 	roomIntervals[intervalId] = interval;
 }

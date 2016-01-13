@@ -74,8 +74,9 @@ socket.on('clear screen', function() {
 
 socket.on('chat-message', function(message) {
 	var li = $("<li />")
-		.attr({ "class":(message.sender == player.name ? "myMessage" : "") })
-		.text(message.sender + ": " + message.content);
+		.attr({ "class":(message.sender == player.name ? "myMessage" : 
+			((message.sender === "system-close" || message.sender === "system-win") ? message.sender : "")) })
+		.html("<b>" + ((message.sender === "system-close" || message.sender === "system-win") ? "System" : message.sender)  + ":</b> " + message.content);
 
 	$("#right-container #chat #output-chat ul").append(li);
 
