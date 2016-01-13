@@ -143,17 +143,13 @@ function preload() {
 var loadingText;
 
 function create() {
-	// game.load.onLoadStart.add(loadStart, this);
-	// alert(game.width);
-	// var s = game.width/game.height;
-	
 	var s = 1350/700;
 	if(window.innerWidth/window.innerHeight > 1350/700) {
-		game.height = (window.innerWidth > 700 ? 700 : window.innerWidth);
-		game.width = window.innerHeight * s;
+		game.height = (window.innerHeight > 700 ? 700 : window.innerHeight);
+		game.width = game.height * s;
 	} else {
 		game.width = (window.innerWidth > 1350 ? 1350 : window.innerWidth);
-		game.height = window.innerWidth/s;
+		game.height = game.width/s;
 	}
 	game.scale.refresh();
 
