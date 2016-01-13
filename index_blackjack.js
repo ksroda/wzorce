@@ -159,7 +159,7 @@ Room.prototype.startLoop = function(io, roomIntervals) {
 	var self = this;
 	var interval = setInterval(function() {
 		self.gameLoop(io);
-	}, 100);
+	}, 250);
 	
 	roomIntervals[intervalId] = interval;
 }
