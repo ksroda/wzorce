@@ -83,12 +83,25 @@ canvas {
 
 
 #tool-belt {
-	position: absolute;
-	top: 70px;
-	left: 50%;
-	width: 600px;
-	margin-left: -300px;
-	text-align: center;
+	@media (min-width: 1300px) {
+		position: absolute;
+		top: 70px;
+		left: 50%;
+		width: 600px;
+		margin-left: -300px;
+		text-align: center;
+	}
+
+	@media (max-width: 1299px) {
+		position: absolute;
+		top: 70px;
+		right: 10px;
+		// width: 600px;
+		// .bordered;
+		// margin-left: -300px;
+
+		text-align: center;
+	}
 
 	button {
 		width: 40px;
@@ -128,14 +141,50 @@ canvas {
 	background-color: #1d3643;
 }
 
-#right-container {
+#chat-ranking-navigator {
 	position: absolute;
 	right: 10px;
+	bottom: 5px;
 	width: 350px;
-	top: 70px;
-	background-color: #1d3643;
-	color: white;
-	border-radius: 5px;
+	// .bordered;
+
+	.btn {
+		width: 175px;
+	}
+}
+
+#chat-ranking-navigator {
+	visibility: visible;
+}
+
+@media (min-width: 1300px) {
+	#chat-ranking-navigator {
+		visibility: hidden;
+	}
+}
+
+
+#right-container {
+	@media (min-width: 1300px) {
+		position: absolute;
+		right: 10px;
+		width: 350px;
+		top: 70px;
+		background-color: #1d3643;
+		color: white;
+		border-radius: 5px;
+	}
+
+	@media (max-width: 1299px) {
+		position: absolute;
+		right: 10px;
+		width: 350px;
+		bottom: 50px;
+		background-color: #1d3643;
+		color: white;
+		border-radius: 5px;
+		display: none;
+	}
 	//.bordered;
 
 	#chat {
@@ -200,13 +249,26 @@ canvas {
 }
 
 #right-container-ranking {
-	position: absolute;
-	right: 10px;
-	width: 350px;
-	top: 390px;
-	background-color: #1d3643;
-	color: white;
-	border-radius: 5px;
+	@media (min-width: 1300px) {
+		position: absolute;
+		right: 10px;
+		width: 350px;
+		top: 390px;
+		background-color: #1d3643;
+		color: white;
+		border-radius: 5px;
+	}
+
+	@media (max-width: 1299px) {
+		position: absolute;
+		right: 10px;
+		width: 350px;
+		bottom: 50px;
+		background-color: #1d3643;
+		color: white;
+		border-radius: 5px;
+		display: none;
+	}
 	//.bordered;
 
 	-webkit-user-select: none;

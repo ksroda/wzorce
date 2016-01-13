@@ -37,6 +37,15 @@ $(document).ready(function() {
 	// 	});
 
 	// $('[data-toggle="tooltip"]').tooltip("show");
+
+	$("body").on('click',"#show-chat", function() {
+		$("#right-container").toggle();
+		$("#right-container-ranking").hide();
+	});
+	$("body").on('click',"#show-ranking", function() {
+		$("#right-container-ranking").toggle();
+		$("#right-container").hide();
+	});
 });
 
 

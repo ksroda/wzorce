@@ -145,7 +145,11 @@ function create() {
     currentCategory = game.add.text(40, 105, "Category:", style);
     currentWord = game.add.text(40, 140, "", style);
     
-    timer = game.add.text(window.innerWidth - 420, 70, "", style);
+    if(window.innerWidth < 1300) {
+    	timer = game.add.text(window.innerWidth - 500, 70, "", style);
+    } else {
+    	timer = game.add.text(window.innerWidth - 420, 70, "", style);
+    }
     gameLoaded = true;
 
     //sendWelcome("testowy"); //Na czas testów
