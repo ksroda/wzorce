@@ -149,10 +149,10 @@ function create() {
 	
 	var s = 1350/700;
 	if(window.innerWidth/window.innerHeight > 1350/700) {
-		game.height = window.innerHeight;
+		game.height = (window.innerWidth > 700 ? 700 : window.innerWidth);
 		game.width = window.innerHeight * s;
 	} else {
-		game.width = window.innerWidth;
+		game.width = (window.innerWidth > 1350 ? 1350 : window.innerWidth);
 		game.height = window.innerWidth/s;
 	}
 	game.scale.refresh();
