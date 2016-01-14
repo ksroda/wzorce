@@ -152,8 +152,6 @@ games["hangman"] = hangmanRequire;
 io.on('connection', function(socket) {
 	socket.startTime = (new Date()).getTime();
 
-	socket.emit('id', socket.id);
-
 	socket.on('login', function(login) {
 		socketUsers[login] = socket.id;
 	});

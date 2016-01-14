@@ -5,6 +5,7 @@ module.exports = (function() {
 
 	var publicSetOnWelcome = function(socket, games, io, roomsIntervals) {
 		socket.on('welcome', function(user) {
+			socket.emit('id', socket.id);
 			socket.name = user.name;
 			socket.room = user.room;
 			socket.game = user.game;

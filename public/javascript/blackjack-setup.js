@@ -35,7 +35,8 @@ if(!user.guest) {
 }
 
 socket.on('id', function(id) {
-	myId = id;
+	player.id = id;
+	myId = player.id;
 });
 
 socket.on('player disconnected', function(playerId) {

@@ -103,6 +103,13 @@ subject.addObserver(new Observer(function(data) {
 	for(var i = 0; i < data.players.length; i++) {
 		if(!userInfo[data.players[i].id]) {
 			userInfo[data.players[i].id] = new UserInfo(data.players[i]);
+			if(data.players[i].id === player.id) {
+				var you = game.add.sprite(data.players[i].x - 100, data.players[i].y  + 100, "you");
+				you.anchor.set(0.5, 0.5);
+				setTimeout(function() {
+					you.kill();
+				}, 3000);
+			}
 		} else {
 			userInfo[data.players[i].id].update(data.players[i]);
 		}
@@ -189,7 +196,8 @@ function startLoading() {
 	game.load.image("table", "cards/table.png");
 	game.load.image("arrow", "assets/arrow.png");
 	game.load.image("deck", "assets/deck4.png");
-	//game.load.image("title", "assets/title.png");
+	game.load.image("insurence", "assets/insurence.png");
+	game.load.image("you", "assets/you.png");
 
 	game.load.spritesheet("status", "assets/status.png", 109, 33, 4);
 
@@ -197,10 +205,8 @@ function startLoading() {
 }
 
 function loadComplete() {
-	// $("canvas").hide();
 	loadingText.setText("");
 	game.time.desiredFps = 30;
-
 
 	var table = game.add.sprite(675, 280, "table");
 
@@ -313,6 +319,15 @@ function UserInfo(player) {
 
 	this.splitProperties.cardsSum.anchor.set(0.5, 0.5);
 	this.splitProperties.pointsBet.anchor.set(0.5, 0.5);
+
+
+	this.insurence = game.add.sprite(player.x, player.y + 120, "insurence");
+	this.insurence.anchor.set(0.5, 0.5);
+	// this.insurence.scale.setTo(0.2, 0.2);
+	this.insurence.visible = false;
+
+	// this.you.scale.setTo(0.3, 0.3);
+	// this.you.visible = false;
 }
 
 UserInfo.prototype.update = function(player) {
@@ -321,6 +336,7 @@ UserInfo.prototype.update = function(player) {
 	this.pointsBet.setText(player.pointsBet);
 	if(player.id === myId) this.overallPoints.setText("Overall points: " + player.overallPoints);
 	this.status.animations.play(player.gameResult);
+	this.insurence.visible = player.insurence;
 	
 	if(player.split) {
 		this.splitProperties.cardsSum.setText(player.splitProperties.howManyAces > 0 ? player.splitProperties.cardsSum + 

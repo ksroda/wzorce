@@ -84,11 +84,11 @@ var subject = new Subject();
 subject.addObserver(new Observer(function(room) {
 	if(room.currentWord) {
 		currentCategory.text = "Category: " + room.currentWord.category;
-		currentWord.text = (room.currentPlayer.name == player.name) ? "Word: " + room.currentWord.word : "";
+		currentWord.text = (room.currentPlayer.id === player.id) ? "Word: " + room.currentWord.word : "";
 	}
-	whoIsDrawing.text = (room.currentPlayer.name == player.name) ? "You are drawing" : room.currentPlayer.name + " is drawing";
+	whoIsDrawing.text = (room.currentPlayer.id === player.id) ? "You are drawing" : room.currentPlayer.name + " is drawing";
 	timer.text = room.timer;
-	iAmDrawing = (room.currentPlayer.name == player.name);
+	iAmDrawing = (room.currentPlayer.id === player.id);
 }));
 
 subject.addObserver(new Observer(function(room) {
@@ -118,7 +118,7 @@ subject.addObserver(new Observer(function(room) {
 		var divPencil = $("<div />")
 			.attr({ "class": "pencil col-sm-1"});
 
-		if(room.ranking[i].name == room.currentPlayer.name) {
+		if(room.ranking[i].id == room.currentPlayer.id) {
 			divPencil.append(pencil);
 		} 
 
@@ -183,7 +183,7 @@ function onUp(pointer) {
 function trace(pointer) {
     if (draw && (Math.abs(pointer.x - lastX) > length || Math.abs(pointer.y - lastY) > length) && iAmDrawing) {
       	graphics.lineTo(pointer.x, pointer.y);
-		console.log(i++);
+		// console.log(i++);
 		lastX = pointer.x;
 		lastY = pointer.y;
 		socket.emit('mouse drag', {

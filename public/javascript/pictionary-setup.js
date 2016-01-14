@@ -71,6 +71,10 @@ socket.on('mouse drag', function(position) {
 // 	subject.notify(room);
 // });
 
+socket.on('id', function(id) {
+	player.id = id;
+});
+
 socket.on('clear screen', function() {
 	graphics.kill();
 	graphics = game.add.graphics(0, 0);

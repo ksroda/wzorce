@@ -77,6 +77,7 @@ function Room(roomName, currentTime) {
 	this.cards 					= [];
 	this.dealerCardsSum 		= 0;
 	this.dealerCardsNumber 		= 0;
+	this.dealerCards 			= [];
 	this.betTime 				= 10000;
 	this.thisStartTime 			= currentTime;
 	this.timeBetweenCardsDeal 	= 800;
@@ -105,6 +106,8 @@ Room.prototype.createPlayer = function(player) {
 	player.pointsBet = 0;
 	player.cards = [];
 	player.gameResult = "none";
+	player.insurence = false;
+	player.insurencePoints = 0;
 
 	player.split = false;
 	player.hand = "right";
@@ -250,21 +253,51 @@ Room.prototype.stand = function(now) {
 
 Room.prototype.split = function(now) {
 	this.currentPlayer.action = "none";
-	this.currentPlayerTime = now;
-	this.currentPlayer.cards[0].goalX -= 40;
-	this.currentPlayer.cards[1].goalX = this.currentPlayer.cards[0].goalX + 80;
-	this.currentPlayer.cards[1].goalY += 20;
+	if(this.currentPlayer.overallPoints >= this.currentPlayer.pointsBet && this.currentPlayer.cardsNumber === 2) {
+		this.currentPlayerTime = now;
+		this.currentPlayer.cards[0].goalX -= 40;
+		this.currentPlayer.cards[1].goalX = this.currentPlayer.cards[0].goalX + 80;
+		this.currentPlayer.cards[1].goalY += 20;
 
-	this.currentPlayer.split = true;
-	this.currentPlayer.cardsNumber = 1;
-	this.currentPlayer.splitProperties.cardsNumber = 1;
-	this.currentPlayer.splitProperties.cards.push(this.currentPlayer.cards.pop());
-	this.currentPlayer.splitProperties.howManyAces = (this.currentPlayer.splitProperties.cards[0].value === 11 ? 1 : 0);
-	this.currentPlayer.howManyAces = (this.currentPlayer.cards[0].value === 11 ? 1 : 0);
-	this.currentPlayer.splitProperties.cardsSum = this.currentPlayer.splitProperties.cards[0].value;
-	this.currentPlayer.cardsSum = this.currentPlayer.cards[0].value;
-	this.currentPlayer.splitProperties.pointsBet = this.currentPlayer.pointsBet;
-	this.currentPlayer.overallPoints -= this.currentPlayer.pointsBet;
+		this.currentPlayer.split = true;
+		this.currentPlayer.cardsNumber = 1;
+		this.currentPlayer.splitProperties.cardsNumber = 1;
+		this.currentPlayer.splitProperties.cards.push(this.currentPlayer.cards.pop());
+		this.currentPlayer.splitProperties.howManyAces = (this.currentPlayer.splitProperties.cards[0].value === 11 ? 1 : 0);
+		this.currentPlayer.howManyAces = (this.currentPlayer.cards[0].value === 11 ? 1 : 0);
+		this.currentPlayer.splitProperties.cardsSum = this.currentPlayer.splitProperties.cards[0].value;
+		this.currentPlayer.cardsSum = this.currentPlayer.cards[0].value;
+		this.currentPlayer.splitProperties.pointsBet = this.currentPlayer.pointsBet;
+		this.currentPlayer.overallPoints -= this.currentPlayer.pointsBet;
+	}	
+}
+
+Room.prototype.insurence = function(now) {
+	this.currentPlayer.action = "none";
+	if(!this.currentPlayer.insurence && this.dealerCards[0].value === 11 
+		&& this.currentPlayer.overallPoints >= this.currentPlayer.pointsBet 
+		&& this.currentPlayer.cardsNumber === 2 && !this.currentPlayer.split) {
+		this.currentPlayerTime = now;
+		this.currentPlayer.insurence = true;
+		this.currentPlayer.insurencePoints = this.currentPlayer.pointsBet;
+		this.currentPlayer.overallPoints -= this.currentPlayer.pointsBet;
+		console.log("insurence");
+	}
+}
+
+Room.prototype.double = function(now) {
+	this.currentPlayer.action = "none";
+	if(this.currentPlayer.overallPoints >= this.currentPlayer.pointsBet) {
+		if(this.currentPlayer.split && this.currentPlayer.hand == "right") {
+			this.currentPlayer.overallPoints -= this.currentPlayer.splitProperties.pointsBet;
+			this.currentPlayer.splitProperties.pointsBet *= 2;
+		} else {
+			this.currentPlayer.overallPoints -= this.currentPlayer.pointsBet;
+			this.currentPlayer.pointsBet *= 2;
+		}
+		this.hit(now);
+		this.stand(now);
+	}
 }
 
 Room.prototype.drawCard = function(cardForDealer) {
@@ -273,6 +306,7 @@ Room.prototype.drawCard = function(cardForDealer) {
 		this.cards.push(card);
 		this.dealerCardsSum += card.value;
 		this.dealerCardsNumber += 1;
+		this.dealerCards.push(card);
 		if(card.value === 11) this.dealerHowManyAces += 1;
 		if(this.dealerCardsSum > 21 && this.dealerHowManyAces > 0) {
 			this.dealerCardsSum -= 10;
@@ -315,7 +349,6 @@ Room.prototype.drawCard = function(cardForDealer) {
 				}
 			}
 		}
-		
 	}
 }
 
@@ -393,19 +426,13 @@ Room.prototype.game = new GameState(function(room) {
 				room.stand(now);
 		} else 
 			if(room.currentPlayer.action === "double") {
-				room.currentPlayer.action = "none";
-				if(room.currentPlayer.split && room.currentPlayer.hand == "right") {
-					room.currentPlayer.overallPoints -= room.currentPlayer.splitProperties.pointsBet;
-					room.currentPlayer.splitProperties.pointsBet *= 2;
-				} else {
-					room.currentPlayer.overallPoints -= room.currentPlayer.pointsBet;
-					room.currentPlayer.pointsBet *= 2;
-				}
-				room.hit(now);
-				room.stand(now);
+				room.double(now);
 		} else
 		 	if(room.currentPlayer.action === "split" && !room.currentPlayer.split) {
 			 	room.split(now);
+		} else
+		 	if(room.currentPlayer.action === "insurence") {
+			 	room.insurence(now);
 			}
 		room.timer = Math.ceil((room.timeToThink - (now - room.currentPlayerTime))/1000);
 
@@ -423,6 +450,85 @@ Room.prototype.game = new GameState(function(room) {
 		}
 });
 
+Room.prototype.pointsReward = function(room, player, condition, conditionSplit) {
+	// player.gameResult = "lose";
+	// if(player.inGame) {
+	// 	player.overallPoints += 2 * player.pointsBet;
+	// 	player.gameResult = "win";
+	// } else {
+	// 	player.overallPoints += player.pointsBet;
+	// 	player.gameResult = "push";
+	// }
+	// if(player.split) {
+	// 	player.splitProperties.gameResult = "lose";
+	// 	if(player.splitProperties.inGame) {
+	// 		player.overallPoints += 2 * player.splitProperties.pointsBet;
+	// 		player.splitProperties.gameResult = "win";
+	// 	} else {
+	// 		player.overallPoints += player.splitProperties.pointsBet;
+	// 		player.splitProperties.gameResult = "push";
+	// 	}
+	// }
+
+
+	if(player.insurence && room.dealerCards[0].value === 11 && room.dealerCardsSum === 21) {
+		player.overallPoints += 2 * player.insurencePoints;
+	}
+
+
+	player.gameResult = "lose";
+	if(player.inGame) {
+		if(condition) {
+			room.increasedRewardWhenBlackjack(room, player, function(player) {
+				player.overallPoints += 2 * player.pointsBet;
+				player.gameResult = "win";
+			});
+		} else if(player.cardsSum === room.dealerCardsSum) {
+			room.increasedRewardWhenBlackjack(room, player, function(player) {
+				player.overallPoints += player.pointsBet;
+				player.gameResult = "push";
+			});
+		}
+	}
+	if(player.split) {
+		player.splitProperties.gameResult = "lose";
+		if(player.splitProperties.inGame) {
+			if(conditionSplit) {
+				room.increasedRewardWhenBlackjackSplit(room, player, function(player) {
+					player.overallPoints += 2 * player.splitProperties.pointsBet;
+					player.splitProperties.gameResult = "win";
+				});
+			} else if(player.splitProperties.cardsSum === room.dealerCardsSum) {
+				room.increasedRewardWhenBlackjackSplit(room, player, function(player) {
+					player.overallPoints += player.splitProperties.pointsBet;
+					player.splitProperties.gameResult = "push";
+				});
+			}
+		}
+	}
+}
+
+Room.prototype.increasedRewardWhenBlackjack = function(room, player, callback) {
+	if(player.cardsSum === 21 && player.cardsNumber === 2 
+		&& (player.cardsNumber < room.dealerCardsNumber || room.dealerCardsSum !== 21)) {
+		player.overallPoints += Math.floor(3/2 * player.pointsBet) + player.pointsBet;
+		player.gameResult = "win";
+	} else {
+		callback(player);
+	}
+}
+
+Room.prototype.increasedRewardWhenBlackjackSplit = function(room, player, callback) {
+	if(player.split) {
+		if(player.splitProperties.cardsSum === 21 && player.splitProperties.cardsNumber === 2 
+			&& (player.splitProperties.cardsNumber < room.dealerCardsNumber || room.dealerCardsSum !== 21)) {
+			player.overallPoints += Math.floor(3/2 * player.splitProperties.pointsBet) + player.splitProperties.pointsBet;
+			player.splitProperties.gameResult = "win";
+		} else {
+			callback(player);
+		}
+	}
+}
 
 Room.prototype.dealersTurn = new GameState(function(room) {
 	var now = (new Date()).getTime();
@@ -435,25 +541,7 @@ Room.prototype.dealersTurn = new GameState(function(room) {
 				if(room.dealerCardsSum > 21) {
 					for(var i = 0; i < room.players.length; i++) {
 						var player = room.players[i];
-						player.gameResult = "lose";
-						if(player.inGame) {
-							player.overallPoints += 2 * player.pointsBet;
-							player.gameResult = "win";
-						} else {
-							player.overallPoints += player.pointsBet;
-							player.gameResult = "push";
-						}
-						if(player.split) {
-							player.splitProperties.gameResult = "lose";
-							if(player.splitProperties.inGame) {
-								player.overallPoints += 2 * player.splitProperties.pointsBet;
-								player.splitProperties.gameResult = "win";
-							} else {
-								player.overallPoints += player.splitProperties.pointsBet;
-								player.splitProperties.gameResult = "push";
-							}
-						}
-
+						room.pointsReward(room, player, true, true);
 					}
 					room.changeState(room.afterGame);
 					room.afterGameControlTime = now;
@@ -461,34 +549,9 @@ Room.prototype.dealersTurn = new GameState(function(room) {
 			} else {
 				for(var i = 0; i < room.players.length; i++) {
 					var player = room.players[i];
-					player.gameResult = "lose";
-					if(player.inGame) {
-						if(player.cardsSum > room.dealerCardsSum) {
-							player.overallPoints += 2 * player.pointsBet;
-							player.gameResult = "win";
-						} else if(player.cardsSum === room.dealerCardsSum) {
-							if(player.cardsSum === 21 && player.cardsNumber === 2 
-								&& player.cardsNumber < room.dealerCardsNumber) {
-								player.overallPoints += Math.floor(3/2 * player.pointsBet) + player.pointsBet;
-								player.gameResult = "win";
-							} else {
-								player.overallPoints += player.pointsBet;
-								player.gameResult = "push";
-							}
-						}
-					}
-					if(player.split) {
-						player.splitProperties.gameResult = "lose";
-						if(player.splitProperties.inGame) {
-							if(player.splitProperties.cardsSum > room.dealerCardsSum) {
-								player.overallPoints += 2 * player.splitProperties.pointsBet;
-								player.splitProperties.gameResult = "win";
-							} else if(player.splitProperties.cardsSum === room.dealerCardsSum) {
-								player.overallPoints += player.splitProperties.pointsBet;
-								player.splitProperties.gameResult = "push";
-							}
-						}
-					}
+					// console.log(player.cardsSum + " " + room.dealerCardsSum + " " + player.cardsNumber + " " + room.dealerCardsNumber);
+					room.pointsReward(room, player, player.cardsSum > room.dealerCardsSum, 
+						player.splitProperties.cardsSum > room.dealerCardsSum);
 				}
 				room.changeState(room.afterGame);
 				room.afterGameControlTime = now;
@@ -521,6 +584,8 @@ Room.prototype.reset = new GameState(function(room) {
 			room.players[i].howManyAces = 0;
 			room.players[i].cards = [];
 			room.players[i].gameResult = "none";
+			room.players[i].insurence = false;
+			room.players[i].insurencePoints = 0;
 
 			room.players[i].split = false;
 			room.players[i].hand = "right";
@@ -538,6 +603,7 @@ Room.prototype.reset = new GameState(function(room) {
 		room.currentPlayer = 0;
 		room.dealerCardsSum = 0;
 		room.dealerCardsNumber = 0;
+		room.dealerCards = [];
 		room.thisStartTime = (new Date()).getTime();
 		room.controlDealTime = (new Date()).getTime(),
 		room.isCardForDealer = false;
