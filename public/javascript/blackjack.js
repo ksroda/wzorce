@@ -104,7 +104,7 @@ subject.addObserver(new Observer(function(data) {
 		if(!userInfo[data.players[i].id]) {
 			userInfo[data.players[i].id] = new UserInfo(data.players[i]);
 			if(data.players[i].id === player.id) {
-				var you = game.add.sprite(data.players[i].x - 100, data.players[i].y  + 100, "you");
+				var you = game.add.sprite(data.players[i].x - 80, data.players[i].y  + 100, "you");
 				you.anchor.set(0.5, 0.5);
 				setTimeout(function() {
 					you.kill();
