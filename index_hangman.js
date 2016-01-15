@@ -182,6 +182,9 @@ Room.prototype.wordRandom = new GameState(function(io, room) {
 
 	timer = 0;
 	var word = room.randomWordFromList();
+
+	io.to(room.id).emit("new word", word.type);
+
 	console.log("slowo: "+word.type);
 	room.words.push(word.type);
 	var remainingLength = word.type.length;

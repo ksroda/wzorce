@@ -9,7 +9,7 @@ var hangman;
 
 var letterCovers;
 var letterValues;
-var style = { font: "70px Arial", fill: "#FFFFFF", align: "center" };
+var style = { font: "50px Arial", fill: "#FFFFFF", align: "center" };
 
 function preload() {
   game.load.spritesheet("hangman", "assets/hangman.png", 294, 281, 107);
@@ -109,8 +109,6 @@ function create() {
   hangman.animations.add('part10', seq(96, 101), 7, false);
   hangman.animations.add('part11', seq(102, 106), 7, false);
   // hangman.animations.play('part11');
-
-  letterFactory("cat and dog always walk together");
 }
 
 function seq(from, to) {
@@ -129,7 +127,7 @@ function render() {
 
 }
 
-var letterScale = 0.5;
+var letterScale = 0.4;
 
 function Letter(letter, x, y) {
 	this.x = x;
@@ -158,7 +156,7 @@ function letterFactory(word) {
 
 
 	var counterX = 0;
-	var startY = 150;
+	var startY = 120;
 	var lastSpace = 0;
 
 	for(var i = 0; i < word.length; i++) {
@@ -170,7 +168,7 @@ function letterFactory(word) {
 		counterX++;
 		if(counterX > wordBreaker && word[i+1] === " ") {
 			counterX = 0;
-			startY += 200;
+			startY += 120;
 			i++;
 		}
 	}

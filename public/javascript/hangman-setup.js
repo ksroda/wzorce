@@ -40,6 +40,11 @@ socket.on('correctLetter', function(data) {
 socket.on('unblockLetters', function() {
 	$('.letterButton').css("background-color", "blue").attr("disabled", false);
 });
+
+socket.on('new word', function(word) {
+	console.log(word);
+	// letterFactory(word);
+})
 		
 		
 function sendWelcome(roomName) {
