@@ -17,7 +17,7 @@ module.exports = (function () {
   function init() {
  
    var hangman = {
-		rooms: {}
+		rooms: []
 	}
 
 	hangman.createRoom = function(io, roomName, roomIntervals) {
@@ -28,7 +28,7 @@ module.exports = (function () {
 
 	//-----------------------------------------------------------------Socket---------------------------------------------------
 
-	hangman.setOnLetterSend = function(socket) {
+  hangman.setOnLetterSend = function(socket) {
 		var self = this;
 		/*socket.on('letterButton', function(letter) {
 				console.log(letter + "  " + socket);
@@ -48,6 +48,7 @@ module.exports = (function () {
 				}*/
 			});
 	}
+
 
 	return hangman;
  
@@ -103,8 +104,6 @@ Room.prototype.createPlayer = function(player) {
 	player.action = "none";
 	player.numOfChances = 3;
 	player.inGame = true;
-	player.pointsHangman = 0;
-
 	this.playersAll.push(player);
 	if(this.playersAll.length === 1) this.currentPlayer = player;
 	this.usersNum += 1;
@@ -114,9 +113,8 @@ Room.prototype.startLoop = function(io, roomIntervals) {
 	var intervalId = auxiliaryRequire.randomId();
 	this.interval = intervalId;
 
-	this.changeState(this.wordRandom);
 	var self = this;
-	// this.changeState(this.beginning);
+	this.changeState(this.wordRandom);
 	var interval = setInterval(function() {
 		self.gameLoop(io);
 	}, 500);
@@ -124,22 +122,27 @@ Room.prototype.startLoop = function(io, roomIntervals) {
 	roomIntervals[intervalId] = interval;
 }
 
+Room.prototype.setRandomWord = function() {
+	//databaseRequire.setRandomWord(this);
+}
+
 Room.prototype.changeCurrentPlayer = function(io, player) {
-	// this.currentPlayer = player;
-	// this.drawingControlTime = (new Date()).getTime();
-	// this.changeState(this.beginning);
-	// io.to(this.id).emit('clear screen');
+/*	this.currentPlayer = player;
+	this.drawingControlTime = (new Date()).getTime();
+	this.changeState(this.beginning);*/
+
+
 }
 
 Room.prototype.userDisconnected = function(io, playerId) {
-	// if(this.currentPlayer.id === playerId) {
-	// 	var index = this.playersAll.indexOf(this.currentPlayer);
-	// 	index++;
-	// 	if(index > this.playersAll.length - 1) {
-	// 		index = 0;
-	// 	}
-	// 	this.changeCurrentPlayer(io, this.playersAll[index]);
-	// }
+/*	if(this.currentPlayer.id === playerId) {
+		var index = this.playersAll.indexOf(this.currentPlayer);
+		index++;
+		if(index > this.playersAll.length - 1) {
+			index = 0;
+		}
+		this.changeCurrentPlayer(io, this.playersAll[index]);
+	}*/
 }
 
 Room.prototype.findPlayerById = function(id) {
@@ -149,6 +152,12 @@ Room.prototype.findPlayerById = function(id) {
 		};
 	}
 	return undefined; 
+};
+
+Room.prototype.getRanking = function() {
+	return this.playersAll.sort(function(a,b) {
+		return b.localPoints - a.localPoints
+	});
 };
 
 Room.prototype.randomWordFromList = function() {
@@ -167,10 +176,10 @@ Room.prototype.randomWordFromList = function() {
 	});
 }
 
+
 Room.prototype.changeState = function(loopState) {
 	this.loopState = loopState;
-};
-
+}
 
 Room.prototype.wordRandom = new GameState(function(io, room) {
 /*	var now = (new Date()).getTime();
@@ -224,7 +233,9 @@ Room.prototype.guessing = new GameState(function(io, room) {
 		var letter = room.currentPlayer.action;
 
 						//zablokuj przycisk
-		
+		io.to(room.id).emit('blockLetter', {
+			litera: letter
+		});
 
 
 		console.log(letter + " dl " + letter.length);
@@ -238,12 +249,17 @@ Room.prototype.guessing = new GameState(function(io, room) {
 				console.log("w slowie jest "+letter);
 			}
 		}
+		if(position.length>0){//current zgadl litere
+			room.guessedLetters.push(letter);
+			//odslon litere
 
-		if(position.length === 0) {
-			io.to(room.id).emit('wrongLetter', {
-				litera: letter,
-				positions: []
-			});
+
+			room.changeState(room.letterGuessed);
+
+		}
+		else{//nie zgadl litery TODO!!!!!!!!!!!!!!!!!!!!!!1
+
+			//rysujwisielca
 
 			room.currentPlayer.numOfChances--;
 			console.log("szans="+room.currentPlayer.numOfChances);
@@ -281,17 +297,7 @@ Room.prototype.guessing = new GameState(function(io, room) {
 			else { //nie mamy graczy z zachowanymi szansami
 				room.changeState(room.reset);
 			}
-		} else {
-			io.to(room.id).emit('correctLetter', {
-				litera: letter,
-				positions: position
-			});
-
-			room.guessedLetters.push(letter);
-			//odslon litere
-
-
-			room.changeState(room.letterGuessed);
+			
 		}
 	}
 });
@@ -384,15 +390,14 @@ Room.prototype.reset = new GameState(function(io, room) {
 
 });
 
-
 Room.prototype.gameLoop = function(io) {
 	this.loopState.execute(io, this);
 
 	io.to(this.id).emit('update', {
 		currentWord: this.currentWord,
 		currentPlayer: this.currentPlayer,
-		timer: this.timer
-		// ranking: this.getRanking()
+		timer: this.timer,
+		ranking: this.getRanking()
 	});
 
 	console.log("Game state: " + this.state  +

@@ -5,7 +5,7 @@
 </script>
 <div id="rooms">
 	<div id="output-room">
-		<div ng-repeat="x in rooms | orderBy: 'usersNum':true">
+		<div ng-repeat="x in rooms | orderBy: 'usersNum':true | filter: roomEntered">
 			<button type="button" class="btn btn-default btn-block roomEnter" ng-click="enterRoom(x.name)">
 				<span class="singleRoomName">{{ x.name }}</span>
 				<span class="badge">{{ x.usersNum }}</span>

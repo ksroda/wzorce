@@ -171,6 +171,8 @@ io.on('connection', function(socket) {
 	pictionaryRequire.setOnChatMessage(io, socket);
 
 	blackjackRequire.socketHandling(socket);
+
+	hangmanRequire.setOnLetterSend(socket);
 });
 
 

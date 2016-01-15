@@ -225,12 +225,18 @@ module.exports = function() {
 		}		
 	}
 
+	var publicGetWordsList = function() {
+		var words = [{name: "cat", category: "animals", points: 30}, {name: "dog", category: "animals", points: 30}];
+		return words;
+	}
+
 
 	return {
 		randomId: publicRandomId,
 		getCardsStack: publicGetCardsStack,
 		correctness: publicCorrectness,
 		objectToArray: publicObjectToArray,
-		generateChatName: publicGenerateChatName
+		generateChatName: publicGenerateChatName,
+		getWordsList: publicGetWordsList
 	}
 }
