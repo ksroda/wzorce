@@ -27,8 +27,16 @@ socket.on('wrongLetter', function(data) {
 	var id=data.litera;
 	$('#'+id).css("background-color", "red").attr("disabled", true);
 	if(hangmanPartIndex <= 11) {
-		hangman.animations.play('part' + hangmanPartIndex);
-		hangmanPartIndex++;
+		// hangman.animations.play('part' + hangmanPartIndex);
+		
+		for (var x in hangman) {
+	    	hangman[x].visible = false;
+	    }
+	    if(hangmanPartIndex > 0) {
+	    	hangman[hangmanPartIndex].visible = true;
+	    	hangman[hangmanPartIndex].animations.play("go");
+	    }
+	    hangmanPartIndex++;
 	}
 });
 

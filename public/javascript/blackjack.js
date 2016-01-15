@@ -6,6 +6,10 @@ if(!userAllowedToEnterGame) {
 var height = window.innerHeight;
 var width = window.innerWidth;
 
+$(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip(); 
+});
+
 //------------------------------------Phraser-------------------------------------------
 var game = new Phaser.Game(1350, 700, Phaser.CANVAS, 'phaser', { preload: preload, create: create, update: update }, true);
 var cardsGroup;
