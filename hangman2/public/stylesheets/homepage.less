@@ -1,0 +1,54 @@
+.bordered {
+	border: 1px solid;
+}
+
+body {
+	-webkit-transition: background-color 0.8s; /* Safari */
+    transition: background-color 0.8s;
+    background-color: #333333;
+    color: white;
+}
+
+#titleblack, #titleyellow, #titleblue  {
+	opacity: 0;
+}
+
+#centre-containter {
+	@backgroundSizeX: 500px;
+	position: absolute;
+	//.bordered;
+	width: @backgroundSizeX;
+	left: 50%;
+	top: 170px;
+	margin-left: -250px;
+	height: (@backgroundSizeX * 0.2329) * 3;
+
+
+	.games {
+		//.bordered;
+		width: 100%;
+		text-align: center;
+		height: (@backgroundSizeX * 0.2329);
+		background-size: @backgroundSizeX (@backgroundSizeX * 0.2329);
+    	background-repeat: no-repeat;
+
+    	-webkit-transition: opacity 0.8s; /* Safari */
+    	transition: opacity 0.8s;
+	}
+
+	#blackjack {
+		border-top-right-radius: 5px;
+		border-top-left-radius: 5px;
+		background-image: url("img/blackjack_logo.png");
+	}
+
+	#pictionary {
+		background-image: url("img/pictionary_logo.png");
+	}
+
+	#hangman {
+		border-bottom-right-radius: 5px;
+		border-bottom-left-radius: 5px;
+		background-image: url("img/hangman_logo.png");
+	}
+}

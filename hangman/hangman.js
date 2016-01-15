@@ -1,3 +1,73 @@
+//------------------------------------JQuery---------------------------------------------
+$(document).ready(function() {
+	
+	$("#create").on('click', function() {
+		sendWelcome($("#roomname").val());
+	});
+			
+	//jeżeli dodajemy element dynamicznie (append) to tak wygląda funkcja on click jquery
+	$(document).on('click','.roomEnter',function(){
+		sendWelcome($(".singleRoomName", this).text());
+	});
+		
+	$(".letterButton").on('click', function() {
+		socket.emit("letterButton", this.id);
+	});	
+	
+});
+
+
+
+//------------------------------------Socket----------------------------------------------
+var socket = io();
+
+socket.on('mouse down', function(properties) {
+	console.log(properties);
+	graphics.lineStyle(properties.size, properties.color, 1);
+	graphics.moveTo(properties.start.x, properties.start.y);
+});
+	
+socket.on('update rooms', function(rooms) {
+	angular.element($('#rooms')).scope().update(rooms);
+});
+
+socket.on('update', function(room) {
+	subject.notify(room);
+});
+
+
+socket.on('blockLetter', function(data) {
+	var id=data.litera;
+	$('#'+id).css("background-color", "red").attr("disabled", true);
+
+});
+
+socket.on('unblockLetters', function() {
+
+	$('.letterButton').css("background-color", "blue").attr("disabled", false);
+
+});
+
+
+		
+function sendWelcome(roomName) {
+	socket.emit('welcome', {
+		name:	player.name,
+		room:	roomName,
+		game: 	"hangman",
+		overallPoints: player.overallPoints
+	});
+		
+	$("canvas").show();
+	$("#rooms").hide();
+};
+
+//------------------------------------Player-----------------------------------------------
+var player = {
+	name: 			user.name,
+	overallPoints:  user.overallPoints, 
+	roomName:		0
+};
 
 //---------------------------------Phaser-------------------------------------------
 var game = new Phaser.Game(window.innerWidth, window.innerHeight, Phaser.CANVAS, '', { create: create, update: update, render: render });

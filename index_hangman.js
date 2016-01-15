@@ -86,7 +86,7 @@ function Room(roomName, currentTime) {
 	this.guessTime 				= 5000;
 	this.roomStartTime 			= (new Date()).getTime();
 	this.isRoundStarted 		= false;
-	this.wordsList 				= auxiliaryRequire.getWordsList();
+	this.wordsList 				= [];
 	this.timeToThink 			= 15000;
 	this.currentPlayerTime 		= (new Date()).getTime();
 	this.wordX 					= 600;
@@ -94,6 +94,8 @@ function Room(roomName, currentTime) {
 	this.afterGameControlTime 	= (new Date()).getTime();
 	this.afterGameTime 			= 3000;
 	this.timer 					= 0;
+	this.numOfChances			= 11;
+	this.wrongLetters 			= [];
 }
 
 
@@ -101,9 +103,9 @@ Room.prototype.createPlayer = function(player) {
 	player.localPoints = 0;
 	player.guessedWord = false;
 	player.action = "none";
-	player.numOfChances = 3;
+	player.numOfChances = this.numOfChances;
 	player.inGame = true;
-	player.pointsHangman = 0;
+	player.localPoints = 0;
 
 	this.playersAll.push(player);
 	if(this.playersAll.length === 1) this.currentPlayer = player;
@@ -117,29 +119,47 @@ Room.prototype.startLoop = function(io, roomIntervals) {
 	this.changeState(this.wordRandom);
 	var self = this;
 	// this.changeState(this.beginning);
-	var interval = setInterval(function() {
-		self.gameLoop(io);
-	}, 500);
-	
-	roomIntervals[intervalId] = interval;
+	databaseRequire.getWordForHangman(this, function() {
+		var interval = setInterval(function() {
+			self.gameLoop(io);
+		}, 250);
+		
+		roomIntervals[intervalId] = interval;
+	});
 }
 
 Room.prototype.changeCurrentPlayer = function(io, player) {
-	// this.currentPlayer = player;
-	// this.drawingControlTime = (new Date()).getTime();
-	// this.changeState(this.beginning);
-	// io.to(this.id).emit('clear screen');
+	var index = this.players.indexOf(this.currentPlayer);
+	index++;
+	if(index > this.players.length - 1) {
+		index = 0;
+	}
+	this.currentPlayer = this.players[index];
+	//this.currentPlayerTime = (new Date()).getTime();
 }
 
 Room.prototype.userDisconnected = function(io, playerId) {
-	// if(this.currentPlayer.id === playerId) {
-	// 	var index = this.playersAll.indexOf(this.currentPlayer);
-	// 	index++;
-	// 	if(index > this.playersAll.length - 1) {
-	// 		index = 0;
-	// 	}
-	// 	this.changeCurrentPlayer(io, this.playersAll[index]);
-	// }
+	if (this.players.length == 1){
+		this.changeState(this.reset);
+	}
+
+	if(this.currentPlayer.id === playerId) {
+	 	var index = this.players.indexOf(this.currentPlayer);
+		index++;
+		if(index > this.players.length - 1) {
+			index = 0;
+		}
+		this.currentPlayer = this.players[index];
+
+		for(var i = 0; i < this.players.length; i++) {
+			if(this.players[i].id === playerId) {
+				this.players.splice(i, 1);
+				break;
+			}
+		}
+		// this.players.splice(this.players.indexOf(this.currentPlayer), 1);
+		//this.changeCurrentPlayer(io, this.playersAll[index]);
+	}
 }
 
 Room.prototype.findPlayerById = function(id) {
@@ -151,13 +171,25 @@ Room.prototype.findPlayerById = function(id) {
 	return undefined; 
 };
 
+Room.prototype.getRanking = function() {
+	for(var i = 0; i < this.playersAll.length; i++) {
+		if(this.players.indexOf(this.playersAll[i]) === -1) {
+			this.playersAll[i].localPoints = -1;
+		}
+	}
+
+	return this.playersAll.sort(function(a,b) {
+		return b.localPoints - a.localPoints
+	});
+};
+
 Room.prototype.randomWordFromList = function() {
 	var wordIndex = Math.floor(Math.random() * this.wordsList.length);
 	var word = this.wordsList[wordIndex];
 	this.wordsList.splice(wordIndex, 1);
 	return ({
 		id: 	auxiliaryRequire.randomId(),
-  		type: 	word.name,
+  		type: 	word.word.replace(/[^a-zA-Z\s]/g, "").toLowerCase(),
 		x: 		1200,
 		y: 		100,
 /*		goalX: 	room.currentPlayer.x + room.currentPlayer.cardsNumber * 25,
@@ -180,22 +212,30 @@ Room.prototype.wordRandom = new GameState(function(io, room) {
   	room.changeState(room.drawing);*/
   	room.state ="wordRandom";
 
+
+  	room.numOfChances = Math.ceil(11/room.playersAll.length);
+
 	timer = 0;
 	var word = room.randomWordFromList();
 
-	io.to(room.id).emit("new word", word.type);
+	room.encryptedWord = word.type.replace(/[a-zA-Z]/g, "_")
+	// io.to(room.id).emit("new word", room.encryptedWord);
 
 	console.log("slowo: "+word.type);
 	room.words.push(word.type);
 	var remainingLength = word.type.length;
 
-/*	room.players = [];
+	room.players = [];
 	for(var i=0; i < room.playersAll.length; i++){
+		room.playersAll[i].numOfChances = room.numOfChances;
+		room.playersAll[i].inGame = true;
+		room.playersAll[i].localPoints = 0;
 		room.players.push(room.playersAll[i]);
-	}*/
+
+	}
 
 	//room.playersAll[0].inGame = true;
-	room.currentPlayer = room.playersAll[0];
+	room.currentPlayer = room.players[0];
 	room.changeState(room.guessing);
 
 
@@ -238,7 +278,7 @@ Room.prototype.guessing = new GameState(function(io, room) {
 		for(var i = 0; i < word.length; i++){
 			if(word[i]=== letter){
 				position.push(i);
-				console.log("w slowie jest "+letter);
+				console.log("w slowie jest "+letter +" na pozycji " + position);
 			}
 		}
 
@@ -248,14 +288,16 @@ Room.prototype.guessing = new GameState(function(io, room) {
 				positions: []
 			});
 
+			room.wrongLetters.push(letter);
+
 			room.currentPlayer.numOfChances--;
 			console.log("szans="+room.currentPlayer.numOfChances);
 
 
-			var index = room.playersAll.indexOf(room.currentPlayer);
+			var index = room.players.indexOf(room.currentPlayer);
 
 			if (room.currentPlayer.numOfChances==0){
-				room.playersAll[index].inGame = false;
+				room.players[index].inGame = false;
 				//room.players.splice(room.players.indexOf(room.currentPlayer),1);
 			}
 
@@ -263,22 +305,22 @@ Room.prototype.guessing = new GameState(function(io, room) {
 	
 			var licznik = 0;
 
-			while(licznik<=room.playersAll.length){
+			while(licznik<=room.players.length){
 				index++;
 				licznik++;
 
-				if(index > room.playersAll.length - 1) {
+				if(index > room.players.length - 1) {
 					index = 0;
 				}
 
-				if (room.playersAll[index].inGame == true) {
-					room.currentPlayer = room.playersAll[index];
+				if (room.players[index].inGame == true) {
+					room.currentPlayer = room.players[index];
 					licznik = 1000; //zeby wyjsc z while'a
 				}
 			}
 
 			if (licznik == 1000) { //mamy nastepnego gracza
-				room.currentPlayer = room.playersAll[index];
+				room.currentPlayer = room.players[index];
 				room.changeState(room.guessing);
 			}
 			else { //nie mamy graczy z zachowanymi szansami
@@ -290,7 +332,10 @@ Room.prototype.guessing = new GameState(function(io, room) {
 				positions: position
 			});
 
-			room.guessedLetters.push(letter);
+			room.guessedLetters.push({
+				letter: letter,
+				positions: position
+			});
 			//odslon litere
 
 
@@ -299,49 +344,57 @@ Room.prototype.guessing = new GameState(function(io, room) {
 	}
 });
 
+Room.prototype.numberOfGuessedLetters = function() {
+	var result = 0;
+	for(var i = 0; i < this.guessedLetters.length; i++) {
+		result += this.guessedLetters[i].positions.length;
+	}
+	return result;
+}
+
 Room.prototype.letterGuessed = new GameState(function(io, room) {
 /*	var now = (new Date()).getTime();
 	room.state = "after game";
 	//if(now - room.afterGameControlTime > room.afterGameTime) {
 			//	room.afterGameControlTime = now;
-				room.playersAll.forEach(function(player) {
+				room.players.forEach(function(player) {
 					player.guessedWord = false;
 				})
 				room.changeState(room.beginning);
 			//}*/
 
 	room.state="letterGuessed";
-	room.currentPlayer.pointsHangman += 50;
-		console.log("current player: " + room.currentPlayer.name + " jego pkty= " + room.currentPlayer.pointsHangman);
-		if(room.guessedLetters.length==room.words[room.words.length-1].length){ //wszystkie litery odgadniete
-			room.currentPlayer.pointsHangman += 200; //pkty dla zwyciezcy
-			console.log("koniec; current player: " + room.currentPlayer.name + " jego pkty= " + room.currentPlayer.pointsHangman);
+	room.currentPlayer.localPoints += 50;
+		console.log("current player: " + room.currentPlayer.name + " jego pkty= " + room.currentPlayer.localPoints);
+		if(room.numberOfGuessedLetters()==room.words[room.words.length-1].replace(/\s/g,"").length){ //wszystkie litery odgadniete
+			room.currentPlayer.localPoints += 200; //pkty dla zwyciezcy
+			console.log("koniec; current player: " + room.currentPlayer.name + " jego pkty= " + room.currentPlayer.localPoints);
 			//room.state="reset";
 			room.changeState(room.reset);
 		}
 		else{
 			//zmiana gracza
 			
-			var index = room.playersAll.indexOf(room.currentPlayer);
+			var index = room.players.indexOf(room.currentPlayer);
 			var licznik = 0;
 
-			while(licznik<=room.playersAll.length){
+			while(licznik<=room.players.length){
 				index++;
 				licznik++;
 
-				if(index > room.playersAll.length - 1) {
+				if(index > room.players.length - 1) {
 					index = 0;
 				}
 
-				if (room.playersAll[index].inGame = true) {
-					room.currentPlayer = room.playersAll[index];
+				if (room.players[index].inGame = true) {
+					room.currentPlayer = room.players[index];
 					licznik = 1000; //zeby wyjsc z while'a
 				}
 				
 			}
 
 			if (licznik == 1000) { //mamy nastepnego gracza
-				room.currentPlayer = room.playersAll[index];
+				room.currentPlayer = room.players[index];
 				room.changeState(room.guessing);
 			}
 			else { //nie mamy graczy z zachowanymi
@@ -357,7 +410,7 @@ Room.prototype.reset = new GameState(function(io, room) {
 	room.state = "after game";
 	//if(now - room.afterGameControlTime > room.afterGameTime) {
 			//	room.afterGameControlTime = now;
-				room.playersAll.forEach(function(player) {
+				room.players.forEach(function(player) {
 					player.guessedWord = false;
 				})
 				room.changeState(room.beginning);
@@ -366,20 +419,23 @@ Room.prototype.reset = new GameState(function(io, room) {
 	room.state="reset";
 	//room.changeState(room.reset);
 	room.guessedLetters = [];
+	room.encryptedWord = "";
+
+	room.wrongLetters = [];
 	//room.state = "wordRandom";
 	//room.currentPlayer = 0;
 	io.to(room.id).emit('unblockLetters');
 
-	for(var i=0; i < room.playersAll.length; i++){
-		room.playersAll[i].numOfChances = 3;
+	for(var i=0; i < room.players.length; i++){
+		room.players[i].numOfChances = 11;
 	}
 
 	if (room.wordsList.length == 0) {
 		room.wordsList = auxiliaryRequire.getWordsList();
 	}
 
-	for(var i = 0; i < room.playersAll.length; i++) {
-		room.playersAll[i].action = "none";
+	for(var i = 0; i < room.players.length; i++) {
+		room.players[i].action = "none";
 	}
 
 	room.changeState(room.wordRandom);
@@ -392,12 +448,15 @@ Room.prototype.gameLoop = function(io) {
 	this.loopState.execute(io, this);
 
 	io.to(this.id).emit('update', {
-		currentWord: this.currentWord,
+		wrongLetters: this.wrongLetters,
+		guessedLetters: this.guessedLetters,
+		encryptedWord: this.encryptedWord,
 		currentPlayer: this.currentPlayer,
-		timer: this.timer
-		// ranking: this.getRanking()
+		timer: this.timer,
+		state: this.state,
+		ranking: this.getRanking()
 	});
 
 	console.log("Game state: " + this.state  +
-		"   Current player: " + this.currentPlayer.name + " numb of players: "+this.playersAll.length);
+		"   Current player: " + this.currentPlayer.name + " numb of players: "+this.players.length);
 }

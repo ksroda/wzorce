@@ -1,0 +1,47 @@
+pokój {
+	id
+	nazwa
+	liczba graczy
+	lista graczy
+	aktualny gracz
+	stan pokoju
+	czas rysowania = 60 sekund
+	aktualne hasło
+}
+
+
+gracz {
+	id
+	nazwa
+	gracz zgadł hasło = false : boolean
+}
+
+
+
+interval {
+	switch(stan pokoju) {
+		case "rozpoczęcie rozgrywki":
+			aktualne hasło = losuj hasło(lista haseł);
+			stan pokoju = "czas rysowania":
+			break;
+		case "czas rysowania":
+			pętla po graczach {
+				jeżeli (gracz zgadł hasło) {
+					aktualny gracz = gracz, który zgadł hasło
+					dodaj punkty aktualnemu graczowi
+					stan pokoju = zgadnięte hasło
+					wysłanie do graczy powiadomienia kto zgadł hasło i jakie było
+				}
+			}
+			break;
+		case "after game":
+			(odczekiwanie 3 sekund)
+			pętla po wszystkich graczach {
+				ustaw zmienną "gracz zgadł hasło" na false
+			}
+			stan pokoju = "rozpoczęcie rozgrywki"
+			break
+	}
+	wyślij do graczy aktualną punktację
+}
+
