@@ -83,17 +83,10 @@ function Room(roomName, currentTime) {
 	this.state 					= "wordRandom";
 	this.currentWord 			= "";
 	this.guessedLetters 		= [];
-	this.guessTime 				= 5000;
-	this.roomStartTime 			= (new Date()).getTime();
-	this.isRoundStarted 		= false;
 	this.wordsList 				= [];
-	this.timeToThink 			= 15000;
-	this.currentPlayerTime 		= (new Date()).getTime();
-	this.wordX 					= 600;
-	this.wordY 					= 50;
+	this.timeToThink 			= 10000;
 	this.afterGameControlTime 	= (new Date()).getTime();
 	this.afterGameTime 			= 3000;
-	this.timer 					= 0;
 	this.numOfChances			= 11;
 	this.wrongLetters 			= [];
 }
@@ -105,6 +98,7 @@ Room.prototype.createPlayer = function(player) {
 	player.letterChosen = "none";
 	player.inGame = true;
 	player.waiting = true;
+	player.startTime = 0; 
 
 	this.playersAll.push(player);
 	if(this.playersAll.length === 1) this.currentPlayer = player;
@@ -133,7 +127,8 @@ Room.prototype.changeCurrentPlayer = function() {
 		index = 0;
 	}
 	this.currentPlayer = this.players[index];
-	//this.currentPlayerTime = (new Date()).getTime();
+	this.currentPlayer.startTime = (new Date).getTime();
+	this.currentPlayerTime = 10;
 }
 
 Room.prototype.userDisconnected = function(io, playerId) {
@@ -198,7 +193,6 @@ Room.prototype.wordRandom = new GameState(function(io, room) {
   	room.state ="wordRandom";
   	room.numOfChances = 11;
 
-	timer = 0;
 	var word = room.randomWordFromList();
 	room.encryptedWord = word.value.replace(/[a-zA-Z]/g, "_");
 
@@ -214,12 +208,29 @@ Room.prototype.wordRandom = new GameState(function(io, room) {
 	}
 
 	room.currentPlayer = room.players[0];
+	room.currentPlayer.startTime = (new Date).getTime();
 	room.changeState(room.guessing);
 });
 
 Room.prototype.guessing = new GameState(function(io, room) {
 	room.state = "guessing";
-	if (room.currentPlayer.letterChosen != "none") {
+	var now = (new Date).getTime();
+
+	room.currentPlayerTime = room.timeToThink/1000 - Math.floor((now - room.currentPlayer.startTime)/1000);
+	if(room.currentPlayerTime <= 0) {
+		room.changeCurrentPlayer();
+		room.numOfChances--;
+
+		io.to(room.id).emit('wrongLetter', {
+			letter: "none",
+			positions: []
+		});
+		
+		if (room.numOfChances === 0) {
+			room.changeState(room.reset);
+		}
+	} else 
+		if (room.currentPlayer.letterChosen != "none") {
 		var letter = room.currentPlayer.letterChosen;
 		room.currentPlayer.letterChosen = "none";
 
@@ -309,7 +320,7 @@ Room.prototype.gameLoop = function(io) {
 		guessedLetters: this.guessedLetters,
 		encryptedWord: this.encryptedWord,
 		currentPlayer: this.currentPlayer,
-		timer: this.timer,
+		timer: this.currentPlayerTime,
 		state: this.state,
 		ranking: this.getRanking()
 	});

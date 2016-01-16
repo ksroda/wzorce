@@ -26,6 +26,8 @@ var newPlayer = true;
 
 var loadingText;
 
+var timer;
+
 function startLoading() {
 	game.load.spritesheet("part1", "assets/part1.png", 490, 468, 39);
 	game.load.spritesheet("part2", "assets/part2.png", 490, 468, 60);
@@ -127,6 +129,7 @@ subject.addObserver(new Observer(function(data) {
 subject.addObserver(new Observer(function(data) {
   currentPlayer.setText(data.currentPlayer.id !== player.id ? data.currentPlayer.name +"'s turn" : "Your turn");
   wordCategory.setText("Category: " + data.wordCategory);
+  timer.setText(data.timer);
 }));
 
 subject.addObserver(new Observer(function(data) {
@@ -138,8 +141,8 @@ subject.addObserver(new Observer(function(data) {
       var id=data.guessedLetters[i].letter;
       $('#'+id).css("background-color", "green").attr("disabled", true);
       for(var j = 0; j < data.guessedLetters[i].positions.length; j++) {
-        letters[data.guessedLetters[i].positions[j]].letterValue = id;
-        letters[data.guessedLetters[i].positions[j]].letter.setText(id);
+        letters[data.guessedLetters[i].positions[j]].letterValue = id.toUpperCase();
+        letters[data.guessedLetters[i].positions[j]].letter.setText(id.toUpperCase());
         letters[data.guessedLetters[i].positions[j]].update("show");
       }
     }
@@ -252,6 +255,9 @@ function loadComplete() {
 
   wordCategory = game.add.text(window.innerWidth/2, 100,"Category", styleCurrentPlayer);
   wordCategory.anchor.set(0.5,0.5);
+
+	timer = game.add.text(window.innerWidth/2 + 235, window.innerHeight - 230, "", styleCurrentPlayer);
+	timer.anchor.set(0.5, 0.5);
   gameLoaded = true;
 }
 
