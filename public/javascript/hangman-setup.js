@@ -26,6 +26,8 @@ var gameLoaded = false;
 socket.on('wrongLetter', function(data) {
 	var id=data.letter;
 	$('#'+id).css("background-color", "red").attr("disabled", true);
+	var hangmanPartIndex = 11 - data.numOfChances + 1;
+	console.log(hangmanPartIndex);
 	if(hangmanPartIndex <= 11) {
 		// hangman.animations.play('part' + hangmanPartIndex);
 		
@@ -36,7 +38,6 @@ socket.on('wrongLetter', function(data) {
 	    	hangman[hangmanPartIndex].visible = true;
 	    	hangman[hangmanPartIndex].animations.play("go");
 	    }
-	    hangmanPartIndex++;
 	}
 });
 

@@ -9,7 +9,6 @@ var game = new Phaser.Game(window.innerWidth, window.innerHeight, Phaser.CANVAS,
 //--------------------------------Observer------------------------------------------
 
 var hangmanParts;
-var hangmanPartIndex = 1;
 var hangman = {};
 
 var letterCovers;
@@ -110,15 +109,12 @@ var subject = new Subject();
 
 subject.addObserver(new Observer(function(data) {
   if (data.state == "reset"){
-    for(var i=0; i<letters.length; i++){
+    for(var i = 0; i < letters.length; i++){
       letters[i].letter.kill();
       if(letters[i].cover) letters[i].cover.kill();
       for (var x in hangman) {
     	hangman[x].visible = false;
    		}
-      // hangman.animations.play("part0");
-
-      hangmanPartIndex = 1;
     }
     letters = [];
     newPlayer = true;
