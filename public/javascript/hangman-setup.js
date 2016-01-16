@@ -26,7 +26,7 @@ var gameLoaded = false;
 socket.on('wrongLetter', function(data) {
 	var id=data.letter;
 	$('#'+id).css("background-color", "red").attr("disabled", true);
-	var hangmanPartIndex = 11 - data.numOfChances + 1;
+	var hangmanPartIndex = 11 - data.numOfChances;
 	console.log(hangmanPartIndex);
 	if(hangmanPartIndex <= 11) {
 		// hangman.animations.play('part' + hangmanPartIndex);
