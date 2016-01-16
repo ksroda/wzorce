@@ -148,13 +148,14 @@ subject.addObserver(new Observer(function(data) {
     }
 
     for(var i = 0; i < data.wrongLetters.length; i++) {
-      var id=data.wrongLetters[i];
+      var id = data.wrongLetters[i];
       $('#'+id).css("background-color", "red").attr("disabled", true);
       
     }
 
+    // console.log("data.wrongLetters.length:  " + data.wrongLetters.length);
     for (var x in hangman) {
-    	if(x === data.wrongLetters.length) {
+    	if(x == data.wrongLetters.length) {
     		hangman[x].visible = true;
     	} else {
     		hangman[x].visible = false;
@@ -162,7 +163,6 @@ subject.addObserver(new Observer(function(data) {
     }
 
     if(data.wrongLetters.length > 0) {
-    	// hangman[data.wrongLetters.length].visible = true;
     	hangman[data.wrongLetters.length].animations.play("go");
     }
   }

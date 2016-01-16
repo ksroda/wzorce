@@ -132,9 +132,6 @@ Room.prototype.changeCurrentPlayer = function() {
 }
 
 Room.prototype.userDisconnected = function(io, playerId) {
-	if (this.players.length == 1){
-		this.changeState(this.reset);
-	} else {
 		if(this.currentPlayer.id === playerId) {
 		 	var index = this.players.indexOf(this.currentPlayer);
 			index++;
@@ -150,7 +147,10 @@ Room.prototype.userDisconnected = function(io, playerId) {
 				break;
 			}
 		}
-	}
+
+		if (this.players.length == 0) {
+			this.changeState(this.reset);
+		}
 }
 
 Room.prototype.findPlayerById = function(id) {
