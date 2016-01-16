@@ -60,9 +60,11 @@ app.controller('roomsController', ["$scope", "$http", "$location", function($sco
 	}
 
 	$scope.createRoom = function() {
-		userAllowedToEnterGame = true;
-		sendWelcome($scope.roomEntered);
-		$location.path("/game");
+		if($scope.roomEntered != undefined) {
+			userAllowedToEnterGame = true;
+			sendWelcome($scope.roomEntered);
+			$location.path("/game");
+		}
 	}
 }]);
 

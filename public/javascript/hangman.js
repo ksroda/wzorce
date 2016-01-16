@@ -210,7 +210,7 @@ function preload() {
 
 function create() {
 	var style = { font: "30px Arial", fill: "#FFFFFF", align: "center" };
-	loadingText = game.add.text(675, 280, "Loading...", style);
+	loadingText = game.add.text(window.innerWidth/2, window.innerHeight/2, "Loading...", style);
 	loadingText.anchor.set(0.5, 0.5);
 	game.load.onLoadComplete.add(loadComplete, this);
 	startLoading();
