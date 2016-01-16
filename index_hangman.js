@@ -223,7 +223,8 @@ Room.prototype.guessing = new GameState(function(io, room) {
 
 		io.to(room.id).emit('wrongLetter', {
 			letter: "none",
-			positions: []
+			positions: [],
+			numOfChances: room.numOfChances
 		});
 		
 		if (room.numOfChances === 0) {
