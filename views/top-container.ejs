@@ -54,14 +54,14 @@
 				Friends
 			</div>
 			<ul class="friends-list">
-				<li ng-repeat="x in friends">
-					<button type="button" class="chat-friend-button" data-target="#{{ x }}">
+				<li ng-repeat="x in friends track by $index">
+					<button type="button" class="chat-friend-button" data-target="#{{ x }}{{ $index }}">
 						<img id="offline{{ x }}" class="offline-status" src="stylesheets/img/offline.png">
 						<img id="online{{ x }}" class="online-status" src="stylesheets/img/online.png">
 						<span class="chatroom-name">{{ x }}<span>
 						<span class="got-message glyphicon glyphicon-envelope"></span>
 					</button>
-					<div id="{{ x }}" class="chat-window collapse">
+					<div id="{{ x }}{{ $index }}" class="chat-window collapse">
 						<div class="chat-friend">
 							<div class="chat-friend-messages">
 								<ul>

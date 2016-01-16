@@ -24,6 +24,7 @@ app.controller('friendsController', ["$scope", "$http", "$location", function($s
 			friend: $scope.friendName
 		});
 		$scope.updateFriends();
+		$scope.friendName = "";
 	}
 
 	$scope.keyPressed = function($event, name, inputId) {
