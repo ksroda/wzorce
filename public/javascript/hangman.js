@@ -3,7 +3,7 @@ if(!userAllowedToEnterGame) {
 	window.location = "#/";
 } else {
 
-var game = new Phaser.Game(window.innerWidth, window.innerHeight, Phaser.CANVAS, '', { preload: preload, create: create, update: update, render: render });
+var game = new Phaser.Game(window.innerWidth, window.innerHeight, Phaser.CANVAS, 'phaser', { preload: preload, create: create });
 
 
 //--------------------------------Observer------------------------------------------
@@ -17,7 +17,7 @@ var letterValues;
 var style = { font: "40px Arial", fill: "#FFFFFF", align: "center" };
 var styleCurrentPlayer = { font: "30px Arial", fill: "#FFFFFF", align: "center" };
 
-
+var wordCategory;
 var letters = [];
 
 var currentPlayer;
@@ -123,7 +123,7 @@ subject.addObserver(new Observer(function(data) {
 
 subject.addObserver(new Observer(function(data) {
   currentPlayer.setText(data.currentPlayer.id !== player.id ? data.currentPlayer.name +"'s turn" : "Your turn");
-
+  wordCategory.setText("Category: " + data.wordCategory);
 }));
 
 subject.addObserver(new Observer(function(data) {
@@ -148,15 +148,17 @@ subject.addObserver(new Observer(function(data) {
     }
 
     for (var x in hangman) {
-    	hangman[x].visible = false;
+    	if(x === data.wrongLetters.length) {
+    		hangman[x].visible = true;
+    	} else {
+    		hangman[x].visible = false;
+    	}
     }
+
     if(data.wrongLetters.length > 0) {
-    	hangman[data.wrongLetters.length].visible = true;
+    	// hangman[data.wrongLetters.length].visible = true;
     	hangman[data.wrongLetters.length].animations.play("go");
     }
-    
-    // hangman.animations.play("part" + data.wrongLetters.length);
-
   }
 
 }));
@@ -181,7 +183,7 @@ subject.addObserver(new Observer(function(room) {
 
     var divPoints = $("<div />")
       .attr({ "class": "points col-sm-3"})
-      .text(room.ranking[i].localPoints === -1 ? "Waiting" : room.ranking[i].localPoints);
+      .text(room.ranking[i].waiting === true ? "Waiting" : room.ranking[i].localPoints);
 
     var pencil = $("<span />")
       .attr({ "class": "glyphicon glyphicon-chevron-left"});
@@ -217,7 +219,7 @@ function create() {
   	hangman[i].visible = false;
   }
 
-  var fps = 30;
+  var fps = 60;
   hangman[1].animations.add('go', seq(0, 38), fps, false);
   hangman[2].animations.add('go', seq(0, 59), fps, false);
   hangman[3].animations.add('go', seq(0, 32), fps, false);
@@ -230,8 +232,11 @@ function create() {
   hangman[10].animations.add('go', seq(0, 13), fps, false);
   hangman[11].animations.add('go', seq(0, 11), fps, false);
 
-  currentPlayer = game.add.text(window.innerWidth/2,window.innerHeight - 230,"Current player",styleCurrentPlayer);
+  currentPlayer = game.add.text(window.innerWidth/2, window.innerHeight - 230,"Current player",styleCurrentPlayer);
   currentPlayer.anchor.set(0.5,0.5);
+
+  wordCategory = game.add.text(window.innerWidth/2, 100,"Category", styleCurrentPlayer);
+  wordCategory.anchor.set(0.5,0.5);
 }
 
 function seq(from, to) {
@@ -276,18 +281,23 @@ Letter.prototype.update = function(command) {
 }
 
 function letterFactory(word) {
-	
-		var letterWidth = 137 * letterScale;
-		var startX = window.innerWidth/2 - word.length/2 * letterWidth + letterWidth/2 * letterScale;
+	var additionalScale = 1.1;
+	var letterWidth = 137 * letterScale;
 
-		var counterX = 0;
-		var startY = 150;
-		var lastSpace = 0;
+	do {
+		additionalScale -= 0.1;
+		letterWidth = 137 * letterScale * additionalScale;
+	} while(word.length * letterWidth > window.innerWidth);
 
-		for(var i = 0; i < word.length; i++) {
-			letters.push(new Letter(word[i], startX + letterWidth * counterX, startY));
-			counterX++;
-		}
+	letterWidth = 137 * letterScale * additionalScale;
+	var startX = window.innerWidth/2 - word.length/2 * letterWidth + letterWidth/2 * letterScale;
+	var startY = 150;
+
+	for(var i = 0; i < word.length; i++) {
+		letters.push(new Letter(word[i], startX + letterWidth * i, startY));
+	}
 }
+
+
 
 }

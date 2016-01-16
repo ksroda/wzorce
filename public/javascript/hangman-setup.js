@@ -24,7 +24,7 @@ var socket = io();
 var gameLoaded = false;
 
 socket.on('wrongLetter', function(data) {
-	var id=data.litera;
+	var id=data.letter;
 	$('#'+id).css("background-color", "red").attr("disabled", true);
 	if(hangmanPartIndex <= 11) {
 		// hangman.animations.play('part' + hangmanPartIndex);
@@ -41,7 +41,7 @@ socket.on('wrongLetter', function(data) {
 });
 
 socket.on('correctLetter', function(data) {
-	var id=data.litera;
+	var id=data.letter;
 	$('#'+id).css("background-color", "green").attr("disabled", true);
 	for(var i = 0; i < data.positions.length; i++) {
 		letters[data.positions[i]].letterValue = id.toUpperCase();
@@ -52,11 +52,6 @@ socket.on('correctLetter', function(data) {
 
 socket.on('unblockLetters', function() {
 	$('.letterButton').css("background-color", "#1d3643").attr("disabled", false);
-});
-
-socket.on('new word', function(word) {
-	console.log(word);
-	
 });
 
 socket.on('id', function(id) {

@@ -116,9 +116,14 @@ module.exports.getFriends = function(name, callback) {
 }
 
 module.exports.getWordForHangman = function(room, callback) {
-	db.collection("pictionary_dictionary").find().toArray(function (err, docs) {
-		assert.equal(err, null);
-  		room.wordsList = docs;
-  		callback();
- 	});
+	if(!db) {
+		room.wordsList = [{ word: "Spider Man", category: "Movie"}, { word: "Albert Einstein", category: "Character" }];
+		callback();
+	} else {
+		db.collection("pictionary_dictionary").find().toArray(function (err, docs) {
+			assert.equal(err, null);
+	  		room.wordsList = docs;
+	  		callback();
+	 	});
+	}
 };
