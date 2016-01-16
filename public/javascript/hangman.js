@@ -24,7 +24,9 @@ var currentPlayer;
 
 var newPlayer = true;
 
-function preload() {
+var loadingText;
+
+function startLoading() {
 	game.load.spritesheet("part1", "assets/part1.png", 490, 468, 39);
 	game.load.spritesheet("part2", "assets/part2.png", 490, 468, 60);
 	game.load.spritesheet("part3", "assets/part3.png", 490, 468, 33);
@@ -39,6 +41,7 @@ function preload() {
 
 	// game.load.spritesheet("hangman", "assets/hangman.png", 294, 281, 107);
 	game.load.spritesheet("letter", "assets/letter.png", 137, 196, 2);
+	game.load.start();
 }
 
 function Observer(func) {
@@ -201,23 +204,35 @@ subject.addObserver(new Observer(function(room) {
   }
 }));
 
+function preload() {
 
+}
 
 function create() {
-	// $("canvas").hide();
-	game.stage.backgroundColor = 0xF8B346;
-  gameLoaded = true;
+	var style = { font: "30px Arial", fill: "#FFFFFF", align: "center" };
+	loadingText = game.add.text(675, 280, "Loading...", style);
+	loadingText.anchor.set(0.5, 0.5);
+	game.load.onLoadComplete.add(loadComplete, this);
+	startLoading();
+}
 
-  hangmanParts = game.add.group();
-  letterValues = game.add.group();
-  letterCovers = game.add.group();
-  // hangman = {};
-  for(var i = 1 ; i <= 11; i++) {
-  	hangman[i] = hangmanParts.create(20, window.innerHeight-30, "part" + i);
-  	hangman[i].anchor.set(0, 1);
-  	hangman[i].scale.setTo(0.8, 0.8);
-  	hangman[i].visible = false;
-  }
+
+
+function loadComplete() {
+	loadingText.setText("");
+	$(".letterButtons").fadeIn();
+	$("#right-container-ranking").fadeIn();
+	game.stage.backgroundColor = 0xF8B346;
+	hangmanParts = game.add.group();
+	letterValues = game.add.group();
+	letterCovers = game.add.group();
+
+	for(var i = 1 ; i <= 11; i++) {
+		hangman[i] = hangmanParts.create(20, window.innerHeight-30, "part" + i);
+		hangman[i].anchor.set(0, 1);
+		hangman[i].scale.setTo(0.8, 0.8);
+		hangman[i].visible = false;
+	}
 
   var fps = 60;
   hangman[1].animations.add('go', seq(0, 38), fps, false);
@@ -237,6 +252,7 @@ function create() {
 
   wordCategory = game.add.text(window.innerWidth/2, 100,"Category", styleCurrentPlayer);
   wordCategory.anchor.set(0.5,0.5);
+  gameLoaded = true;
 }
 
 function seq(from, to) {

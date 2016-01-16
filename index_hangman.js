@@ -202,7 +202,7 @@ Room.prototype.wordRandom = new GameState(function(io, room) {
 	var word = room.randomWordFromList();
 	room.encryptedWord = word.value.replace(/[a-zA-Z]/g, "_");
 
-	console.log("current word: " + word.value);
+	// console.log("current word: " + word.value);
 	room.currentWord = word.value;
 	room.wordCategory = word.category;
 
@@ -232,7 +232,7 @@ Room.prototype.guessing = new GameState(function(io, room) {
 			}
 		}
 
-		console.log("word: " + word + "   letter: " + letter);
+		// console.log("word: " + word + "   letter: " + letter);
 
 		if(letterPositionsInTheWord.length === 0) {
 			room.numOfChances--;
@@ -265,9 +265,11 @@ Room.prototype.guessing = new GameState(function(io, room) {
 
 Room.prototype.givePoints = function() {
 	this.currentPlayer.localPoints += 50;
+	this.currentPlayer.overallPoints += 50;
 	if(this.numberOfGuessedLetters() === this.currentWord.replace(/\s/g,"").length) { //wszystkie litery odgadniete
 		for(var i = 0; i < this.players.length; i++) {
 			this.players[i].localPoints += 100;
+			this.currentPlayer.overallPoints += 100;
 		}
 		this.changeState(this.reset);
 	}
