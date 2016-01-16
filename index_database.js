@@ -98,7 +98,7 @@ module.exports.addFriend = function(name, friend) {
     		$push: { 
     			"friends": friend
     		}
-    	},function(err, results) {
+    	}, function(err, results) {
 	      //console.log(results);
 	   });
 }

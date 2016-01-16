@@ -157,8 +157,13 @@ io.on('connection', function(socket) {
 	});
 
 	socket.on('add friend', function(data) {
-		console.log(data.user, data.friend);
-		databaseRequire.addFriend(data.user, data.friend);
+		databaseRequire.getFriends(data.user, function(result, friends) {
+			if(friends.indexOf(data.friend) === -1) {
+				databaseRequire.addFriend(data.user, data.friend);
+			} else {
+				console.log("Friend name repeated - it's forbidden");
+			}
+		});
 	});
 	
 	socketRequire.setOnWelcome(socket, games, io, roomsIntervals);
