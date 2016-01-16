@@ -209,6 +209,7 @@ function preload() {
 }
 
 function create() {
+	game.stage.backgroundColor = 0xF8B346;
 	var style = { font: "30px Arial", fill: "#FFFFFF", align: "center" };
 	loadingText = game.add.text(window.innerWidth/2, window.innerHeight/2, "Loading...", style);
 	loadingText.anchor.set(0.5, 0.5);
@@ -222,7 +223,6 @@ function loadComplete() {
 	loadingText.setText("");
 	$(".letterButtons").fadeIn();
 	$("#right-container-ranking").fadeIn();
-	game.stage.backgroundColor = 0xF8B346;
 	hangmanParts = game.add.group();
 	letterValues = game.add.group();
 	letterCovers = game.add.group();
