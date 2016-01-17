@@ -57,11 +57,21 @@ app.controller('friendsController', ["$scope", "$http", "$location", "$timeout",
 app.controller('roomsController', ["$scope", "$http", "$location", function($scope, $http, $location) {
 	$http.get(gameName + "/rooms").success(function(response) {
 		$scope.rooms = response;
+		if($scope.rooms.length === 0) {
+			$scope.noRooms = true;
+		} else {
+			$scope.noRooms = false;
+		}
 	});
 
 	$scope.update = function(rooms) {
 		$scope.$apply(function() {
 			$scope.rooms = rooms;
+			if($scope.rooms.length === 0) {
+				$scope.noRooms = true;
+			} else {
+				$scope.noRooms = false;
+			}
 		});
 	}
 

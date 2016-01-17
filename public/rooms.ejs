@@ -6,10 +6,16 @@
 		userAllowedToEnterGame = false;
 		$("#top-container").show();
 		socket.disconnect();
+		location.reload();
 	}
 </script>
 <div id="rooms">
 	<div id="output-room">
+		<div id="no-rooms" ng-show="noRooms">
+			NO ROOMS AVAILABLE
+			<br/>
+			CREATE YOUR OWN
+		</div>
 		<div ng-repeat="x in rooms | orderBy: 'usersNum':true">
 			<button type="button" class="btn btn-default btn-block roomEnter" ng-click="enterRoom(x.name)">
 				<span class="singleRoomName">{{ x.name }}</span>

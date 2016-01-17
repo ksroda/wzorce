@@ -27,7 +27,7 @@ module.exports = (function() {
 			}
 
 			games[socket.game].rooms[socket.roomId].createPlayer(player);
-			socket.broadcast.emit('update rooms', games[socket.game].rooms);
+			socket.broadcast.emit('update rooms', auxiliaryRequire.objectToArray(games[socket.game].rooms));
 		});
 	};
 
@@ -60,7 +60,7 @@ module.exports = (function() {
 					}
 				}
 			
-				io.emit('update rooms', games[socket.game].rooms);
+				io.emit('update rooms', auxiliaryRequire.objectToArray(games[socket.game].rooms));
 			}
 		});
 	};

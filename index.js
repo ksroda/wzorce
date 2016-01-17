@@ -124,7 +124,7 @@ app.get('/blackjack', function(req, res) {
 });
 
 app.get('/blackjack/rooms', function(req, res) {
-  res.send(games["blackjack"].rooms);
+  res.send(auxiliaryRequire.objectToArray(games["blackjack"].rooms));
 });
 
 app.get('/friends', function(req, res) {

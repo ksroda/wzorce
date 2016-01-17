@@ -107,7 +107,10 @@ module.exports = function() {
 	var publicObjectToArray = function(object) {
 		var result = [];
 		for(var x in object) {
-			result.push(object[x]);
+			result.push({
+				name: object[x].name,
+				usersNum: object[x].usersNum
+			});
 		}
 		return result;
 	}

@@ -48,19 +48,6 @@ socket.on('player disconnected', function(playerId) {
 	}
 });
 
-// socket.on('update rooms', function(rooms) {
-// 	var controller = angular.element($('#rooms')).scope();
-// 	if(controller) {
-// 		controller.update(rooms);
-// 	}
-// });
-
-// socket.on('update', function(data) {
-// 	if(gameLoaded) {
-// 		subject.notify(data);
-// 	}
-// });
-
 function sendWelcome(roomName) {
 	socket.emit('welcome', {
 		name:	player.name,
