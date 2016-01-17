@@ -9,7 +9,7 @@ var game = new Phaser.Game(window.innerWidth, window.innerHeight, Phaser.CANVAS,
 //--------------------------------Observer------------------------------------------
 
 var hangmanParts;
-var hangman = {};
+var hangman;
 
 var letterCovers;
 var letterValues;
@@ -28,19 +28,7 @@ var loadingText;
 var timer;
 
 function startLoading() {
-	game.load.spritesheet("part1", "assets/part1.png", 490, 468, 39);
-	game.load.spritesheet("part2", "assets/part2.png", 490, 468, 60);
-	game.load.spritesheet("part3", "assets/part3.png", 490, 468, 33);
-	game.load.spritesheet("part4", "assets/part4.png", 490, 468, 14);
-	game.load.spritesheet("part5", "assets/part5.png", 490, 468, 13);
-	game.load.spritesheet("part6", "assets/part6.png", 490, 468, 34);
-	game.load.spritesheet("part7", "assets/part7.png", 490, 468, 11);
-	game.load.spritesheet("part8", "assets/part8.png", 490, 468, 9);
-	game.load.spritesheet("part9", "assets/part9.png", 490, 468, 11);
-	game.load.spritesheet("part10", "assets/part10.png", 490, 468, 14);
-	game.load.spritesheet("part11", "assets/part11.png", 490, 468, 12);
-
-	// game.load.spritesheet("hangman", "assets/hangman.png", 294, 281, 107);
+	game.load.spritesheet("hangman", "assets/hangman.png", 294, 281, 107);
 	game.load.spritesheet("letter", "assets/letter.png", 137, 196, 2);
 	game.load.start();
 }
@@ -52,9 +40,7 @@ subject.addObserver(new Observer(function(data) {
     for(var i = 0; i < letters.length; i++){
       letters[i].letter.kill();
       if(letters[i].cover) letters[i].cover.kill();
-      for (var x in hangman) {
-    	hangman[x].visible = false;
-   		}
+   		hangman.animations.play("part0");
     }
     letters = [];
     newPlayer = true;
@@ -85,21 +71,11 @@ subject.addObserver(new Observer(function(data) {
 
     for(var i = 0; i < data.wrongLetters.length; i++) {
       var id = data.wrongLetters[i];
-      $('#'+id).css("background-color", "red").attr("disabled", true);
-      
-    }
-
-    // console.log("data.wrongLetters.length:  " + data.wrongLetters.length);
-    for (var x in hangman) {
-    	if(x == data.wrongLetters.length) {
-    		hangman[x].visible = true;
-    	} else {
-    		hangman[x].visible = false;
-    	}
+      $('#' + id).css("background-color", "red").attr("disabled", true); 
     }
 
     if(data.wrongLetters.length > 0) {
-    	hangman[data.wrongLetters.length].animations.play("go");
+    	hangman.animations.play("part" + data.wrongLetters.length);
     }
   }
 
@@ -156,8 +132,6 @@ function create() {
 	startLoading();
 }
 
-
-
 function loadComplete() {
 	loadingText.setText("");
 	$(".letterButtons").fadeIn();
@@ -166,25 +140,24 @@ function loadComplete() {
 	letterValues = game.add.group();
 	letterCovers = game.add.group();
 
-	for(var i = 1 ; i <= 11; i++) {
-		hangman[i] = hangmanParts.create(20, window.innerHeight-30, "part" + i);
-		hangman[i].anchor.set(0, 1);
-		hangman[i].scale.setTo(0.8, 0.8);
-		hangman[i].visible = false;
-	}
+	hangman = hangmanParts.create(20, window.innerHeight-30, "hangman");
+ 
+   hangman.anchor.set(0, 1);
+   hangman.scale.setTo(1.2, 1.2);
 
-  var fps = 60;
-  hangman[1].animations.add('go', seq(0, 38), fps, false);
-  hangman[2].animations.add('go', seq(0, 59), fps, false);
-  hangman[3].animations.add('go', seq(0, 32), fps, false);
-  hangman[4].animations.add('go', seq(0, 13), fps, false);
-  hangman[5].animations.add('go', seq(0, 12), fps, false);
-  hangman[6].animations.add('go', seq(0, 33), fps, false);
-  hangman[7].animations.add('go', seq(0, 10), fps, false);
-  hangman[8].animations.add('go', seq(0, 8), fps, false);
-  hangman[9].animations.add('go', seq(0, 10), fps, false);
-  hangman[10].animations.add('go', seq(0, 13), fps, false);
-  hangman[11].animations.add('go', seq(0, 11), fps, false);
+ 	var fps = 30;
+   hangman.animations.add('part0', seq(0, 0), 1, false);
+   hangman.animations.add('part1', seq(0, 16), fps, false);
+   hangman.animations.add('part2', seq(17, 42), fps, false);
+   hangman.animations.add('part3', seq(43, 56), fps, false);
+   hangman.animations.add('part4', seq(57, 62), fps, false);
+   hangman.animations.add('part5', seq(63, 67), fps, false);
+   hangman.animations.add('part6', seq(68, 82), fps, false);
+   hangman.animations.add('part7', seq(83, 87), fps, false);
+   hangman.animations.add('part8', seq(88, 91), fps, false);
+   hangman.animations.add('part9', seq(92, 95), fps, false);
+   hangman.animations.add('part10', seq(96, 101), fps, false);
+   hangman.animations.add('part11', seq(102, 106), fps, false);
 
   currentPlayer = game.add.text(window.innerWidth/2, window.innerHeight - 230,"Current player",styleCurrentPlayer);
   currentPlayer.anchor.set(0.5,0.5);

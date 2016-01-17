@@ -1,24 +1,3 @@
-//------------------------------------JQuery---------------------------------------------
-$(document).ready(function() {
-	
-	// $("#create").on('click', function() {
-	// 	sendWelcome($("#roomname").val());
-	// });
-			
-	//jeżeli dodajemy element dynamicznie (append) to tak wygląda funkcja on click jquery
-	// $(document).on('click','.roomEnter',function(){
-	// 	sendWelcome($(".singleRoomName", this).text());
-	// });
-		
-	// $("body").on('click', ".letterButton", function() {
-	// 	console.log(this.id);
-	// 	socket.emit("letterButton", this.id);
-	// });	
-	// console.log("działam");
-	
-});
-
-
 //------------------------------------Socket----------------------------------------------
 var socket = io();
 var gameLoaded = false;
@@ -29,14 +8,8 @@ socket.on('wrongLetter', function(data) {
 	var hangmanPartIndex = 11 - data.numOfChances;
 	console.log(hangmanPartIndex);
 	if(hangmanPartIndex <= 11) {
-		// hangman.animations.play('part' + hangmanPartIndex);
-		
-		for (var x in hangman) {
-	    	hangman[x].visible = false;
-	    }
 	    if(hangmanPartIndex > 0) {
-	    	hangman[hangmanPartIndex].visible = true;
-	    	hangman[hangmanPartIndex].animations.play("go");
+	    	hangman.animations.play("part" + hangmanPartIndex);
 	    }
 	}
 });
@@ -67,12 +40,6 @@ function sendWelcome(roomName) {
 		game: 	"hangman",
 		overallPoints: player.overallPoints
 	});
-		
-	// $("canvas").show();
-	// $("#tool-belt").show();
-	// $("#rooms").hide();
-	// $("#right-container").show();
-	// $("#right-container-ranking").show();
 };
 
 //------------------------------------Player-----------------------------------------------

@@ -1,31 +1,3 @@
-//------------------------------------JQuery---------------------------------------------
-$(document).ready(function() {
-	// $(".actionButtons").hide();
-	// $(".betButtons").hide();
-	// $("#titleblack").show();
-
-	// $("#create").on('click', function() {
-	// 	// sendWelcome($("#roomname").val());
-	// });
-		
-	// //jeżeli dodajemy element dynamicznie (append) to tak wygląda funkcja on click jquery
-	// $(document).on('click','.roomEnter',function(){
-	// 	// sendWelcome($(".singleRoomName", this).text());
-	// });
-
-	// $(".actionButton").on('click', function() {
-		
-	// });
-
-	// $(".betButton").on('click', function() {
-	// 	// socket.emit("betButton", this.id);
-	// });
-
-	// $('[data-toggle="tooltip"]').tooltip("show");
-});	
-
-
-		
 //------------------------------------Socket--------------------------------------------
 var socket = io();
 var gameLoaded = false;

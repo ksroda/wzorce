@@ -1,43 +1,5 @@
 //------------------------------------JQuery---------------------------------------------
 $(document).ready(function() {
-	// // $("#tool-belt").hide();
-	// // $("#right-container").hide();
-	// // $("#right-container-ranking").hide();
-	
-	// $("#create").on('click', function() {
-	// 	// sendWelcome($("#roomname").val());
-	// });
-			
-	// //jeżeli dodajemy element dynamicznie (append) to tak wygląda funkcja on click jquery
-	// $(document).on('click','.roomEnter',function(){
-	// 	// sendWelcome($(".singleRoomName", this).text());
-	// });
-		
-	// $(".color").on('click', function() {
-	// 	player.pathProperties.color = (this.id == "yellow" ? 0xF7FF00 : 
-	// 									(this.id == "blue" ? 0x0000FF : 
-	// 										(this.id == "white" ? 0xFFFFFF : 
-	// 											(this.id == "green" ? 0x00FF00 : 
-	// 												(this.id == "red" ? 0xFF0000 : 0x000000)))));
-	// });
-		
-	// $(".size").on('click', function() {
-	// 	player.pathProperties.size = this.id;
-	// });
-
-	// $("#right-container #chat #input-chat #send-button button")
-	// 	.on('click', function() {
-	// 		//alert($("#right-container #chat #input-chat #message input").val());
-	// 		var input = $("#right-container #chat #input-chat #message input");
-	// 		socket.emit('chat-message', {
-	// 			sender: player.name,
-	// 			content: input.val()
-	// 		});
-	// 		input.val("");
-	// 	});
-
-	// $('[data-toggle="tooltip"]').tooltip("show");
-
 	$("body").on('click',"#show-chat", function() {
 		$("#right-container").toggle();
 		$("#right-container-ranking").hide();
@@ -62,14 +24,6 @@ socket.on('mouse down', function(properties) {
 socket.on('mouse drag', function(position) {
 	graphics.lineTo(position.x, position.y);
 });
-		
-// socket.on('update rooms', function(rooms) {
-// 	angular.element($('#rooms')).scope().update(rooms);
-// });
-
-// socket.on('update', function(room) {
-// 	subject.notify(room);
-// });
 
 socket.on('id', function(id) {
 	player.id = id;
