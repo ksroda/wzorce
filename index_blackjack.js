@@ -257,7 +257,8 @@ Room.prototype.stand = function(now) {
 
 Room.prototype.split = function(now) {
 	this.currentPlayer.action = "none";
-	if(this.currentPlayer.overallPoints >= this.currentPlayer.pointsBet && this.currentPlayer.cardsNumber === 2) {
+	if(this.currentPlayer.overallPoints >= this.currentPlayer.pointsBet && this.currentPlayer.cardsNumber === 2 
+		&& this.currentPlayer.cards[0].value === this.currentPlayer.cards[1].value) {
 		this.currentPlayerTime = now;
 		this.currentPlayer.cards[0].goalX -= 40;
 		this.currentPlayer.cards[1].goalX = this.currentPlayer.cards[0].goalX + 80;
