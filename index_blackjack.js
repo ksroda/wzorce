@@ -108,6 +108,8 @@ Room.prototype.createPlayer = function(player) {
 	player.gameResult = "none";
 	player.insurence = false;
 	player.insurencePoints = 0;
+	player.doubleAction = false;
+	player.doubleActionAndBust = false;
 
 	player.split = false;
 	player.hand = "right";
@@ -118,7 +120,9 @@ Room.prototype.createPlayer = function(player) {
 		cards: [],
 		pointsBet: 0,
 		gameResult: "none",
-		inGame: true
+		inGame: true,
+		doubleAction: false,
+		doubleActionAndBust: false
 	}
 
 	player.seat = this.seats.indexOf(false);
@@ -244,10 +248,10 @@ Room.prototype.stand = function(now) {
 	this.currentPlayerTime = now;
 	if(this.currentPlayer.split && this.currentPlayer.hand === "right") {
 		this.currentPlayer.hand = "left";
-		this.currentPlayer.splitProperties.inGame = true;
+		this.currentPlayer.splitProperties.inGame = (this.currentPlayer.splitProperties.doubleActionAndBust ? false : true);
 	} else {
 		this.isRoundStarted = true;
-		this.changeCurrentPlayer(true);
+		this.changeCurrentPlayer((this.currentPlayer.doubleActionAndBust ? false : true));
 	}
 }
 
@@ -289,9 +293,11 @@ Room.prototype.double = function(now) {
 	this.currentPlayer.action = "none";
 	if(this.currentPlayer.overallPoints >= this.currentPlayer.pointsBet) {
 		if(this.currentPlayer.split && this.currentPlayer.hand == "right") {
+			this.currentPlayer.splitProperties.doubleAction = true;
 			this.currentPlayer.overallPoints -= this.currentPlayer.splitProperties.pointsBet;
 			this.currentPlayer.splitProperties.pointsBet *= 2;
 		} else {
+			this.currentPlayer.doubleAction = true;
 			this.currentPlayer.overallPoints -= this.currentPlayer.pointsBet;
 			this.currentPlayer.pointsBet *= 2;
 		}
@@ -325,10 +331,11 @@ Room.prototype.drawCard = function(cardForDealer) {
 				if(this.currentPlayer.splitProperties.howManyAces > 0) {
 					this.currentPlayer.splitProperties.cardsSum -= 10;
 					--this.currentPlayer.splitProperties.howManyAces;
-				} else {
-					// this.changeCurrentPlayer(false);	
+				} else if(!this.currentPlayer.splitProperties.doubleAction) {
 					this.currentPlayer.hand = "left";
 					this.currentPlayer.splitProperties.inGame = false;
+				} else {
+					this.currentPlayer.splitProperties.doubleActionAndBust = true;
 				}
 			}
 		} else {
@@ -344,8 +351,10 @@ Room.prototype.drawCard = function(cardForDealer) {
 				if(this.currentPlayer.howManyAces > 0) {
 					this.currentPlayer.cardsSum -= 10;
 					--this.currentPlayer.howManyAces;
-				} else {
+				} else if(!this.currentPlayer.doubleAction) {
 					this.changeCurrentPlayer(false);	
+				} else {
+					this.currentPlayer.doubleActionAndBust = true;
 				}
 			}
 		}
@@ -451,26 +460,6 @@ Room.prototype.game = new GameState(function(room) {
 });
 
 Room.prototype.pointsReward = function(room, player, condition, conditionSplit) {
-	// player.gameResult = "lose";
-	// if(player.inGame) {
-	// 	player.overallPoints += 2 * player.pointsBet;
-	// 	player.gameResult = "win";
-	// } else {
-	// 	player.overallPoints += player.pointsBet;
-	// 	player.gameResult = "push";
-	// }
-	// if(player.split) {
-	// 	player.splitProperties.gameResult = "lose";
-	// 	if(player.splitProperties.inGame) {
-	// 		player.overallPoints += 2 * player.splitProperties.pointsBet;
-	// 		player.splitProperties.gameResult = "win";
-	// 	} else {
-	// 		player.overallPoints += player.splitProperties.pointsBet;
-	// 		player.splitProperties.gameResult = "push";
-	// 	}
-	// }
-
-
 	if(player.insurence && room.dealerCards[0].value === 11 && room.dealerCardsSum === 21) {
 		player.overallPoints += 2 * player.insurencePoints;
 	}
@@ -586,6 +575,8 @@ Room.prototype.reset = new GameState(function(room) {
 			room.players[i].gameResult = "none";
 			room.players[i].insurence = false;
 			room.players[i].insurencePoints = 0;
+			room.players[i].doubleAction = false;
+			room.players[i].doubleActionAndBust = false;
 
 			room.players[i].split = false;
 			room.players[i].hand = "right";
@@ -596,7 +587,9 @@ Room.prototype.reset = new GameState(function(room) {
 				cards: [],
 				pointsBet: 0,
 				gameResult: "none",
-				inGame: true
+				inGame: true,
+				doubleAction: false,
+				doubleActionAndBust: false
 			}
 		}
 		room.changeState(room.bet);
