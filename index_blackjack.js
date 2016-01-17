@@ -461,7 +461,7 @@ Room.prototype.game = new GameState(function(room) {
 });
 
 Room.prototype.pointsReward = function(room, player, condition, conditionSplit) {
-	if(player.insurence && room.dealerCards[0].value === 11 && room.dealerCardsSum === 21) {
+	if(player.insurence && room.dealerCards[0].value === 11 && room.dealerCardsSum === 21 && room.dealerCardsNumber === 2) {
 		player.overallPoints += 2 * player.insurencePoints;
 	}
 
@@ -500,7 +500,7 @@ Room.prototype.pointsReward = function(room, player, condition, conditionSplit) 
 
 Room.prototype.increasedRewardWhenBlackjack = function(room, player, callback) {
 	if(player.cardsSum === 21 && player.cardsNumber === 2 
-		&& (player.cardsNumber < room.dealerCardsNumber || room.dealerCardsSum !== 21)) {
+		&& (player.cardsNumber < room.dealerCardsNumber || room.dealerCardsSum !== 21) && !player.split) {
 		player.overallPoints += Math.floor(3/2 * player.pointsBet) + player.pointsBet;
 		player.gameResult = "win";
 	} else {
@@ -511,7 +511,7 @@ Room.prototype.increasedRewardWhenBlackjack = function(room, player, callback) {
 Room.prototype.increasedRewardWhenBlackjackSplit = function(room, player, callback) {
 	if(player.split) {
 		if(player.splitProperties.cardsSum === 21 && player.splitProperties.cardsNumber === 2 
-			&& (player.splitProperties.cardsNumber < room.dealerCardsNumber || room.dealerCardsSum !== 21)) {
+			&& (player.splitProperties.cardsNumber < room.dealerCardsNumber || room.dealerCardsSum !== 21) && !player.split) {
 			player.overallPoints += Math.floor(3/2 * player.splitProperties.pointsBet) + player.splitProperties.pointsBet;
 			player.splitProperties.gameResult = "win";
 		} else {
