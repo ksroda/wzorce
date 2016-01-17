@@ -137,6 +137,49 @@ app.get('/friends', function(req, res) {
   });
 });
 
+app.get('/addfriend', function(req, res) {
+	if(req.session.user.name == req.query.who) {
+		databaseRequire.getFriends(req.query.who, function(result, friends) {
+			databaseRequire.userExists(req.query.friend, function(result) {
+				if(result) {
+					if(friends.indexOf(req.query.friend) === -1) {
+						databaseRequire.addFriend(req.query.who, req.query.friend, function(result, friends) {
+							if(result) {
+								res.send({
+									friends: friends,
+									message: "Friend successfully added",
+									success: true
+								});
+							} else {
+								res.send({
+									friends: [],
+									message: "Something bad happened",
+									success: false
+								});
+							}
+						});
+					} else {
+						res.send({
+							friends: friends,
+							message: req.query.friend  + " is already on your friends list",
+									success: false
+						});
+					}
+				} else {
+					res.send({
+						friends: friends,
+						message: "User doesn't exist",
+									success: false
+					})
+				}
+			});
+		});
+	} else {
+		res.send("You're not authorized to do that");
+		console.log("Not authorized");
+	}
+});
+
 app.get('/bonus', function(req, res) {
   res.render('bonus');
 });
@@ -156,15 +199,9 @@ io.on('connection', function(socket) {
 		socketUsers[login] = socket.id;
 	});
 
-	socket.on('add friend', function(data) {
-		databaseRequire.getFriends(data.user, function(result, friends) {
-			if(friends.indexOf(data.friend) === -1) {
-				databaseRequire.addFriend(data.user, data.friend);
-			} else {
-				console.log("Friend name repeated - it's forbidden");
-			}
-		});
-	});
+	// socket.on('add friend', function(data) {
+		
+	// });
 	
 	socketRequire.setOnWelcome(socket, games, io, roomsIntervals);
 	socketRequire.setOnDisconnect(socket, games, io, roomsIntervals);

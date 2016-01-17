@@ -53,6 +53,7 @@
 			<div id="friends-header">
 				Friends
 			</div>
+			<div id="scroll-screen">
 			<ul class="friends-list">
 				<li ng-repeat="x in friends track by $index">
 					<button type="button" class="chat-friend-button" data-target="#{{ x }}">
@@ -74,6 +75,11 @@
 					</div>
 				</li>
 			</ul>
+			</div>
+			<div ng-bind="returnMessageSuccess" class="alert alert-success return-message" ng-show="returnMessageShowSuccess">
+			</div>
+			<div  ng-bind="returnMessageDanger" class="alert alert-danger return-message" ng-show="returnMessageShowDanger">
+			</div>
 			<div id="input-friend" class="row">
 				<div id="input-add" class="col-sm-9">
 					<input type="text" class="form-control" id="friendname" placeholder="Enter Friend Name" ng-model="friendName">

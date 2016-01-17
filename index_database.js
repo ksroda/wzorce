@@ -89,21 +89,21 @@ module.exports.updateUserStatistics = function(user, startTime) {
 	   });
 }
 
-module.exports.addFriend = function(name, friend) {
+module.exports.addFriend = function(name, friend, callback) {
 	db.collection("users_statistics").updateOne(
 		{ 
 			"name" : name 
 		},
 		{
-    		$push: { 
-    			"friends": friend
-    		}
-    	}, function(err, results) {
-	      //console.log(results);
-	   });
+			$push: { 
+				"friends": friend
+			}
+		}, function(err, results) {
+			getFriends(name, callback);
+		});
 }
 
-module.exports.getFriends = function(name, callback) {
+var getFriends = function(name, callback) {
 	db.collection("users_statistics").find({ "name": name }).toArray(function (err, docs) {
 		if(docs.length == 0) {
 			console.log("Cannot fetch friends");
@@ -114,6 +114,8 @@ module.exports.getFriends = function(name, callback) {
 		};
 	});
 }
+
+module.exports.getFriends = getFriends;
 
 module.exports.getWordForHangman = function(room, callback) {
 	if(!db) {
@@ -127,3 +129,14 @@ module.exports.getWordForHangman = function(room, callback) {
 	 	});
 	}
 };
+
+
+module.exports.userExists = function(name, callback) {
+	db.collection("users").find({ "name": name }).toArray(function (err, docs) {
+		if(docs.length == 0) {
+			callback(false);
+		} else {
+			callback(true);
+		};
+	});
+}

@@ -1,4 +1,4 @@
-app.controller('friendsController', ["$scope", "$http", "$location", function($scope, $http, $location) {
+app.controller('friendsController', ["$scope", "$http", "$location", "$timeout", function($scope, $http, $location, $timeout) {
 	$http.get("/friends?who=" + user.name).success(function(response) {
 		$scope.friends = response;
 		socket.emit('join me to friends chats', {
@@ -18,12 +18,23 @@ app.controller('friendsController', ["$scope", "$http", "$location", function($s
 	}
 
 	$scope.addFriend = function() {
-		// console.log(user.name);
-		socket.emit('add friend', {
-			user: user.name,
-			friend: $scope.friendName
+		$http.get("/addfriend?who=" + user.name + "&friend=" + $scope.friendName).success(function(response) {
+			$scope.friends = response.friends;
+			if(response.success) {
+				$scope.returnMessageSuccess = response.message;
+				$scope.returnMessageShowSuccess = true;
+				$timeout(function() {
+					$scope.returnMessageShowSuccess = false;
+				}, 3000);
+			} else {
+				$scope.returnMessageDanger = response.message;
+				$scope.returnMessageShowDanger = true;
+				$timeout(function() {
+					$scope.returnMessageShowDanger = false;
+				}, 3000);
+			}
 		});
-		$scope.updateFriends();
+		
 		$scope.friendName = "";
 	}
 
