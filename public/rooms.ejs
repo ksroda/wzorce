@@ -2,7 +2,11 @@
 	$(document).ready(function() {
 		$('[data-toggle="tooltip"]').tooltip("show");
 	});
-	// alert("to tu!")
+	if(userAllowedToEnterGame) {
+		userAllowedToEnterGame = false;
+		$("#top-container").show();
+		socket.disconnect();
+	}
 </script>
 <div id="rooms">
 	<div id="output-room">

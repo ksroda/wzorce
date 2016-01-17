@@ -69,10 +69,7 @@ function sendWelcome(roomName) {
 		overallPoints: player.overallPoints
 	});
 
-	// $("canvas").show();
-	// $("#rooms").hide();
 	$("#top-container").hide();
-	//$(".actionButtons").show();
 };
 
 //------------------------------------Player-----------------------------------------------
