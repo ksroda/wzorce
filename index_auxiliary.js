@@ -109,7 +109,8 @@ module.exports = function() {
 		for(var x in object) {
 			result.push({
 				name: object[x].name,
-				usersNum: object[x].usersNum
+				usersNum: object[x].usersNum,
+				isDisabled: (object[x].usersNum >= 5 ? true : false)
 			});
 		}
 		return result;

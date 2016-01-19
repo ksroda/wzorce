@@ -17,7 +17,7 @@
 			CREATE YOUR OWN
 		</div>
 		<div ng-repeat="x in rooms | orderBy: 'usersNum':true">
-			<button type="button" class="btn btn-default btn-block roomEnter" ng-click="enterRoom(x.name)">
+			<button type="button" class="btn btn-default btn-block roomEnter" ng-click="enterRoom(x.name)" ng-disabled="x.isDisabled">
 				<span class="singleRoomName">{{ x.name }}</span>
 				<span class="badge">{{ x.usersNum }}</span>
 			</button>

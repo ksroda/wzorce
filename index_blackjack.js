@@ -39,7 +39,7 @@ module.exports = (function () {
 		socket.on('betButton', function(bet) {
 			if(self.rooms[socket.roomId]) {
 				var player = self.rooms[socket.roomId].findPlayerById(socket.id);
-				if(self.rooms[socket.roomId].state === "bet" && player.overallPoints >= player.pointsBet + parseInt(bet)) {
+				if(player !== undefined && self.rooms[socket.roomId].state === "bet" && player.overallPoints >= player.pointsBet + parseInt(bet)) {
 					player.pointsBet += parseInt(bet);
 				}
 			}

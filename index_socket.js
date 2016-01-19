@@ -42,20 +42,28 @@ module.exports = (function() {
 			}
 			if(socket.game) {
 				var room = games[socket.game].rooms[socket.roomId];
-				databaseRequire.updateUserStatistics(room.findPlayerById(socket.id), socket.startTime);
-				room.usersNum--;
+				var player;
+				
+				if(room) {
+					player = room.findPlayerById(socket.id);
+				}
 
-				if(room.usersNum <= 0) {
-					clearInterval(roomsIntervals[room.interval]);
-					delete games[socket.game].rooms[socket.roomId];
-				} else {
-					io.to(socket.roomId).emit('player disconnected', socket.id);
-					room.userDisconnected(io, socket.id);
-	
-					for(var i = 0; i < room.playersAll.length; i++) {
-						if(room.playersAll[i].id === socket.id) {
-							room.playersAll.splice(i, 1);
-							break;
+				if(player) {
+					databaseRequire.updateUserStatistics(player, socket.startTime);
+					room.usersNum--;
+				
+					if(room.usersNum <= 0) {
+						clearInterval(roomsIntervals[room.interval]);
+						delete games[socket.game].rooms[socket.roomId];
+					} else {
+						io.to(socket.roomId).emit('player disconnected', socket.id);
+						room.userDisconnected(io, socket.id);
+		
+						for(var i = 0; i < room.playersAll.length; i++) {
+							if(room.playersAll[i].id === socket.id) {
+								room.playersAll.splice(i, 1);
+								break;
+							}
 						}
 					}
 				}
