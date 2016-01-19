@@ -14,9 +14,16 @@ socket.on('id', function(id) {
 socket.on('player disconnected', function(playerId) {
 	if(userInfo[playerId]) {
 		userInfo[playerId].name.kill();
+		
 		userInfo[playerId].cardsSum.kill();
 		userInfo[playerId].pointsBet.kill();
 		userInfo[playerId].status.kill();
+
+		userInfo[playerId].splitProperties.cardsSum.kill();
+		userInfo[playerId].splitProperties.pointsBet.kill();
+		userInfo[playerId].splitProperties.status.kill();
+
+		userInfo[playerId].insurence.kill();
 	}
 });
 
