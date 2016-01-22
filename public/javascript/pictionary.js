@@ -1,6 +1,6 @@
 if(!userAllowedToEnterGame) {
 	userAllowedToEnterGame = false;
-	window.location = "#/";
+	window.location = "/pictionary";
 } else {
 
 //---------------------------------Phaser-------------------------------------------

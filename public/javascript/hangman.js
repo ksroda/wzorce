@@ -1,6 +1,6 @@
 if(!userAllowedToEnterGame) {
 	userAllowedToEnterGame = false;
-	window.location = "#/";
+	window.location = "/hangman";
 } else {
 
 var game = new Phaser.Game(window.innerWidth, window.innerHeight, Phaser.CANVAS, 'phaser', { preload: preload, create: create });

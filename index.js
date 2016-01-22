@@ -127,6 +127,10 @@ app.get('/blackjack/rooms', function(req, res) {
   res.send(auxiliaryRequire.objectToArray(games["blackjack"].rooms));
 });
 
+app.get('/game', function(req, res) {
+  res.redirect("/");
+});
+
 app.get('/friends', function(req, res) {
   databaseRequire.getFriends(req.query.who, function(result, friends) {
   	if(result) {
