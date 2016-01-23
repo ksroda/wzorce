@@ -79,6 +79,7 @@ app.controller('roomsController', ["$scope", "$http", "$location", function($sco
 		userAllowedToEnterGame = true;
 		sendWelcome(room);
 		$location.path("/game");
+		$location.replace();
 	}
 
 	$scope.createRoom = function() {
@@ -86,6 +87,7 @@ app.controller('roomsController', ["$scope", "$http", "$location", function($sco
 			userAllowedToEnterGame = true;
 			sendWelcome($scope.roomEntered);
 			$location.path("/game");
+			$location.replace();
 		}
 	}
 }]);
